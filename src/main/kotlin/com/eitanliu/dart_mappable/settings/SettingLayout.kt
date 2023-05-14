@@ -15,7 +15,7 @@ class SettingLayout(private val settingState: Settings) {
 
     val rootPanel = panel {
         row {
-            label("model suffix: ")
+            label("Model suffix: ")
                 .horizontalAlign(HorizontalAlign.LEFT)
 
             textField().applyToComponent {

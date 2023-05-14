@@ -75,7 +75,11 @@ open class JsonInputDialog(
         row {
             textField().horizontalAlign(HorizontalAlign.FILL)
         }
-        row { label("JSON Text:") }
+        row {
+            label("JSON Text:")
+            button("Format") {
+            }.horizontalAlign(HorizontalAlign.RIGHT)
+        }
         row {
             resizableRow()
             textField().apply {
@@ -111,7 +115,7 @@ open class JsonInputDialog(
                 ApplicationManager.getApplication().getService(Settings::class.java).state::nullable
             )
 
-            button("Format") {
+            button("Settings") {
 
             }.horizontalAlign(HorizontalAlign.RIGHT)
         }

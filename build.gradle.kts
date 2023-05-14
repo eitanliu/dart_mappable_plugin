@@ -5,9 +5,10 @@ fun properties(key: String) = project.findProperty(key).toString()
 
 plugins {
     id("java")
-    id("org.jetbrains.kotlin.jvm") version "1.6.20"
-    id("org.jetbrains.intellij") version "1.5.2"
+    id("org.jetbrains.kotlin.jvm") version "1.8.0"
+    id("org.jetbrains.intellij")  version "1.13.1"
     id("org.jetbrains.changelog") version "1.3.0"
+    // id("org.jetbrains.compose") version "1.3.0"
 }
 
 group = properties("pluginGroup")
@@ -15,6 +16,12 @@ version = properties("pluginVersion")
 
 repositories {
     mavenCentral()
+}
+
+dependencies {
+    // 添加 Compose Desktop 需要的依赖项，compose.desktop.currentOs 这个 value 便来自于上面添加的 org.jetbrains.compose 插件
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
+    // implementation(compose.desktop.currentOs)
 }
 
 // Configure Gradle IntelliJ Plugin - read more: https://github.com/JetBrains/gradle-intellij-plugin

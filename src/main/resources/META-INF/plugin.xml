@@ -35,24 +35,29 @@
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
-        <applicationService serviceImplementation="com.eitanliu.dart_mappable.settings.Settings"/>
+        <applicationService serviceImplementation="com.eitanliu.dart_mappable.settings.Settings" />
 
-        <projectConfigurable
-                groupId="tools" displayName="DartMappableSettings"
-                id="preferences.SingleFileExecutionConfigurable"
-                instance="com.eitanliu.dart_mappable.settings.SettingComponent"/>
-        <applicationService serviceImplementation="com.eitanliu.dart_mappable.services.ApplicationService"/>
-        <projectService serviceImplementation="com.eitanliu.dart_mappable.services.ProjectService"/>
+        <projectConfigurable displayName="DartMappableSettings" id="preferences.SingleFileExecutionConfigurable"
+            instance="com.eitanliu.dart_mappable.settings.SettingConfig" />
+        <applicationService serviceImplementation="com.eitanliu.dart_mappable.services.ApplicationService" />
+        <projectService serviceImplementation="com.eitanliu.dart_mappable.services.ProjectService" />
     </extensions>
+
+    <application-components>
+        <!--<component>-->
+        <!--    <implementation-class>com.eitanliu.dart_mappable.settings.Settings</implementation-class>-->
+        <!--</component>-->
+    </application-components>
 
     <applicationListeners>
         <listener class="com.eitanliu.dart_mappable.listeners.ProjectManagerListener"
-                  topic="com.intellij.openapi.project.ProjectManagerListener"/>
+            topic="com.intellij.openapi.project.ProjectManagerListener" />
     </applicationListeners>
+
     <actions>
-        <action id="JsonToDart" class="com.eitanliu.dart_mappable.actions.JsonToDart"
-                icon="/icon/action.svg" text="JsonToDartMappable" description="Generate dart bean class File from JSON">
-            <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFile"/>
+        <action id="JsonToDart" class="com.eitanliu.dart_mappable.actions.JsonToDart" icon="/icon/action.svg"
+            text="JsonToDartMappable" description="Generate dart bean class File from JSON">
+            <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFile" />
         </action>
     </actions>
 </idea-plugin>

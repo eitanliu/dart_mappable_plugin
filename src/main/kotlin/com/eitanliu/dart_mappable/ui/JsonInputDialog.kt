@@ -14,6 +14,8 @@ import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 import com.intellij.ui.dsl.gridLayout.VerticalAlign
 import com.intellij.util.ui.JBDimension
+import java.awt.event.KeyEvent
+import java.awt.event.KeyListener
 import javax.swing.JComponent
 import javax.swing.JTextField
 import javax.swing.text.JTextComponent
@@ -82,7 +84,34 @@ open class JsonInputDialog(
         }
         row {
             resizableRow()
-            textField().apply {
+            textArea().apply {
+                applyToComponent {
+                    addKeyListener(object : KeyListener {
+                        override fun keyTyped(e: KeyEvent) {
+                        }
+
+                        override fun keyPressed(e: KeyEvent) {
+                            if (e.keyCode == KeyEvent.VK_TAB) {
+                                e.consume()
+                                if (e.isShiftDown) {
+                                    transferFocusBackward()
+                                    // Plan B
+                                    // KeyboardFocusManager.getCurrentKeyboardFocusManager().focusPreviousComponent()
+                                    // Plan C
+                                    // val currentFocusOwner = KeyboardFocusManager.getCurrentKeyboardFocusManager().focusOwner
+                                    // val focusCycleRoot = KeyboardFocusManager.getCurrentKeyboardFocusManager().currentFocusCycleRoot
+                                    // val previousComponent = focusCycleRoot?.focusTraversalPolicy?.getComponentBefore(focusCycleRoot, currentFocusOwner)
+                                    // previousComponent?.requestFocusInWindow()
+                                } else {
+                                    transferFocus()
+                                }
+                            }
+                        }
+
+                        override fun keyReleased(e: KeyEvent) {
+                        }
+                    })
+                }
                 horizontalAlign(HorizontalAlign.FILL)
                 verticalAlign(VerticalAlign.FILL)
             }

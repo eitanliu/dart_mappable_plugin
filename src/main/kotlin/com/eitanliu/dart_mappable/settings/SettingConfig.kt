@@ -1,17 +1,19 @@
 package com.eitanliu.dart_mappable.settings
 
+import com.eitanliu.dart_mappable.extensions.value
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.options.Configurable
 import javax.swing.JComponent
 
-class SettingComponent : Configurable {
+class SettingConfig : Configurable {
     private var settingLayout: SettingLayout? = null
+
     override fun isModified(): Boolean {
         return settingLayout?.run {
             // getSettings() != Settings(
             //     modelSuffix, false, false
             // )
-            getSettings().modelSuffix != modelSuffix
+            getSettings().modelSuffix != graph.modelSuffix.value
         } ?: false
     }
 
@@ -20,8 +22,14 @@ class SettingComponent : Configurable {
     }
 
     override fun apply() {
-        settingLayout?.let { layout ->
-            getSettings().modelSuffix = layout.modelSuffix
+        settingLayout?.also { layout ->
+            getSettings().modelSuffix = layout.graph.modelSuffix.value
+        }
+    }
+
+    override fun reset() {
+        settingLayout?.also { layout ->
+            layout.graph.modelSuffix.value = getSettings().modelSuffix
         }
     }
 

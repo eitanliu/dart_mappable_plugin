@@ -10,11 +10,15 @@ import kotlin.reflect.KMutableProperty0
 @Suppress("NOTHING_TO_INLINE", "UnstableApiUsage")
 inline fun <V> KMutableProperty0<V>.toGraphProperty(
     propertyGraph: PropertyGraph = PropertyGraph()
-) = GraphPropertyImpl(propertyGraph, ::get).also { property ->
+): GraphProperty<V> = GraphPropertyImpl(propertyGraph, ::get).also { property ->
     property.afterChange {
         if (get() != it) set(it)
     }
 }
 
 @Suppress("NOTHING_TO_INLINE", "EXTENSION_SHADOWED_BY_MEMBER")
-inline fun <T> PropertyGraph.graphProperty(ref: KMutableProperty0<T>): GraphProperty<T> = ref.toGraphProperty(this)
+inline fun <T> PropertyGraph.propertyOf(ref: KMutableProperty0<T>): GraphProperty<T> = ref.toGraphProperty(this)
+
+inline var <T> GraphProperty<T>.value
+    get() = get()
+    set(value) = set(value)

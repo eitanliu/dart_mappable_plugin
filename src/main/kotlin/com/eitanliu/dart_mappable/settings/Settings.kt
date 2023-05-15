@@ -1,12 +1,9 @@
 package com.eitanliu.dart_mappable.settings
 
-import com.eitanliu.dart_mappable.extensions.toGraphProperty
+import com.eitanliu.dart_mappable.extensions.propertyOf
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
-import com.intellij.openapi.observable.properties.GraphProperty
-import com.intellij.openapi.observable.properties.GraphPropertyImpl
-import com.intellij.openapi.observable.properties.GraphPropertyImpl.Companion.graphProperty
 import com.intellij.openapi.observable.properties.PropertyGraph
 import com.intellij.util.xmlb.XmlSerializerUtil
 
@@ -19,14 +16,7 @@ data class Settings(
     var nullable: Boolean,
 ) : PersistentStateComponent<Settings> {
 
-    private val propertyGraph = PropertyGraph()
-
-    val modelSuffixProperty = ::modelSuffix.toGraphProperty(propertyGraph)
-
-    val ensureInitializedProperty = ::ensureInitialized.toGraphProperty(propertyGraph)
-    val constructorProperty = ::constructor.toGraphProperty(propertyGraph)
-    val factoryProperty = ::factory.toGraphProperty(propertyGraph)
-    val nullableProperty = ::nullable.toGraphProperty(propertyGraph)
+    val graph = Graph(this)
 
     constructor() : this(
         modelSuffix = "entity", ensureInitialized = true,
@@ -41,5 +31,16 @@ data class Settings(
     override fun loadState(state: Settings) {
 
         XmlSerializerUtil.copyBean(state, this)
+    }
+
+    class Graph(private val data: Settings) {
+        private val propertyGraph = PropertyGraph()
+
+        val modelSuffix = propertyGraph.propertyOf(data::modelSuffix)
+
+        val ensureInitialized = propertyGraph.propertyOf(data::ensureInitialized)
+        val constructor = propertyGraph.propertyOf(data::constructor)
+        val factory = propertyGraph.propertyOf(data::factory)
+        val nullable = propertyGraph.propertyOf(data::nullable)
     }
 }

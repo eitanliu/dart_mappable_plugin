@@ -1,25 +1,24 @@
 package com.eitanliu.dart_mappable.settings
 
-import com.eitanliu.dart_mappable.extensions.graphProperty
+import com.eitanliu.dart_mappable.extensions.propertyOf
 import com.intellij.openapi.observable.properties.PropertyGraph
-import com.intellij.openapi.observable.util.bind
+import com.intellij.ui.dsl.builder.bindText
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 
 
 class SettingLayout(private val settingState: Settings) {
-    private val propertyGraph = PropertyGraph()
-    var modelSuffix = settingState.modelSuffix
+    val graph = Graph(this)
 
-    private val modelSuffixProperty = propertyGraph.graphProperty(::modelSuffix)
+    var modelSuffix = settingState.modelSuffix
 
     val rootPanel = panel {
         row {
             label("Model suffix: ")
                 .horizontalAlign(HorizontalAlign.LEFT)
 
-            textField().applyToComponent {
-                bind(modelSuffixProperty)
+            textField().apply {
+                bindText(graph.modelSuffix)
             }.horizontalAlign(HorizontalAlign.FILL)
 
             rowComment("Configure scan suffix files(Please separate them with commas)")
@@ -27,4 +26,9 @@ class SettingLayout(private val settingState: Settings) {
         // separator()
     }
 
+    class Graph(private val data: SettingLayout) {
+        private val propertyGraph = PropertyGraph()
+
+        val modelSuffix = propertyGraph.propertyOf(data::modelSuffix)
+    }
 }

@@ -8,12 +8,14 @@ import javax.swing.JComponent
 class SettingConfig : Configurable {
     private var settingLayout: SettingLayout? = null
 
+    private val settings = ApplicationManager.getApplication().getService(Settings::class.java).state
+
     override fun isModified(): Boolean {
         return settingLayout?.run {
-            // getSettings() != Settings(
+            // settings != Settings(
             //     modelSuffix, false, false
             // )
-            getSettings().modelSuffix != graph.modelSuffix.value
+            settings.graph.modelSuffix.value != graph.modelSuffix.value
         } ?: false
     }
 
@@ -23,25 +25,21 @@ class SettingConfig : Configurable {
 
     override fun apply() {
         settingLayout?.also { layout ->
-            getSettings().modelSuffix = layout.graph.modelSuffix.value
+            settings.graph.modelSuffix.value = layout.graph.modelSuffix.value
         }
     }
 
     override fun reset() {
         settingLayout?.also { layout ->
-            layout.graph.modelSuffix.value = getSettings().modelSuffix
+            layout.graph.modelSuffix.value = settings.graph.modelSuffix.value
         }
     }
 
 
     override fun createComponent(): JComponent {
-        return SettingLayout(getSettings()).apply {
+        return SettingLayout(settings).apply {
             settingLayout = this
         }.rootPanel
-    }
-
-    private fun getSettings(): Settings {
-        return ApplicationManager.getApplication().getService(Settings::class.java).state
     }
 
 }

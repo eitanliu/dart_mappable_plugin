@@ -1,7 +1,7 @@
-package com.eitanliu.dart_mappable.actions
+package com.eitanliu.dart.mappable.actions
 
-import com.eitanliu.dart_mappable.ui.JsonInputDialog
-import com.eitanliu.dart_mappable.utils.Log
+import com.eitanliu.dart.mappable.ui.JsonInputDialog
+import com.eitanliu.dart.mappable.utils.Log
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.LangDataKeys
@@ -51,9 +51,11 @@ class JsonToDart : AnAction() {
         val directoryFactory = PsiDirectoryFactory.getInstance(directory.project)
         val packageName = directoryFactory.getQualifiedName(directory, true)
         val psiFileFactory = PsiFileFactory.getInstance(project)
-        JsonInputDialog(project) { className, json ->
-            false
-        }.show()
+        val dialog = JsonInputDialog(project) { className, json ->
+            true
+        }.apply { show() }
+        val className = dialog.graph.className
+        val json = dialog.graph.json
 
         // 获取项目根目录
         project.stateStore.projectBasePath

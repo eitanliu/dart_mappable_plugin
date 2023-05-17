@@ -1,6 +1,6 @@
-package com.eitanliu.dart_mappable.settings
+package com.eitanliu.dart.mappable.settings
 
-import com.eitanliu.dart_mappable.extensions.value
+import com.eitanliu.dart.mappable.extensions.value
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.options.Configurable
 import javax.swing.JComponent

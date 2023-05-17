@@ -1,6 +1,6 @@
-package com.eitanliu.dart_mappable.settings
+package com.eitanliu.dart.mappable.settings
 
-import com.eitanliu.dart_mappable.extensions.propertyOf
+import com.eitanliu.dart.mappable.extensions.propertyOf
 import com.intellij.openapi.observable.properties.PropertyGraph
 import com.intellij.ui.dsl.builder.bindText
 import com.intellij.ui.dsl.builder.panel

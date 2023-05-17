@@ -1,4 +1,4 @@
-package com.eitanliu.dart_mappable
+package com.eitanliu.dart.mappable
 
 import com.intellij.DynamicBundle
 import org.jetbrains.annotations.NonNls

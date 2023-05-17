@@ -1,11 +1,11 @@
 @file:Suppress("DialogTitleCapitalization")
 
-package com.eitanliu.dart_mappable.ui
+package com.eitanliu.dart.mappable.ui
 
-import com.eitanliu.dart_mappable.extensions.propertyOf
-import com.eitanliu.dart_mappable.extensions.value
-import com.eitanliu.dart_mappable.settings.Settings
-import com.eitanliu.dart_mappable.utils.SimpleKeyListener
+import com.eitanliu.dart.mappable.extensions.propertyOf
+import com.eitanliu.dart.mappable.extensions.value
+import com.eitanliu.dart.mappable.settings.Settings
+import com.eitanliu.dart.mappable.utils.SimpleKeyListener
 import com.google.gson.*
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.observable.properties.PropertyGraph
@@ -107,12 +107,12 @@ open class JsonInputDialog(
 
             checkBox(
                 "constructor"
-            ).bindSelected(settings.state::constructor)
+            ).bindSelected(settings.graph.constructor)
 
             checkBox(
                 "factory"
             ).bindSelected(
-                settings.state::factory
+                settings.graph.factory
             ).applyToComponent {
                 this.toolTipText = "fromMap and fromJson factory"
             }
@@ -120,7 +120,7 @@ open class JsonInputDialog(
             checkBox(
                 "nullable"
             ).bindSelected(
-                settings.state::nullable
+                settings.graph.nullable
             )
 
             button("Settings") {

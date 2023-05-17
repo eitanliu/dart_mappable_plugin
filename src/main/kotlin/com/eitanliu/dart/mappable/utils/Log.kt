@@ -1,4 +1,4 @@
-package com.eitanliu.dart_mappable.utils
+package com.eitanliu.dart.mappable.utils
 
 import com.intellij.openapi.diagnostic.Logger
 

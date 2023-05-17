@@ -1,7 +1,9 @@
 package com.eitanliu.dart.mappable.actions
 
+import com.eitanliu.dart.mappable.extensions.camelCaseToUnderscore
+import com.eitanliu.dart.mappable.generator.DartGenerator
 import com.eitanliu.dart.mappable.ui.JsonInputDialog
-import com.eitanliu.dart.mappable.utils.Log
+import com.intellij.CommonBundle
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.LangDataKeys
@@ -11,7 +13,7 @@ import com.intellij.openapi.components.stateStore
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ProjectRootManager
-import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.ui.Messages
 import com.intellij.project.stateStore
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFile
@@ -51,11 +53,25 @@ class JsonToDart : AnAction() {
         val directoryFactory = PsiDirectoryFactory.getInstance(directory.project)
         val packageName = directoryFactory.getQualifiedName(directory, true)
         val psiFileFactory = PsiFileFactory.getInstance(project)
-        val dialog = JsonInputDialog(project) { className, json ->
+
+        val (className, json) = JsonInputDialog(project) { className, json ->
+            val name = className.camelCaseToUnderscore()
+            val fileName = "$name.dart"
+
+            val psiFile = directory.findFile(fileName)
+
+            if (psiFile != null) {
+                val override = Messages.showOkCancelDialog(
+                    "Do you want to overwrite the current file?", "File Already Exist",
+                    CommonBundle.message("button.overwrite"), CommonBundle.getCancelButtonText(),
+                    null,
+                )
+                return@JsonInputDialog override == Messages.OK
+            }
             true
-        }.apply { show() }
-        val className = dialog.graph.className
-        val json = dialog.graph.json
+        }.showDialog()
+
+        val generator = DartGenerator(className, json)
 
         // 获取项目根目录
         project.stateStore.projectBasePath

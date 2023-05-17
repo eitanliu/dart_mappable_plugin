@@ -11,6 +11,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.observable.properties.PropertyGraph
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
+import com.intellij.openapi.ui.Messages
 import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.bindText
 import com.intellij.ui.dsl.builder.panel
@@ -158,15 +159,22 @@ open class JsonInputDialog(
         val json = graph.json.value
 
         if (className.isEmpty()) {
-            throw Exception("className must not null or empty")
+            Messages.showErrorDialog("Error", "className must not null or empty")
+            return
         }
         if (json.isEmpty()) {
-            throw Exception("json must not null or empty")
+            Messages.showErrorDialog("Error", "json must not null or empty")
+            return
         }
 
         if (doOkAction(className, json)) {
             super.doOKAction()
         }
+    }
+
+    fun showDialog(): Pair<String, String> {
+        show()
+        return graph.className.value to graph.json.value
     }
 
     class Graph(private val data: JsonInputDialog) {

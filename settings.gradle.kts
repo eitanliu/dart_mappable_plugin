@@ -1,1 +1,1 @@
-rootProject.name = "dart_mappable"
+rootProject.name = "dart_mappable_plugin"

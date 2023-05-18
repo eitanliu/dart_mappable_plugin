@@ -1,6 +1,7 @@
 package com.eitanliu.dart.mappable.actions
 
 import com.eitanliu.dart.mappable.extensions.camelCaseToUnderscore
+import com.eitanliu.dart.mappable.extensions.value
 import com.eitanliu.dart.mappable.generator.DartGenerator
 import com.eitanliu.dart.mappable.settings.Settings
 import com.eitanliu.dart.mappable.ui.JsonInputDialog
@@ -56,9 +57,15 @@ class JsonToDart : AnAction() {
         val packageName = directoryFactory.getQualifiedName(directory, true)
         val psiFileFactory = PsiFileFactory.getInstance(project)
 
+        val settings = ApplicationManager.getApplication().getService(Settings::class.java).state
         val (className, json) = JsonInputDialog(project) { className, json ->
             val name = className.camelCaseToUnderscore()
-            val fileName = "$name.dart"
+            val modelSuffix = settings.graph.modelSuffix.value.camelCaseToUnderscore()
+
+            val underscoreName = "${className.camelCaseToUnderscore()}${
+                if (modelSuffix.isEmpty()) "" else "_$modelSuffix"
+            }"
+            val fileName = "$underscoreName.dart"
 
             val psiFile = directory.findFile(fileName)
 
@@ -73,7 +80,6 @@ class JsonToDart : AnAction() {
             true
         }.showDialog()
 
-        val settings = ApplicationManager.getApplication().getService(Settings::class.java).state
         val generator = DartGenerator(settings, className, json)
 
         // 获取项目根目录

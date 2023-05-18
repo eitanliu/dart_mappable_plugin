@@ -1,6 +1,8 @@
 package com.eitanliu.dart.mappable
 
 import com.eitanliu.dart.mappable.generator.CodeGenerator
+import com.eitanliu.dart.mappable.generator.DartGenerator
+import com.eitanliu.dart.mappable.settings.Settings
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -44,5 +46,19 @@ class GeneratorUnitTest {
         """.trimIndent()
 
         assertEquals("generatorEquals", expected, actual)
+    }
+
+    @Test
+    fun jsonParse() {
+        val classLoader = javaClass.classLoader
+        val test01 = classLoader.getResourceAsStream("test01.json")!!
+        val content = test01.bufferedReader().use { it.readText() }
+        println("json: \n$content")
+        val setting = Settings().apply {
+            nullable = true
+        }
+        val generator = DartGenerator(setting, "Text01", content)
+        val classes = generator.generatorClassesString()
+        println("classes: \n$classes")
     }
 }

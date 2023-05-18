@@ -2,12 +2,14 @@ package com.eitanliu.dart.mappable.actions
 
 import com.eitanliu.dart.mappable.extensions.camelCaseToUnderscore
 import com.eitanliu.dart.mappable.generator.DartGenerator
+import com.eitanliu.dart.mappable.settings.Settings
 import com.eitanliu.dart.mappable.ui.JsonInputDialog
 import com.intellij.CommonBundle
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.LangDataKeys
 import com.intellij.openapi.actionSystem.PlatformDataKeys
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.StoragePathMacros
 import com.intellij.openapi.components.stateStore
 import com.intellij.openapi.project.guessProjectDir
@@ -71,7 +73,8 @@ class JsonToDart : AnAction() {
             true
         }.showDialog()
 
-        val generator = DartGenerator(className, json)
+        val settings = ApplicationManager.getApplication().getService(Settings::class.java).state
+        val generator = DartGenerator(settings, className, json)
 
         // 获取项目根目录
         project.stateStore.projectBasePath

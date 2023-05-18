@@ -102,13 +102,17 @@ open class JsonInputDialog(
         row {
 
             val settings = ApplicationManager.getApplication().getService(Settings::class.java)
-            checkBox(
-                "ensureInitialized"
-            ).bindSelected(settings.graph.ensureInitialized)
+            // checkBox(
+            //     "ensureInitialized"
+            // ).bindSelected(settings.graph.ensureInitialized)
 
             checkBox(
                 "constructor"
-            ).bindSelected(settings.graph.constructor)
+            ).bindSelected(
+                settings.graph.constructor
+            ).applyToComponent {
+                this.toolTipText = "constructor has params"
+            }
 
             checkBox(
                 "factory"

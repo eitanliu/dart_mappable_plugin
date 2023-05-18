@@ -61,6 +61,8 @@ class DartGenerator(
     }
 
     private fun CodeGenerator.writeDataClasses(models: List<DartClassModel>) {
+
+        val last = models.last()
         for (model in models) {
 
             val sampleName = "${model.name}$classSuffix"
@@ -76,13 +78,32 @@ class DartGenerator(
                     }
 
                     val nullable = member.nullable ?: settings.nullable
-                    val typeNullable = "?".takeIf { nullable && member.name != "dynamic" } ?: ""
-                    writeln("${member.type}$typeNullable ${member.name.keyToCamelCase()};")
+                    writeln(buildString {
+                        // type
+                        append(member.type)
+                        if (member.isEntity) append(classSuffix)
+                        if (nullable && member.name != "dynamic") append("?")
+                        // name
+                        append(" ${member.name.keyToCamelCase()}")
+                        // default
+                        if (!settings.constructor) append(" = ${typeDefault(member)}")
+                        append(";")
+                    })
                 }
                 writeln()
 
                 // constructor
-                val params = model.members.joinToString { "this.${it.name.keyToCamelCase()}" }
+                val params = if (settings.constructor) model.members.joinToString(
+                    separator = ", ", prefix = "", postfix = ""
+                ) {
+                    // val nullable = it.nullable ?: settings.nullable
+                    // buildString {
+                    //     // if (!nullable) this.append("required ")
+                    //     append("this.${it.name.keyToCamelCase()}")
+                    //     if (!nullable) append(" = ${typeDefault(it.type)}")
+                    // }
+                    "this.${it.name.keyToCamelCase()}"
+                } else ""
                 writeScoped("$sampleName($params) {", "}") {
                     writeln("$mapper.ensureInitialized();")
                 }
@@ -97,9 +118,8 @@ class DartGenerator(
 
                 // ensureInitialized
                 writeln("static $mapper ensureInitialized() => $mapper.ensureInitialized();")
-                writeln()
             }
-            writeln()
+            if (model != last) writeln()
         }
     }
 
@@ -128,7 +148,7 @@ class DartGenerator(
                 value.isJsonObject || value.isJsonArray -> {
                     val subName = "$name${key.keyToCamelCase(true)}"
                     parserElement(value, subName, models)
-                    DartMemberModel(key, subName)
+                    DartMemberModel(key, subName, isEntity = true)
                 }
 
                 value is JsonPrimitive -> {
@@ -176,6 +196,20 @@ class DartGenerator(
             DartMemberModel(key, "dynamic")
         }
     }
+
+    private fun typeDefault(member: DartMemberModel) = when {
+        member.nullable ?: settings.nullable -> "null"
+        member.isEntity -> "${member.type}$classSuffix()"
+        else -> when (member.type) {
+            "String" -> "''"
+            "bool" -> "false"
+            "int" -> "0"
+            "double" -> "0.0"
+            "dynamic" -> "null"
+            else -> "$${member.type}()"
+        }
+    }
+
 
     private fun Number.getType(): String {
         val numberString = toString()

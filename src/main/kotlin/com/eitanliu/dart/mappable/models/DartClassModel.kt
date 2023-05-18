@@ -15,7 +15,9 @@ class DartImportModel(
 class DartMemberModel(
     val name: String,
     val type: String,
+    val default: String? = null,
     val nullable: Boolean? = null,
+    val isEntity: Boolean = false,
 )
 
 class DartFunctionModel(

@@ -11,6 +11,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.LangDataKeys
 import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.components.StoragePathMacros
 import com.intellij.openapi.components.stateStore
 import com.intellij.openapi.project.guessProjectDir
@@ -18,12 +19,11 @@ import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.ui.Messages
 import com.intellij.project.stateStore
-import com.intellij.psi.PsiDirectory
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiFileFactory
-import com.intellij.psi.PsiManager
+import com.intellij.psi.*
+import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.impl.file.PsiDirectoryFactory
 import io.flutter.pub.PubRoots
+
 
 class JsonToDart : AnAction() {
     override fun actionPerformed(event: AnActionEvent) {
@@ -80,7 +80,23 @@ class JsonToDart : AnAction() {
             true
         }.showDialog()
 
-        val generator = DartGenerator(settings, className, json)
+        WriteCommandAction.runWriteCommandAction(project) {
+
+            val generator = DartGenerator(settings, className, json)
+
+            val file = directory.virtualFile.findOrCreateChildData(this, generator.fileName)
+
+            val documentManager = PsiDocumentManager.getInstance(project)
+
+            PsiManager.getInstance(project).findFile(file)?.apply {
+                documentManager.getDocument(this)?.apply {
+                    setText(generator.generatorClassesString())
+                    documentManager.commitDocument(this)
+                }
+                CodeStyleManager.getInstance(project).reformat(this)
+            }
+        }
+
 
         // 获取项目根目录
         project.stateStore.projectBasePath

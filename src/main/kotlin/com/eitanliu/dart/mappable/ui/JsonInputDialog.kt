@@ -2,12 +2,14 @@
 
 package com.eitanliu.dart.mappable.ui
 
-import com.eitanliu.dart.mappable.extensions.propertyOf
+import com.eitanliu.dart.mappable.extensions.copyBind
+import com.eitanliu.dart.mappable.extensions.propertyRef
 import com.eitanliu.dart.mappable.extensions.value
 import com.eitanliu.dart.mappable.generator.DartGenerator
 import com.eitanliu.dart.mappable.settings.Settings
 import com.eitanliu.dart.mappable.utils.SimpleKeyListener
 import com.google.gson.*
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.observable.properties.PropertyGraph
 import com.intellij.openapi.project.Project
@@ -24,7 +26,7 @@ import java.awt.event.KeyEvent
 /**
  * Json input Dialog
  */
-open class JsonInputDialog(
+class JsonInputDialog(
     project: Project,
     private var className: String = "",
     private var json: String = "",
@@ -37,18 +39,16 @@ open class JsonInputDialog(
 
     val settings = ApplicationManager.getApplication().getService(Settings::class.java)
 
-    val graph = Graph(this).afterPropagation {
-        okAction.isEnabled = if (className.value.trim().isNotEmpty() && json.value.trim().isNotEmpty()) {
-            inputIsValidJson(json.value)
-        } else {
-            false
-        }
+    val graph = Graph(this).afterPropagation(disposable) {
+        okAction.isEnabled = inputIsValidJson(json.value).takeIf {
+            className.value.trim().isNotEmpty() && json.value.trim().isNotEmpty()
+        } ?: false
     }
 
     private val prettyGson: Gson = GsonBuilder().setPrettyPrinting().serializeNulls().create()
 
     init {
-        title = "Generate Dart bean Class Code"
+        title = "Generate Dart Bean Class Code"
         setOKButtonText("Generate")
         okAction.apply {
             putValue(DEFAULT_ACTION, false)
@@ -105,34 +105,31 @@ open class JsonInputDialog(
             }
         }
         row {
-            // checkBox(
-            //     "ensureInitialized"
-            // ).bindSelected(settings.graph.ensureInitialized)
 
             checkBox(
                 "constructor"
             ).bindSelected(
-                settings.graph.constructor
+                graph.constructor
             ).applyToComponent {
                 this.toolTipText = "constructor has params"
             }
 
             checkBox(
-                "factory"
-            ).bindSelected(
-                settings.graph.factory
-            ).applyToComponent {
-                this.toolTipText = "fromMap and fromJson factory"
-            }
-
-            checkBox(
                 "nullable"
             ).bindSelected(
-                settings.graph.nullable
+                graph.nullable
             )
 
-            button("Settings") {
+            checkBox(
+                "final"
+            ).bindSelected(
+                graph.final
+            ).applyToComponent {
+                this.toolTipText = "members is final"
+            }
 
+            button("Settings") {
+                SettingsDialog(null, contentPanel).show()
             }.horizontalAlign(HorizontalAlign.RIGHT)
         }
 
@@ -190,12 +187,18 @@ open class JsonInputDialog(
 
     class Graph(private val data: JsonInputDialog) {
         private val propertyGraph = PropertyGraph()
+        private val settings = data.settings
+        private val disposable = data.disposable
 
-        val className = propertyGraph.propertyOf(data::className)
-        val json = propertyGraph.propertyOf(data::json)
+        val className = propertyGraph.propertyRef(data::className)
+        val json = propertyGraph.propertyRef(data::json)
 
-        fun afterPropagation(listener: Graph.() -> Unit) = apply {
-            propertyGraph.afterPropagation { listener() }
+        val constructor = settings.graph.constructor.copyBind(disposable)
+        val nullable = settings.graph.nullable.copyBind(disposable)
+        val final = settings.graph.final.copyBind(disposable)
+
+        fun afterPropagation(disposable: Disposable? = null, listener: Graph.() -> Unit) = apply {
+            propertyGraph.afterPropagation(disposable) { listener() }
         }
     }
 }

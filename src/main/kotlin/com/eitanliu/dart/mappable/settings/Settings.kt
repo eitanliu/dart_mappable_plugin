@@ -1,6 +1,7 @@
 package com.eitanliu.dart.mappable.settings
 
-import com.eitanliu.dart.mappable.extensions.propertyOf
+import com.eitanliu.dart.mappable.extensions.propertyRef
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
@@ -12,16 +13,16 @@ data class Settings(
     var modelSuffix: String,
     var ensureInitialized: Boolean,
     var constructor: Boolean,
-    var factory: Boolean,
     var nullable: Boolean,
+    var final: Boolean,
 ) : PersistentStateComponent<Settings> {
 
     val graph = Graph(this)
 
     constructor() : this(
         modelSuffix = "entity", ensureInitialized = true,
-        constructor = true, factory = true,
-        nullable = false
+        constructor = true, nullable = false,
+        final = false,
     )
 
     override fun getState(): Settings {
@@ -36,11 +37,15 @@ data class Settings(
     class Graph(private val data: Settings) {
         private val propertyGraph = PropertyGraph()
 
-        val modelSuffix = propertyGraph.propertyOf(data::modelSuffix)
+        val modelSuffix = propertyGraph.propertyRef(data::modelSuffix)
 
-        val ensureInitialized = propertyGraph.propertyOf(data::ensureInitialized)
-        val constructor = propertyGraph.propertyOf(data::constructor)
-        val factory = propertyGraph.propertyOf(data::factory)
-        val nullable = propertyGraph.propertyOf(data::nullable)
+        val ensureInitialized = propertyGraph.propertyRef(data::ensureInitialized)
+        val constructor = propertyGraph.propertyRef(data::constructor)
+        val nullable = propertyGraph.propertyRef(data::nullable)
+        val final = propertyGraph.propertyRef(data::final)
+
+        fun afterPropagation(disposable: Disposable? = null, listener: Graph.() -> Unit) = apply {
+            propertyGraph.afterPropagation(disposable) { listener() }
+        }
     }
 }

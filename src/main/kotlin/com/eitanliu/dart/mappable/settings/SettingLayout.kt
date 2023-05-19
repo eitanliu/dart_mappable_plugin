@@ -7,28 +7,25 @@ import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 
 
-class SettingLayout(private val settingState: Settings) {
+class SettingLayout(private val setting: Settings) {
     val graph = Graph(this)
-
-    var modelSuffix = settingState.modelSuffix
 
     val rootPanel = panel {
         row {
-            label("Model suffix: ")
-                .horizontalAlign(HorizontalAlign.LEFT)
+            label("Model suffix:").horizontalAlign(HorizontalAlign.LEFT)
 
             textField().apply {
                 bindText(graph.modelSuffix)
             }.horizontalAlign(HorizontalAlign.FILL)
 
-            rowComment("Configure scan suffix files(Please separate them with commas)")
+            rowComment("Configure dart model bean files suffix")
         }
         // separator()
     }
 
-    class Graph(private val data: SettingLayout) {
+    class Graph(data: SettingLayout) {
         private val propertyGraph = PropertyGraph()
 
-        val modelSuffix = propertyGraph.propertyOf(data::modelSuffix)
+        val modelSuffix = propertyGraph.propertyOf(data.setting.modelSuffix)
     }
 }

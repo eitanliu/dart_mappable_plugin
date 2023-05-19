@@ -77,7 +77,9 @@ class DartGenerator(
                     }
 
                     val nullable = member.nullable ?: settings.nullable
+                    val final = settings.final
                     writeln(buildString {
+                        if (final) append("final ")
                         // type
                         append(member.type)
                         if (member.isEntity) append(camelCaseSuffix)

@@ -1,9 +1,9 @@
 package com.eitanliu.dart.mappable.extensions
 
 
-fun String.toCamelCase(capitalizeFirstWord: Boolean = true): String {
+fun String.replaceFirstChar(capitalize: Boolean = true): String {
     val camelCase = this
-    return if (capitalizeFirstWord) {
+    return if (capitalize) {
         camelCase.replaceFirstChar { if (it.isLowerCase()) it.uppercase() else it.toString() }
     } else {
         camelCase.replaceFirstChar { if (it.isUpperCase()) it.lowercase() else it.toString() }
@@ -44,5 +44,9 @@ fun String.underscoreToCamelCase(capitalizeFirstWord: Boolean = false): String {
 
 fun String.replaceNonAlphabetic(replacement: String = "_"): String {
     val regex = Regex("[^a-zA-Z0-9]+")
+    return replace(regex, replacement)
+}
+fun String.replaceSymbol(replacement: String = "_"): String {
+    val regex = Regex("[\\x20-\\x2F\\x3A-\\x40\\x5B-\\x60\\x7B-\\x7E]+")
     return replace(regex, replacement)
 }

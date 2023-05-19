@@ -1,9 +1,6 @@
 package com.eitanliu.dart.mappable.generator
 
-import com.eitanliu.dart.mappable.extensions.camelCaseToUnderscore
-import com.eitanliu.dart.mappable.extensions.replaceNonAlphabetic
-import com.eitanliu.dart.mappable.extensions.underscoreToCamelCase
-import com.eitanliu.dart.mappable.extensions.value
+import com.eitanliu.dart.mappable.extensions.*
 import com.eitanliu.dart.mappable.models.DartClassModel
 import com.eitanliu.dart.mappable.models.DartFunctionModel
 import com.eitanliu.dart.mappable.models.DartImportModel
@@ -18,13 +15,13 @@ class DartGenerator(
     className: String,
     json: String,
 ) {
-    private val camelCaseName = className.underscoreToCamelCase(true)
+    private val camelCaseName = className.replaceSymbol().underscoreToCamelCase(true)
 
     private val camelCaseSuffix = settings.graph.modelSuffix.value.underscoreToCamelCase(true)
 
     private val underscoreSuffix = settings.graph.modelSuffix.value.camelCaseToUnderscore()
 
-    private val underscoreNameAndSuffix = "${className.camelCaseToUnderscore()}${
+    private val underscoreNameAndSuffix = "${camelCaseName.camelCaseToUnderscore()}${
         if (underscoreSuffix.isEmpty()) "" else "_$underscoreSuffix"
     }"
 

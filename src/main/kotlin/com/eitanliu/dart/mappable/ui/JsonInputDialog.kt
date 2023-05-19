@@ -4,6 +4,7 @@ package com.eitanliu.dart.mappable.ui
 
 import com.eitanliu.dart.mappable.extensions.propertyOf
 import com.eitanliu.dart.mappable.extensions.value
+import com.eitanliu.dart.mappable.generator.DartGenerator
 import com.eitanliu.dart.mappable.settings.Settings
 import com.eitanliu.dart.mappable.utils.SimpleKeyListener
 import com.google.gson.*
@@ -27,10 +28,14 @@ open class JsonInputDialog(
     project: Project,
     private var className: String = "",
     private var json: String = "",
-    val doOkAction: (className: String, json: String) -> Boolean
+    val doOkAction: (generator: DartGenerator) -> Boolean
 ) : DialogWrapper(
     project, true,
 ) {
+    var generator: DartGenerator? = null
+        private set
+
+    val settings = ApplicationManager.getApplication().getService(Settings::class.java)
 
     val graph = Graph(this).afterPropagation {
         okAction.isEnabled = if (className.value.trim().isNotEmpty() && json.value.trim().isNotEmpty()) {
@@ -100,8 +105,6 @@ open class JsonInputDialog(
             }
         }
         row {
-
-            val settings = ApplicationManager.getApplication().getService(Settings::class.java)
             // checkBox(
             //     "ensureInitialized"
             // ).bindSelected(settings.graph.ensureInitialized)
@@ -166,19 +169,23 @@ open class JsonInputDialog(
             Messages.showErrorDialog("Error", "className must not null or empty")
             return
         }
+
         if (json.isEmpty()) {
             Messages.showErrorDialog("Error", "json must not null or empty")
             return
         }
 
-        if (doOkAction(className, json)) {
+        val g = DartGenerator(settings, className, json)
+
+        if (doOkAction(g)) {
+            generator = g
             super.doOKAction()
         }
     }
 
-    fun showDialog(): Pair<String, String> {
+    fun showDialog(): JsonInputDialog {
         show()
-        return graph.className.value to graph.json.value
+        return this
     }
 
     class Graph(private val data: JsonInputDialog) {

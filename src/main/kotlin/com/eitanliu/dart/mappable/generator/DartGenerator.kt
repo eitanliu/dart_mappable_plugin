@@ -2,8 +2,8 @@ package com.eitanliu.dart.mappable.generator
 
 import com.eitanliu.dart.mappable.extensions.camelCaseToUnderscore
 import com.eitanliu.dart.mappable.extensions.replaceNonAlphabetic
-import com.eitanliu.dart.mappable.extensions.toCamelCase
 import com.eitanliu.dart.mappable.extensions.underscoreToCamelCase
+import com.eitanliu.dart.mappable.extensions.value
 import com.eitanliu.dart.mappable.models.DartClassModel
 import com.eitanliu.dart.mappable.models.DartFunctionModel
 import com.eitanliu.dart.mappable.models.DartImportModel
@@ -15,32 +15,33 @@ import java.math.BigInteger
 
 class DartGenerator(
     private val settings: Settings,
-    private val className: String,
-    private val json: String,
+    className: String,
+    json: String,
 ) {
-    val modelSuffix = settings.modelSuffix.camelCaseToUnderscore()
+    private val camelCaseName = className.underscoreToCamelCase(true)
 
-    val underscoreName = "${className.camelCaseToUnderscore()}${
-        if (modelSuffix.isEmpty()) "" else "_$modelSuffix"
+    private val camelCaseSuffix = settings.graph.modelSuffix.value.underscoreToCamelCase(true)
+
+    private val underscoreSuffix = settings.graph.modelSuffix.value.camelCaseToUnderscore()
+
+    private val underscoreNameAndSuffix = "${className.camelCaseToUnderscore()}${
+        if (underscoreSuffix.isEmpty()) "" else "_$underscoreSuffix"
     }"
 
-    val fileName = "$underscoreName.dart"
+    val fileName = "$underscoreNameAndSuffix.dart"
 
-    val fileMapperName = "$underscoreName.mapper.dart"
+    val fileMapperName = "$underscoreNameAndSuffix.mapper.dart"
 
-    private val classSuffix = settings.modelSuffix.toCamelCase(true)
+    val jsonElement by lazy { JsonParser.parseString(json) }
 
-    private val jsonElement = JsonParser.parseString(json)
+    fun generatorClassesString() = CodeGenerator {
+        val models = parserElement(jsonElement, camelCaseName)
 
-    private val generator = CodeGenerator {}
+        writeFileImports(models)
+        writeFileParts(models)
+        writeDataClasses(models)
 
-    fun generatorClassesString(): String {
-        val models = parserElement(jsonElement, className)
-        generator.writeFileImports(models)
-        generator.writeFileParts(models)
-        generator.writeDataClasses(models)
-        return generator.builder.toString()
-    }
+    }.builder.toString()
 
     private fun CodeGenerator.writeFileImports(models: List<DartClassModel>) {
         val imports = models.flatMapTo(mutableListOf()) { it.imports }
@@ -53,7 +54,6 @@ class DartGenerator(
         }
     }
 
-
     private fun CodeGenerator.writeFileParts(models: List<DartClassModel>) {
         writeln()
         writeln("part '$fileMapperName';")
@@ -63,7 +63,7 @@ class DartGenerator(
 
         for (model in models) {
 
-            val sampleName = "${model.name}$classSuffix"
+            val sampleName = "${model.name}$camelCaseSuffix"
             val mappable = "${sampleName}Mappable"
             val mapper = "${sampleName}Mapper"
 
@@ -80,7 +80,7 @@ class DartGenerator(
                     writeln(buildString {
                         // type
                         append(member.type)
-                        if (member.isEntity) append(classSuffix)
+                        if (member.isEntity) append(camelCaseSuffix)
                         if (nullable && member.name != "dynamic") append("?")
                         // name
                         append(" ${member.name.keyToCamelCase()}")
@@ -197,7 +197,7 @@ class DartGenerator(
 
     private fun typeDefault(member: DartMemberModel) = when {
         member.nullable ?: settings.nullable -> "null"
-        member.isEntity -> "${member.type}$classSuffix()"
+        member.isEntity -> "${member.type}$camelCaseSuffix()"
         else -> when (member.type) {
             "String" -> "''"
             "bool" -> "false"
@@ -207,7 +207,6 @@ class DartGenerator(
             else -> "$${member.type}()"
         }
     }
-
 
     private fun Number.getType(): String {
         val numberString = toString()

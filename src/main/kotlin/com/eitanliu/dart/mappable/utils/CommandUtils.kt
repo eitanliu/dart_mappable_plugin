@@ -2,65 +2,59 @@ package com.eitanliu.dart.mappable.utils
 
 import com.intellij.execution.ExecutionException
 import com.intellij.execution.configurations.GeneralCommandLine
-import com.intellij.execution.process.OSProcessHandler
-import com.intellij.execution.process.ProcessAdapter
-import com.intellij.execution.process.ProcessEvent
-import com.intellij.execution.process.ProcessOutputTypes
+import com.intellij.execution.process.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.SystemInfo
+import com.intellij.openapi.vfs.VirtualFile
+import io.flutter.console.FlutterConsoles
 import io.flutter.pub.PubRoot
 import io.flutter.sdk.FlutterSdk
+import io.flutter.utils.MostlySilentColoredProcessHandler
 
 object CommandUtils {
     fun executeCommand(project: Project, command: String) {
         val executable = if (SystemInfo.isWindows) "cmd.exe" else "bash"
 
-        // 指定工作目录
         val workingDirectory: String = project.basePath ?: return
         val commandLine = GeneralCommandLine()
         commandLine.exePath = executable
         commandLine.setWorkDirectory(workingDirectory)
         commandLine.withParameters(if (SystemInfo.isWindows) "/c" else "-c", command)
 
-        // FlutterConsoles.displayMessage(project, null , workingDirectory, true)
-        // FlutterConsoles.displayMessage(project, null , "$command\n", )
         try {
-            // val handler: ColoredProcessHandler = MostlySilentColoredProcessHandler(commandLine)
-            //
-            // FlutterConsoles.displayProcessLater(
-            //     handler, project, null as Module?
-            // ) { handler.startNotify() }
+            val handler: ColoredProcessHandler = MostlySilentColoredProcessHandler(commandLine)
 
-            val processHandler = OSProcessHandler(commandLine)
-            processHandler.addProcessListener(object : ProcessAdapter() {
-                override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
-                    // 获取命令行输出文本
-                    val text = event.text
+            FlutterConsoles.displayProcessLater(
+                handler, project, null
+            ) { handler.startNotify() }
 
-                    // 根据输出类型进行处理
-                    if (outputType == ProcessOutputTypes.STDOUT) {
-                        // 标准输出
-                        // FlutterConsoles.displayMessage(project, null , text)
-                        System.out.println(text)
-                    } else if (outputType == ProcessOutputTypes.STDERR) {
-                        // 错误输出
-                        System.err.println(text)
-                    }
-                }
-            })
-            processHandler.startNotify()
+            // FlutterConsoles.displayMessage(project, null , "$workingDirectory\n", true)
+            // FlutterConsoles.displayMessage(project, null , "$command\n", )
+            // val processHandler = OSProcessHandler(commandLine)
+            // processHandler.addProcessListener(object : ProcessAdapter() {
+            //     override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
+            //         val text = event.text
+            //         when (outputType) {
+            //             ProcessOutputTypes.STDOUT, ProcessOutputTypes.STDERR ->
+            //                 FlutterConsoles.displayMessage(project, null, text)
+            //         }
+            //     }
+            // })
+            // processHandler.startNotify()
         } catch (e: ExecutionException) {
             e.printStackTrace()
         }
     }
 
-    fun executeFlutterPubCommand(project: Project, root: PubRoot, args: String) {
+    fun executeFlutterPubCommand(project: Project, root: PubRoot, dir: VirtualFile, args: String) {
         val sdk = FlutterSdk.getFlutterSdk(project) ?: return
         val module = root.getModule(project) ?: return
         // FileDocumentManager.getInstance().saveAllDocuments()
         val command = sdk.flutterPub(root, *args.split(' ').toTypedArray())
-        // command.startInModuleConsole(module, root::refresh, null)
-        command.startInConsole(project)
+        command.startInModuleConsole(module, {
+            dir.refresh(false, false)
+        }, null)
+        // command.startInConsole(project)
     }
 }

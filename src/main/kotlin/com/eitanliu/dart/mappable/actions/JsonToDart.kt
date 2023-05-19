@@ -1,10 +1,6 @@
 package com.eitanliu.dart.mappable.actions
 
-import com.eitanliu.dart.mappable.extensions.camelCaseToUnderscore
 import com.eitanliu.dart.mappable.extensions.filterInContent
-import com.eitanliu.dart.mappable.extensions.value
-import com.eitanliu.dart.mappable.generator.DartGenerator
-import com.eitanliu.dart.mappable.settings.Settings
 import com.eitanliu.dart.mappable.ui.JsonInputDialog
 import com.eitanliu.dart.mappable.utils.CommandUtils
 import com.intellij.CommonBundle
@@ -14,17 +10,19 @@ import com.intellij.openapi.actionSystem.LangDataKeys
 import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.WriteCommandAction
-import com.intellij.openapi.components.StoragePathMacros
-import com.intellij.openapi.components.stateStore
-import com.intellij.openapi.project.guessProjectDir
+import com.intellij.openapi.editor.Document
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.roots.ModuleRootManager
-import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.ui.Messages
-import com.intellij.project.stateStore
-import com.intellij.psi.*
+import com.intellij.psi.PsiDirectory
+import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiManager
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.impl.file.PsiDirectoryFactory
+import com.intellij.util.TimeoutUtil
 import io.flutter.pub.PubRoots
+import java.io.IOException
 
 
 class JsonToDart : AnAction() {
@@ -65,16 +63,10 @@ class JsonToDart : AnAction() {
 
         val directoryFactory = PsiDirectoryFactory.getInstance(directory.project)
         val packageName = directoryFactory.getQualifiedName(directory, true)
-        val psiFileFactory = PsiFileFactory.getInstance(project)
 
-        val settings = ApplicationManager.getApplication().getService(Settings::class.java).state
-        val (className, json) = JsonInputDialog(project) { className, json ->
-            val modelSuffix = settings.graph.modelSuffix.value.camelCaseToUnderscore()
+        val dialog = JsonInputDialog(project) Action@{ generator ->
 
-            val underscoreName = "${className.camelCaseToUnderscore()}${
-                if (modelSuffix.isEmpty()) "" else "_$modelSuffix"
-            }"
-            val fileName = "$underscoreName.dart"
+            val fileName = generator.fileName
 
             val psiFile = directory.findFile(fileName)
 
@@ -84,51 +76,49 @@ class JsonToDart : AnAction() {
                     CommonBundle.message("button.overwrite"), CommonBundle.getCancelButtonText(),
                     null,
                 )
-                return@JsonInputDialog override == Messages.OK
+                return@Action override == Messages.OK
             }
             true
         }.showDialog()
-        if (className.isEmpty() || json.isEmpty()) return
 
-        WriteCommandAction.runWriteCommandAction(project) {
+        val generator = dialog.generator ?: return
 
-            val generator = DartGenerator(settings, className, json)
-
+        val documentManager = PsiDocumentManager.getInstance(project)
+        val doc = WriteCommandAction.runWriteCommandAction<Document, IOException>(project) {
             val file = directory.virtualFile.findOrCreateChildData(this, generator.fileName)
-
-            val documentManager = PsiDocumentManager.getInstance(project)
-
-            PsiManager.getInstance(project).findFile(file)?.apply {
-                documentManager.getDocument(this)?.apply {
-                    setText(generator.generatorClassesString())
-                    documentManager.commitDocument(this)
+            PsiManager.getInstance(project).findFile(file)?.let { psi ->
+                documentManager.getDocument(psi)?.also { doc ->
+                    doc.setText(generator.generatorClassesString())
+                    documentManager.commitDocument(doc)
+                    CodeStyleManager.getInstance(project).reformat(psi)
                 }
-                CodeStyleManager.getInstance(project).reformat(this)
             }
         }
 
-        // CommandUtils.executeCommand(project, "dart run build_runner build --delete-conflicting-outputs")
         ApplicationManager.getApplication().invokeLater {
+            TimeoutUtil.sleep(600)
+            FileDocumentManager.getInstance().saveDocument(doc)
             CommandUtils.executeFlutterPubCommand(
-                project, pubRoot, "run build_runner build --delete-conflicting-outputs"
+                project, pubRoot, directory.virtualFile,
+                "run build_runner build --delete-conflicting-outputs"
             )
         }
 
         // 获取项目根目录
-        project.stateStore.projectBasePath
-        project.guessProjectDir()
-        project.baseDir
+        // project.stateStore.projectBasePath
+        // project.guessProjectDir()
+        // project.baseDir
 
         // 获取模块根目录
-        module.moduleFile?.parent
-        module.moduleNioFile.parent
-        module.stateStore.storageManager.expandMacro(StoragePathMacros.MODULE_FILE).parent
+        // module.moduleFile?.parent
+        // module.moduleNioFile.parent
+        // module.stateStore.storageManager.expandMacro(StoragePathMacros.MODULE_FILE).parent
         // ProjectRootManager.getInstance(project).fileIndex.getContentRootForFile(file)
 
 
         // 获取项目全部文件
-        ProjectRootManager.getInstance(project).contentRoots
-        ProjectRootManager.getInstance(project).contentSourceRoots
+        // ProjectRootManager.getInstance(project).contentRoots
+        // ProjectRootManager.getInstance(project).contentSourceRoots
         // 获取模块全部文件
         // ModuleRootManager.getInstance(module).contentRoots
         // 获取模块全部文件(不包含根目录)

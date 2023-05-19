@@ -51,24 +51,23 @@ class DartGenerator(
             val alias = import.alias?.let { " as $it" } ?: ""
             writeln("import '${import.name}'${alias};")
         }
-        writeln()
     }
 
 
     private fun CodeGenerator.writeFileParts(models: List<DartClassModel>) {
-        writeln("part '$fileMapperName';")
         writeln()
+        writeln("part '$fileMapperName';")
     }
 
     private fun CodeGenerator.writeDataClasses(models: List<DartClassModel>) {
 
-        val last = models.last()
         for (model in models) {
 
             val sampleName = "${model.name}$classSuffix"
             val mappable = "${sampleName}Mappable"
             val mapper = "${sampleName}Mapper"
 
+            writeln()
             writeln("@MappableClass()")
             writeScoped("class $sampleName with $mappable {", "}") {
                 for (member in model.members) {
@@ -119,7 +118,6 @@ class DartGenerator(
                 // ensureInitialized
                 writeln("static $mapper ensureInitialized() => $mapper.ensureInitialized();")
             }
-            if (model != last) writeln()
         }
     }
 

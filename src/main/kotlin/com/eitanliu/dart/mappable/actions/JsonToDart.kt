@@ -1,6 +1,7 @@
 package com.eitanliu.dart.mappable.actions
 
 import com.eitanliu.dart.mappable.extensions.camelCaseToUnderscore
+import com.eitanliu.dart.mappable.extensions.filterInContent
 import com.eitanliu.dart.mappable.extensions.value
 import com.eitanliu.dart.mappable.generator.DartGenerator
 import com.eitanliu.dart.mappable.settings.Settings
@@ -39,7 +40,7 @@ class JsonToDart : AnAction() {
         val moduleArray = LangDataKeys.MODULE_CONTEXT_ARRAY.getData(dataContext)
 
         val navigatable = LangDataKeys.NAVIGATABLE.getData(dataContext)
-        val pubRoots = PubRoots.forModule(module)
+
         val moduleRoot = ModuleRootManager.getInstance(module)
         val directory = when (navigatable) {
             is PsiDirectory -> navigatable
@@ -54,13 +55,20 @@ class JsonToDart : AnAction() {
                     }.firstOrNull()
             }
         } ?: return
+
+        val pubRoots = PubRoots.forModule(module).filterInContent(directory.virtualFile)
+        if (pubRoots.isEmpty()) {
+            Messages.showInfoMessage("This project is not the flutter project", "Info")
+            return
+        }
+        val pubRoot = pubRoots.first()
+
         val directoryFactory = PsiDirectoryFactory.getInstance(directory.project)
         val packageName = directoryFactory.getQualifiedName(directory, true)
         val psiFileFactory = PsiFileFactory.getInstance(project)
 
         val settings = ApplicationManager.getApplication().getService(Settings::class.java).state
         val (className, json) = JsonInputDialog(project) { className, json ->
-            val name = className.camelCaseToUnderscore()
             val modelSuffix = settings.graph.modelSuffix.value.camelCaseToUnderscore()
 
             val underscoreName = "${className.camelCaseToUnderscore()}${
@@ -72,7 +80,7 @@ class JsonToDart : AnAction() {
 
             if (psiFile != null) {
                 val override = Messages.showOkCancelDialog(
-                    "Do you want to overwrite the current file?", "File Already Exist",
+                    "Do you want to overwrite the $fileName file?", "File Already Exist",
                     CommonBundle.message("button.overwrite"), CommonBundle.getCancelButtonText(),
                     null,
                 )
@@ -99,7 +107,12 @@ class JsonToDart : AnAction() {
             }
         }
 
-        CommandUtils.executeCommand(project, "dart pub run build_runner build --delete-conflicting-outputs")
+        // CommandUtils.executeCommand(project, "dart run build_runner build --delete-conflicting-outputs")
+        ApplicationManager.getApplication().invokeLater {
+            CommandUtils.executeFlutterPubCommand(
+                project, pubRoot, "run build_runner build --delete-conflicting-outputs"
+            )
+        }
 
         // 获取项目根目录
         project.stateStore.projectBasePath
@@ -126,6 +139,8 @@ class JsonToDart : AnAction() {
         // ModuleRootManager.getInstance(module).getSourceRoots(rootTypes)
         // 遍历目录
         // ModuleRootManager.getInstance(module).fileIndex.iterateContent {  }
+        // 判断包含关系
+        // ModuleRootManager.getInstance(module).fileIndex.isInContent( directory.virtualFile )
 
         // 获取 VirtualFile
         // LocalFileSystem.getInstance().findFileByNioFile()

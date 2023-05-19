@@ -226,7 +226,7 @@ class DartGenerator(
     }
 
     private fun String.needAnnotation(): Boolean {
-        val regex = Regex("^[a-z][a-z0-9_]*$")
+        val regex = Regex("^[a-z][a-zA-Z0-9]*$")
         return !matches(regex)
     }
 }

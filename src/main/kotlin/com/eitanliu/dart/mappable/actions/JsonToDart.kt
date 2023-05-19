@@ -5,6 +5,7 @@ import com.eitanliu.dart.mappable.extensions.value
 import com.eitanliu.dart.mappable.generator.DartGenerator
 import com.eitanliu.dart.mappable.settings.Settings
 import com.eitanliu.dart.mappable.ui.JsonInputDialog
+import com.eitanliu.dart.mappable.utils.CommandUtils
 import com.intellij.CommonBundle
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -79,6 +80,7 @@ class JsonToDart : AnAction() {
             }
             true
         }.showDialog()
+        if (className.isEmpty() || json.isEmpty()) return
 
         WriteCommandAction.runWriteCommandAction(project) {
 
@@ -97,6 +99,7 @@ class JsonToDart : AnAction() {
             }
         }
 
+        CommandUtils.executeCommand(project, "dart pub run build_runner build --delete-conflicting-outputs")
 
         // 获取项目根目录
         project.stateStore.projectBasePath

@@ -1,8 +1,10 @@
 package com.eitanliu.dart.mappable.actions
 
 import com.eitanliu.dart.mappable.extensions.filterInContent
+import com.eitanliu.dart.mappable.extensions.invokeLater
 import com.eitanliu.dart.mappable.ui.JsonInputDialog
 import com.eitanliu.dart.mappable.utils.CommandUtils
+import com.eitanliu.dart.mappable.utils.MessagesUtils
 import com.intellij.CommonBundle
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -20,17 +22,15 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.impl.file.PsiDirectoryFactory
-import com.intellij.util.TimeoutUtil
 import io.flutter.pub.PubRoots
 import java.io.IOException
 
 
-class JsonToDart : AnAction() {
+class JsonToDartAction : AnAction() {
     override fun actionPerformed(event: AnActionEvent) {
 
         val project = event.getData(PlatformDataKeys.PROJECT) ?: return
         val projectContext = event.getData(PlatformDataKeys.PROJECT_CONTEXT)
-        println("project $project")
 
         val dataContext = event.dataContext
         val module = LangDataKeys.MODULE.getData(dataContext) ?: return
@@ -38,27 +38,24 @@ class JsonToDart : AnAction() {
         val moduleArray = LangDataKeys.MODULE_CONTEXT_ARRAY.getData(dataContext)
 
         val navigatable = LangDataKeys.NAVIGATABLE.getData(dataContext)
+            ?: LangDataKeys.PSI_FILE.getData(dataContext)
+            ?: LangDataKeys.EDITOR.getData(dataContext)?.document?.let {
+                PsiDocumentManager.getInstance(project).getPsiFile(it)
+            }
 
         val moduleRoot = ModuleRootManager.getInstance(module)
         val directory = when (navigatable) {
             is PsiDirectory -> navigatable
             is PsiFile -> navigatable.containingDirectory
             else -> {
-                println("${moduleRoot.sourceRoots.size}")
-                moduleRoot.sourceRoots
-                    .asSequence()
-                    .mapNotNull {
-                        println("${it.canonicalPath}")
-                        PsiManager.getInstance(project).findDirectory(it)
-                    }.firstOrNull()
+                moduleRoot.sourceRoots.asSequence().mapNotNull {
+                    PsiManager.getInstance(project).findDirectory(it)
+                }.firstOrNull()
             }
         } ?: return
 
         val pubRoots = PubRoots.forModule(module).filterInContent(directory.virtualFile)
-        if (pubRoots.isEmpty()) {
-            Messages.showInfoMessage("This project is not the flutter project", "Info")
-            return
-        }
+        if (MessagesUtils.isNotFlutterProject(pubRoots)) return
         val pubRoot = pubRoots.first()
 
         val directoryFactory = PsiDirectoryFactory.getInstance(directory.project)
@@ -95,13 +92,13 @@ class JsonToDart : AnAction() {
             }
         }
 
-        ApplicationManager.getApplication().invokeLater {
-            TimeoutUtil.sleep(600)
+        ApplicationManager.getApplication().invokeLater(600L) {
             FileDocumentManager.getInstance().saveDocument(doc)
             CommandUtils.executeFlutterPubCommand(
-                project, pubRoot, directory.virtualFile,
-                "run build_runner build --delete-conflicting-outputs"
-            )
+                project, pubRoot, "run build_runner build --delete-conflicting-outputs"
+            ) {
+                directory.virtualFile.refresh(false, false)
+            }
         }
 
         // 获取项目根目录

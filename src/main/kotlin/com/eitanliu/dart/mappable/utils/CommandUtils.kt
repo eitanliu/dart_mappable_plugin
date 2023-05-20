@@ -6,7 +6,6 @@ import com.intellij.execution.process.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.SystemInfo
-import com.intellij.openapi.vfs.VirtualFile
 import io.flutter.console.FlutterConsoles
 import io.flutter.pub.PubRoot
 import io.flutter.sdk.FlutterSdk
@@ -47,14 +46,14 @@ object CommandUtils {
         }
     }
 
-    fun executeFlutterPubCommand(project: Project, root: PubRoot, dir: VirtualFile, args: String) {
+    fun executeFlutterPubCommand(
+        project: Project, root: PubRoot, args: String,
+        processListener: ProcessListener? = null, onDone: Runnable? = null
+    ) {
         val sdk = FlutterSdk.getFlutterSdk(project) ?: return
         val module = root.getModule(project) ?: return
-        // FileDocumentManager.getInstance().saveAllDocuments()
         val command = sdk.flutterPub(root, *args.split(' ').toTypedArray())
-        command.startInModuleConsole(module, {
-            dir.refresh(false, false)
-        }, null)
+        command.startInModuleConsole(module, onDone, processListener)
         // command.startInConsole(project)
     }
 }

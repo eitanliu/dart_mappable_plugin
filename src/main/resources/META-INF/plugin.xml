@@ -5,7 +5,7 @@
 
     <!-- Public plugin name should be written in Title Case.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
-    <name>DartMappable(Json To DartMappable Generator Convert)</name>
+    <name>DartMappable(Json To DartMappable Convert Generator)</name>
 
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
     <vendor email="eitanliu@gmail.com" url="https://www.eitanliu.com">Eitan Liu</vendor>
@@ -15,10 +15,8 @@
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
     <description><![CDATA[
      <br>Json to dart beans are provided, and dart files ending in entity are provided to generate dart bean factory for use.</br>
-     <br>right click on package -> `New`->`JsonToDart`　And Then you will know how to use</br>
-     <br>If you change the fields in the class, just press the shortcut alt + j to regenerate the tojson and fromjson methods. The generated method regenerates all helper classes and JsonConvert classes (the same as the shortcut alt + j) each time an entity file is created in the generated/json directory.</br>
-     <br>If you need generic conversions in your network requests, use the jsonconvert.fromjsonast method directly.</br>
-     <br>If no helper files are generated, you can delete the .idea directory and restart your idea</br>
+     <br>Right click on package -> `New` -> `Json To DartMappable`　And Then you will know how to use.</br>
+     <br>If you change the fields in the class, right click on package -> `Flutter Command` -> `Flutter Run Build Runner`, shortcut key is changed to Alt + r.</br>
   ]]></description>
 
     <!-- Product and plugin compatibility requirements.
@@ -55,9 +53,42 @@
     </applicationListeners>
 
     <actions>
-        <action id="JsonToDart" class="com.eitanliu.dart.mappable.actions.JsonToDart" icon="/icon/action.svg"
-            text="JsonToDartMappable" description="Generate dart bean class File from JSON">
-            <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFile" />
+        <action id="JsonToDartMappable" text="Json To DartMappable" icon="/icon/action.svg"
+            class="com.eitanliu.dart.mappable.actions.JsonToDartAction"
+            description="Generate dart bean class File from JSON">
+            <add-to-group group-id="NewGroup" anchor="first" />
         </action>
+
+        <action id="JsonToDartMappable.Generate" text="Json To DartMappable"
+            class="com.eitanliu.dart.mappable.actions.JsonToDartAction"
+            description="Generate dart bean class File from JSON">
+            <add-to-group group-id="GenerateGroup" anchor="before" relative-to-action="Generate.Constructor.Dart" />
+        </action>
+
+        <action id="PubRunBuildRunnerCommand" text="Flutter Run Build Runner"
+            class="com.eitanliu.dart.mappable.actions.FlutterRunBuildRunnerAction"
+            description="Run 'flutter pub run build_runner build --delete-conflicting-outputs'">
+            <add-to-group group-id="BuildMenu" anchor="first" />
+            <keyboard-shortcut keymap="$default" first-keystroke="alt r" />
+        </action>
+
+        <group id="FlutterCommandGroup" text="Flutter Command" popup="true" icon="AllIcons.Actions.RunAll">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="after" relative-to-action="WeighingNewGroup" />
+            <!--<add-to-group anchor="before" group-id="ProjectViewPopupMenuRunGroup"-->
+            <!--    relative-to-action="RunContextPopupGroup" />-->
+            <reference ref="PubRunBuildRunnerCommand" />
+            <reference ref="flutter.pub.get" />
+            <reference ref="flutter.pub.upgrade" />
+            <reference ref="flutter.clean" />
+            <separator />
+            <reference ref="flutter.doctor" />
+            <reference ref="flutter.upgrade" />
+            <separator />
+            <reference ref="flutter.devtools.open" />
+            <reference ref="flutter.androidstudio.open" />
+            <reference ref="flutter.xcode.open" />
+            <reference ref="FlutterBuildActionGroup" />
+
+        </group>
     </actions>
 </idea-plugin>

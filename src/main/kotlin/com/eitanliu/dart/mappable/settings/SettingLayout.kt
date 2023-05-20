@@ -18,7 +18,7 @@ class SettingLayout(private val setting: Settings) {
                 bindText(graph.modelSuffix)
             }.horizontalAlign(HorizontalAlign.FILL)
 
-            rowComment("Configure dart model bean files suffix")
+            rowComment("Configure dart bean model files suffix.")
         }
         // separator()
     }

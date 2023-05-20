@@ -28,8 +28,8 @@ import java.awt.event.KeyEvent
  */
 class JsonInputDialog(
     project: Project,
-    private var className: String = "",
-    private var json: String = "",
+    private val className: String = "",
+    private val json: String = "",
     val doOkAction: (generator: DartGenerator) -> Boolean
 ) : DialogWrapper(
     project, true,
@@ -111,21 +111,23 @@ class JsonInputDialog(
             ).bindSelected(
                 graph.constructor
             ).applyToComponent {
-                this.toolTipText = "constructor has params"
+                toolTipText = "constructor has params"
             }
 
             checkBox(
                 "nullable"
             ).bindSelected(
                 graph.nullable
-            )
+            ).applyToComponent {
+                toolTipText = "members is nullable"
+            }
 
             checkBox(
                 "final"
             ).bindSelected(
                 graph.final
             ).applyToComponent {
-                this.toolTipText = "members is final"
+                toolTipText = "members is final"
             }
 
             button("Settings") {

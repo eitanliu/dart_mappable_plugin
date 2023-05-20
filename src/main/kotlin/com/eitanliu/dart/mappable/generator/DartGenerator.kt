@@ -15,11 +15,13 @@ class DartGenerator(
     className: String,
     json: String,
 ) {
-    private val camelCaseName = className.replaceSymbol().underscoreToCamelCase(true)
+    private val camelCaseName = className.keyToCamelCase(true)
 
-    private val camelCaseSuffix = settings.graph.modelSuffix.value.underscoreToCamelCase(true)
+    private val camelCaseSuffix = settings.graph.modelSuffix.value
+        .replaceNonAlphabeticNumber("_")
+        .underscoreToCamelCase(true)
 
-    private val underscoreSuffix = settings.graph.modelSuffix.value.camelCaseToUnderscore()
+    private val underscoreSuffix = camelCaseSuffix.camelCaseToUnderscore()
 
     private val underscoreNameAndSuffix = "${camelCaseName.camelCaseToUnderscore()}${
         if (underscoreSuffix.isEmpty()) "" else "_$underscoreSuffix"
@@ -78,13 +80,22 @@ class DartGenerator(
                     writeln(buildString {
                         if (final) append("final ")
                         // type
+                        if (member.collection) append("List<")
                         append(member.type)
-                        if (member.isEntity) append(camelCaseSuffix)
-                        if (nullable && member.name != "dynamic") append("?")
+                        if (member.entity) append(camelCaseSuffix)
+                        if (member.collection && nullable && member.type != "dynamic") append("?")
+                        if (member.collection) append(">")
+                        if (nullable && member.type != "dynamic") append("?")
                         // name
                         append(" ${member.name.keyToCamelCase()}")
                         // default
-                        if (!settings.constructor) append(" = ${typeDefault(member)}")
+                        if (!settings.constructor) {
+                            if (member.collection) {
+                                append(" = List.empty(growable: true)")
+                            } else {
+                                append(" = ${typeDefault(member)}")
+                            }
+                        }
                         append(";")
                     })
                 }
@@ -142,10 +153,23 @@ class DartGenerator(
         for ((key, value) in element.entrySet()) {
 
             val memberModel = when {
-                value.isJsonObject || value.isJsonArray -> {
+                value.isJsonObject -> {
                     val subName = "$name${key.keyToCamelCase(true)}"
                     parserElement(value, subName, models)
-                    DartMemberModel(key, subName, isEntity = true)
+                    DartMemberModel(key, subName, entity = true)
+                }
+
+                value.isJsonArray -> {
+                    val item = value.asJsonArray.firstOrNull()
+                    when {
+                        item == null -> DartMemberModel(key, "dynamic", collection = true)
+                        item is JsonPrimitive -> typeMapping(key, item).copy(collection = true)
+                        else -> {
+                            val subName = "$name${key.keyToCamelCase(true)}"
+                            parserElement(value, subName, models)
+                            DartMemberModel(key, subName, collection = true, entity = true)
+                        }
+                    }
                 }
 
                 value is JsonPrimitive -> {
@@ -196,7 +220,7 @@ class DartGenerator(
 
     private fun typeDefault(member: DartMemberModel) = when {
         member.nullable ?: settings.nullable -> "null"
-        member.isEntity -> "${member.type}$camelCaseSuffix()"
+        member.entity -> "${member.type}$camelCaseSuffix()"
         else -> when (member.type) {
             "String" -> "''"
             "bool" -> "false"
@@ -218,11 +242,18 @@ class DartGenerator(
     }
 
     private fun String.keyToCamelCase(capitalizeFirstWord: Boolean = false): String {
-        return replaceNonAlphabetic("_").underscoreToCamelCase(capitalizeFirstWord)
+        return replaceNonAlphabeticNumber("_")
+            .underscoreToCamelCase(capitalizeFirstWord)
+            .numberAddPrefix()
     }
 
     private fun String.needAnnotation(): Boolean {
         val regex = Regex("^[a-z][a-zA-Z0-9]*$")
         return !matches(regex)
+    }
+
+    private fun String.numberAddPrefix(prefix: String = "$"): String {
+        val regex = Regex("^\\d.+$")
+        return if (matches(regex)) "$prefix$this" else this
     }
 }

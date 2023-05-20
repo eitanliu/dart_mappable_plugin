@@ -42,7 +42,7 @@ fun String.underscoreToCamelCase(capitalizeFirstWord: Boolean = false): String {
     return camelCase.toString()
 }
 
-fun String.replaceNonAlphabetic(replacement: String = "_"): String {
+fun String.replaceNonAlphabeticNumber(replacement: String = "_"): String {
     val regex = Regex("[^a-zA-Z0-9]+")
     return replace(regex, replacement)
 }

@@ -55,7 +55,10 @@ class GeneratorUnitTest {
         val content = test01.bufferedReader().use { it.readText() }
         println("json: \n$content")
         val setting = Settings().apply {
+            modelSuffix = "Vo"
+            constructor = false
             nullable = true
+            final = false
         }
         val generator = DartGenerator(setting, "Text01", content)
         val classes = generator.generatorClassesString()

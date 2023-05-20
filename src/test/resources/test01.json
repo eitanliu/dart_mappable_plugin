@@ -9,5 +9,16 @@
     "float-01": 1.0,
     "boolean": true,
     "string": "str"
-  }
+  },
+  "empty-obj": {},
+  "empty-array": [],
+  "str-array": [
+    ""
+  ],
+  "obj-array": [
+    {
+      "float": 1.0,
+      "string": "str"
+    }
+  ]
 }

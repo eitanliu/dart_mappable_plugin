@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="17" viewBox="0 0 180 178">
   <defs>
     <linearGradient id="group-2@svg-a" x1="50%" x2="50%" y1="0%" y2="100%">
-      <stop offset="0%" stop-color="#05C2FF"/>
-      <stop offset="100%" stop-color="#00A3FF"/>
+      <stop offset="0%" stop-color="#54C5F8"/>
+      <stop offset="100%" stop-color="#70B4F4"/>
     </linearGradient>
   </defs>
   <g fill="none" fill-rule="evenodd" transform="translate(0 -8)">
@@ -10,10 +10,10 @@
       <rect width="140" height="137" x="20" y="20" fill="url(#group-2@svg-a)" transform="rotate(-20 90 88.5)"/>
       <rect width="140" height="137" x="33.704" y="5.84" fill="#FFF" transform="rotate(-5 103.704 74.34)"/>
     </g>
-    <text fill="#03A2F8" font-family="PingFangSC-Semibold, PingFang SC" font-size="80" font-weight="500" transform="rotate(-5 73.317 65)">
+    <text fill="#29B6F6" font-family="PingFangSC-Semibold, PingFang SC" font-size="80" font-weight="500" transform="rotate(-5 73.317 65)">
       <tspan x="42" y="90">D</tspan>
     </text>
-    <text fill="#03A2F8" font-family="PingFangSC-Semibold, PingFang SC" font-size="80" font-weight="500" transform="rotate(-5 131.5 101)">
+    <text fill="#01579B" font-family="PingFangSC-Semibold, PingFang SC" font-size="80" font-weight="500" transform="rotate(-5 131.5 101)">
       <tspan x="96" y="136">M</tspan>
     </text>
   </g>

@@ -2,6 +2,18 @@
 
 # Dart Mappable Changelog
 
+## [1.1.1]
+
+### Release
+
+- Compatible with intellij-community 231 versions(Android Studio Hedgehog | 2023.1.1)
+
+## [1.1.0]
+
+### Release
+
+- user Kotlin UI DSL V2 API
+
 ## [1.0.1]
 
 ### Release

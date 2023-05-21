@@ -7,6 +7,7 @@ import com.eitanliu.dart.mappable.extensions.copyBind
 import com.eitanliu.dart.mappable.extensions.propertyRef
 import com.eitanliu.dart.mappable.extensions.value
 import com.eitanliu.dart.mappable.generator.DartGenerator
+import com.eitanliu.dart.mappable.observable.PropertyGraphWrapper
 import com.eitanliu.dart.mappable.settings.Settings
 import com.google.gson.*
 import com.intellij.openapi.Disposable
@@ -175,6 +176,8 @@ class JsonInputDialog(
         private val settings = data.settings
         private val disposable = data.disposable
 
+        private val wrapper = PropertyGraphWrapper(propertyGraph, this)
+
         val className = propertyGraph.propertyRef(data::className)
         val json = propertyGraph.propertyRef(data::json)
 
@@ -183,7 +186,8 @@ class JsonInputDialog(
         val final = settings.graph.final.copyBind(disposable, propertyGraph)
 
         fun afterPropagation(disposable: Disposable? = null, listener: Graph.() -> Unit) = apply {
-            propertyGraph.afterPropagation { listener() }
+            wrapper.listenerList.add(listener)
+            propertyGraph.afterPropagation(wrapper.listener)
         }
     }
 }

@@ -2,12 +2,12 @@
 
 package com.eitanliu.dart.mappable.ui
 
+import com.eitanliu.dart.mappable.binding.bindTabTransferFocus
 import com.eitanliu.dart.mappable.extensions.copyBind
 import com.eitanliu.dart.mappable.extensions.propertyRef
 import com.eitanliu.dart.mappable.extensions.value
 import com.eitanliu.dart.mappable.generator.DartGenerator
 import com.eitanliu.dart.mappable.settings.Settings
-import com.eitanliu.dart.mappable.utils.SimpleKeyListener
 import com.google.gson.*
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
@@ -21,7 +21,6 @@ import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 import com.intellij.ui.dsl.gridLayout.VerticalAlign
 import com.intellij.util.ui.JBDimension
-import java.awt.event.KeyEvent
 
 /**
  * Json input Dialog
@@ -75,23 +74,7 @@ class JsonInputDialog(
                 bindText(graph.json)
                 applyToComponent {
                     myPreferredFocusedComponent = this
-                    addKeyListener(SimpleKeyListener(onKeyPressed = { e ->
-                        if (e.keyCode == KeyEvent.VK_TAB) {
-                            e.consume()
-                            if (e.isShiftDown) {
-                                transferFocusBackward()
-                                // Plan B
-                                // KeyboardFocusManager.getCurrentKeyboardFocusManager().focusPreviousComponent()
-                                // Plan C
-                                // val currentFocusOwner = KeyboardFocusManager.getCurrentKeyboardFocusManager().focusOwner
-                                // val focusCycleRoot = KeyboardFocusManager.getCurrentKeyboardFocusManager().currentFocusCycleRoot
-                                // val previousComponent = focusCycleRoot?.focusTraversalPolicy?.getComponentBefore(focusCycleRoot, currentFocusOwner)
-                                // previousComponent?.requestFocusInWindow()
-                            } else {
-                                transferFocus()
-                            }
-                        }
-                    }))
+                    bindTabTransferFocus()
                 }
                 horizontalAlign(HorizontalAlign.FILL)
                 verticalAlign(VerticalAlign.FILL)

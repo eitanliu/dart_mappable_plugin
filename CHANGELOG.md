@@ -2,6 +2,13 @@
 
 # Dart Mappable Changelog
 
+## [1.0.1]
+
+### Release
+
+- Compatible with intellij-community 203 versions (Android Studio Arctic Fox)
+- Remove internal API usages
+
 ## [1.0.0]
 
 ### Release

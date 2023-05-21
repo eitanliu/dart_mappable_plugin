@@ -23,7 +23,7 @@ class WeakRecFun1List<T>(
     receiver: T, list: WeakList<T.() -> Unit> = WeakList()
 ) : Function0<Unit>, MutableCollection<T.() -> Unit> by list {
 
-    private val weakRef = WeakReference(this)
+    val weakRef = WeakReference(this)
 
     private val receiver: WeakReference<T>
 

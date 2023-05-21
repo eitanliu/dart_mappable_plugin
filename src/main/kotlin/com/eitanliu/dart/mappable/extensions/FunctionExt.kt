@@ -1,6 +1,6 @@
 package com.eitanliu.dart.mappable.extensions
 
-import com.intellij.util.containers.UnsafeWeakList
+import com.intellij.util.containers.WeakList
 import java.lang.ref.WeakReference
 
 fun <T> (T.() -> Unit).weakRef(): T.() -> Unit {
@@ -19,21 +19,30 @@ class WeakFun1Reference<T>(
 
 }
 
-class WeakRecFun1List<T>(receiver: T, capacity: Int) :
-    UnsafeWeakList<T.() -> Unit>(capacity), Function0<Unit> {
+class WeakRecFun1List<T>(
+    receiver: T, list: WeakList<T.() -> Unit> = WeakList()
+) : Function0<Unit>, MutableCollection<T.() -> Unit> by list {
 
     val weakRef = WeakReference(this)
 
     private val receiver: WeakReference<T>
 
-    constructor(receiver: T) : this(receiver, 0)
+    val listener = Listener(weakRef)
 
     init {
         this.receiver = WeakReference(receiver)
     }
 
     override fun invoke() = forEach {
-        receiver.get()?.apply { it?.invoke(this) }
+        receiver.get()?.apply { it.invoke(this) }
+    }
+
+    @Suppress("MemberVisibilityCanBePrivate")
+    class Listener<T>(val weakRef: WeakReference<WeakRecFun1List<T>>) : Function0<Unit> {
+        override fun invoke() {
+            weakRef.get()?.invoke()
+        }
+
     }
 
 }

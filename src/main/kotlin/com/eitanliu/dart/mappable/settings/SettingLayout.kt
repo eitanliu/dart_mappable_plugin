@@ -2,9 +2,7 @@ package com.eitanliu.dart.mappable.settings
 
 import com.eitanliu.dart.mappable.extensions.propertyOf
 import com.intellij.openapi.observable.properties.PropertyGraph
-import com.intellij.ui.dsl.builder.bindText
-import com.intellij.ui.dsl.builder.panel
-import com.intellij.ui.dsl.gridLayout.HorizontalAlign
+import com.intellij.ui.layout.panel
 
 
 class SettingLayout(private val setting: Settings) {
@@ -12,15 +10,14 @@ class SettingLayout(private val setting: Settings) {
 
     val rootPanel = panel {
         row {
-            label("Model suffix:").horizontalAlign(HorizontalAlign.LEFT)
+            label("Model suffix:")
 
-            textField().apply {
-                bindText(graph.modelSuffix)
-            }.horizontalAlign(HorizontalAlign.FILL)
-
-            rowComment("Configure dart bean model files suffix.")
+            textField(graph.modelSuffix).apply {
+                constraints(pushX)
+            }
         }
-        // separator()
+        row { comment("Configure dart bean model files suffix.") }
+        // row(null as String?, true) {}
     }
 
     class Graph(data: SettingLayout) {

@@ -138,7 +138,7 @@ class DartGenerator(
     ): MutableList<DartClassModel> {
 
         if (element is JsonArray) {
-            if (!element.isEmpty) parserElement(element.first(), name, models)
+            if (element.size() != 0) parserElement(element.first(), name, models)
         }
 
         if (element !is JsonObject) return models

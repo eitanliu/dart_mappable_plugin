@@ -2,12 +2,13 @@
 
 package com.eitanliu.dart.mappable.ui
 
+import com.eitanliu.dart.mappable.binding.bind
+import com.eitanliu.dart.mappable.binding.bindTabTransferFocus
 import com.eitanliu.dart.mappable.extensions.copyBind
 import com.eitanliu.dart.mappable.extensions.propertyRef
 import com.eitanliu.dart.mappable.extensions.value
 import com.eitanliu.dart.mappable.generator.DartGenerator
 import com.eitanliu.dart.mappable.settings.Settings
-import com.eitanliu.dart.mappable.utils.SimpleKeyListener
 import com.google.gson.*
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
@@ -15,13 +16,10 @@ import com.intellij.openapi.observable.properties.PropertyGraph
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.Messages
-import com.intellij.ui.dsl.builder.bindSelected
-import com.intellij.ui.dsl.builder.bindText
-import com.intellij.ui.dsl.builder.panel
-import com.intellij.ui.dsl.gridLayout.HorizontalAlign
-import com.intellij.ui.dsl.gridLayout.VerticalAlign
+import com.intellij.ui.components.JBTextArea
+import com.intellij.ui.layout.applyToComponent
+import com.intellij.ui.layout.panel
 import com.intellij.util.ui.JBDimension
-import java.awt.event.KeyEvent
 
 /**
  * Json input Dialog
@@ -64,75 +62,63 @@ class JsonInputDialog(
         }
         row {
             label("JSON Text:")
-            button("Format") {
-                handleFormatJSONString()
-                myPreferredFocusedComponent?.requestFocus()
-            }.horizontalAlign(HorizontalAlign.RIGHT)
+            right {
+                button("Format") {
+                    handleFormatJSONString()
+                    myPreferredFocusedComponent?.requestFocus()
+                }.apply {
+                    // constraints(growX)
+                    // growPolicy(GrowPolicy.MEDIUM_TEXT)
+                }
+            }
         }
         row {
-            resizableRow()
-            textArea().apply {
-                bindText(graph.json)
-                applyToComponent {
+            scrollPane(
+                JBTextArea().apply {
                     myPreferredFocusedComponent = this
-                    addKeyListener(SimpleKeyListener(onKeyPressed = { e ->
-                        if (e.keyCode == KeyEvent.VK_TAB) {
-                            e.consume()
-                            if (e.isShiftDown) {
-                                transferFocusBackward()
-                                // Plan B
-                                // KeyboardFocusManager.getCurrentKeyboardFocusManager().focusPreviousComponent()
-                                // Plan C
-                                // val currentFocusOwner = KeyboardFocusManager.getCurrentKeyboardFocusManager().focusOwner
-                                // val focusCycleRoot = KeyboardFocusManager.getCurrentKeyboardFocusManager().currentFocusCycleRoot
-                                // val previousComponent = focusCycleRoot?.focusTraversalPolicy?.getComponentBefore(focusCycleRoot, currentFocusOwner)
-                                // previousComponent?.requestFocusInWindow()
-                            } else {
-                                transferFocus()
-                            }
-                        }
-                    }))
+                    bind(graph.json)
+                    bindTabTransferFocus()
+                    // constraints(pushX, pushY)
                 }
-                horizontalAlign(HorizontalAlign.FILL)
-                verticalAlign(VerticalAlign.FILL)
-            }
+            )
         }
         row { label("Class Name:") }
         row {
-            textField().apply {
-                bindText(graph.className)
-                horizontalAlign(HorizontalAlign.FILL)
+            textField(graph.className).apply {
+                constraints(pushX)
             }
         }
         row {
 
             checkBox(
-                "constructor"
-            ).bindSelected(
-                graph.constructor
-            ).applyToComponent {
+                "constructor", graph.constructor
+            ).apply {
+                constraints(pushX)
+            }.applyToComponent {
                 toolTipText = "constructor has params"
             }
 
             checkBox(
-                "nullable"
-            ).bindSelected(
-                graph.nullable
-            ).applyToComponent {
+                "nullable", graph.nullable
+            ).apply {
+                constraints(pushX)
+            }.applyToComponent {
                 toolTipText = "members is nullable"
             }
 
             checkBox(
-                "final"
-            ).bindSelected(
-                graph.final
-            ).applyToComponent {
+                "final", graph.final
+            ).apply {
+                constraints(pushX)
+            }.applyToComponent {
                 toolTipText = "members is final"
             }
 
-            button("Settings") {
-                SettingsDialog(null, contentPanel).show()
-            }.horizontalAlign(HorizontalAlign.RIGHT)
+            right {
+                button("Settings") {
+                    SettingsDialog(null, contentPanel).show()
+                }
+            }
         }
 
     }.apply {

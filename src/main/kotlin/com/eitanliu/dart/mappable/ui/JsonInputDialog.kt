@@ -200,7 +200,7 @@ class JsonInputDialog(
         val final = settings.graph.final.copyBind(disposable, propertyGraph)
 
         fun afterPropagation(disposable: Disposable? = null, listener: Graph.() -> Unit) = apply {
-            propertyGraph.afterPropagation(disposable) { listener() }
+            propertyGraph.afterPropagation { listener() }
         }
     }
 }

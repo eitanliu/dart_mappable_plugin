@@ -1,7 +1,6 @@
 package com.eitanliu.dart.mappable.settings
 
 import com.eitanliu.dart.mappable.extensions.propertyRef
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
@@ -43,9 +42,5 @@ data class Settings(
         val constructor = propertyGraph.propertyRef(data::constructor)
         val nullable = propertyGraph.propertyRef(data::nullable)
         val final = propertyGraph.propertyRef(data::final)
-
-        fun afterPropagation(disposable: Disposable? = null, listener: Graph.() -> Unit) = apply {
-            propertyGraph.afterPropagation(disposable) { listener() }
-        }
     }
 }

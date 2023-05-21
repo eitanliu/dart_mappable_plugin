@@ -195,9 +195,9 @@ class JsonInputDialog(
         val className = propertyGraph.propertyRef(data::className)
         val json = propertyGraph.propertyRef(data::json)
 
-        val constructor = settings.graph.constructor.copyBind(disposable)
-        val nullable = settings.graph.nullable.copyBind(disposable)
-        val final = settings.graph.final.copyBind(disposable)
+        val constructor = settings.graph.constructor.copyBind(disposable, propertyGraph)
+        val nullable = settings.graph.nullable.copyBind(disposable, propertyGraph)
+        val final = settings.graph.final.copyBind(disposable, propertyGraph)
 
         fun afterPropagation(disposable: Disposable? = null, listener: Graph.() -> Unit) = apply {
             propertyGraph.afterPropagation(disposable) { listener() }

@@ -2,6 +2,12 @@
 
 # Dart Mappable Changelog
 
+## [1.0.2]
+
+### Release
+
+- Weak reference PropertyGraph afterPropagation Listener
+
 ## [1.0.1]
 
 ### Release

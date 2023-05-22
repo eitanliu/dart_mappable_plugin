@@ -1,12 +1,10 @@
 <!-- Keep a Changelog guide -> https://keepachangelog.com -->
 
-# Dart Mappable Changelog
-
-## [1.0.2]
+## [1.0.3]
 
 ### Release
 
-- Weak reference PropertyGraph afterPropagation Listener
+- fix run build_runner editing files not been saved
 
 ## [1.0.2]
 

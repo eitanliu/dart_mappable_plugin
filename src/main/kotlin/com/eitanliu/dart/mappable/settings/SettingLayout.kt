@@ -16,7 +16,7 @@ class SettingLayout(private val setting: Settings) {
                 constraints(pushX)
             }
         }
-        row { comment("Configure dart bean model files suffix.") }
+        row { label("Configure dart bean model files suffix.") }
         // row(null as String?, true) {}
     }
 

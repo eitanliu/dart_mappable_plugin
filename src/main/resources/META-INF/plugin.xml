@@ -24,9 +24,9 @@
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.lang</depends>
     <depends>com.intellij.modules.json</depends>
-    <depends>com.intellij.modules.all</depends>
-    <depends>com.intellij.java</depends>
-    <depends>org.jetbrains.kotlin</depends>
+    <!--<depends>com.intellij.modules.all</depends>-->
+    <!--<depends>com.intellij.java</depends>-->
+    <!--<depends>org.jetbrains.kotlin</depends>-->
     <depends>Dart</depends>
     <depends>io.flutter</depends>
 

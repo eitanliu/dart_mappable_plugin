@@ -7,6 +7,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.LangDataKeys
 import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiDocumentManager
@@ -46,10 +47,11 @@ class FlutterRunBuildRunnerAction : AnAction() {
         val pubRoot = pubRoots.first()
 
         ApplicationManager.getApplication().invokeLater {
+            FileDocumentManager.getInstance().saveAllDocuments()
             CommandUtils.executeFlutterPubCommand(
                 project, pubRoot, "run build_runner build --delete-conflicting-outputs"
             ) {
-                pubRoot.root.refresh(false, false)
+                pubRoot.root.refresh(true, true)
             }
         }
     }

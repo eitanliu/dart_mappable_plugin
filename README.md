@@ -1,5 +1,10 @@
 # DartMappable(Json To DartMappable Convert Generator)
 
+## How to use
+
+1. GitHub [Releases](https://github.com/eitanliu/dart_mappable_plugin/releases) or IntelliJ IDEs Plugin Marketplace [DartMappable](https://plugins.jetbrains.com/plugin/21845) page download plugin
+2. Open in the IDE `Setting` -> `Plugins`, right click setting icon ⚙️ -> `Install Plugin from Disk...` selected you download file.
+
 <!-- Plugin description -->
 Json to dart beans are provided, and dart files ending in entity are provided to generate dart bean factory for use.  
 

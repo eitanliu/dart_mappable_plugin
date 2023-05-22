@@ -8,6 +8,13 @@
 
 - Weak reference PropertyGraph afterPropagation Listener
 
+## [1.0.2]
+
+### Release
+
+- Fix json array generator
+- Weak reference PropertyGraph afterPropagation Listener
+
 ## [1.0.1]
 
 ### Release

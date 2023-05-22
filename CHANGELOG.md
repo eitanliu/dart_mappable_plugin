@@ -2,6 +2,18 @@
 
 # Dart Mappable Changelog
 
+## [1.1.3]
+
+### Release
+
+- fix run build_runner editing files not been saved
+
+## [1.1.2]
+
+### Release
+
+- fix run build_runner editing files not been saved
+
 ## [1.1.1]
 
 ### Release
@@ -13,6 +25,12 @@
 ### Release
 
 - user Kotlin UI DSL V2 API
+
+## [1.0.3]
+
+### Release
+
+- fix run build_runner editing files not been saved
 
 ## [1.0.2]
 

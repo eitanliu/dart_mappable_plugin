@@ -73,6 +73,7 @@ class JsonInputDialog(
             textArea().apply {
                 bindText(graph.json)
                 applyToComponent {
+                    rows = 10
                     myPreferredFocusedComponent = this
                     bindTabTransferFocus()
                 }

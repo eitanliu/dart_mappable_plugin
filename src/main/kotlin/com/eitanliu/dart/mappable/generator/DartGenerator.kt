@@ -66,18 +66,22 @@ class DartGenerator(
             val mappable = "${sampleName}Mappable"
             val mapper = "${sampleName}Mapper"
 
-            val isMixin = settings.graph.mappableMixin.value
-            val isCopyWith = settings.graph.mappableCopyWith.value
-            val fromMap = if (isMixin) "fromMap" else settings.graph.mappableFromMap.value
-            val toMap = if (isMixin) "toMap" else settings.graph.mappableToMap.value
-            val fromJson = if (isMixin) "fromJson" else settings.graph.mappableFromJson.value
-            val toJson = if (isMixin) "toJson" else settings.graph.mappableToJson.value
+            val enableMixin = settings.graph.enableMixin.value
+            val enableFromJson = settings.graph.enableFromJson.value
+            val enableToJson = settings.graph.enableToJson.value
+            val enableFromMap = settings.graph.enableFromMap.value
+            val enableToMap = settings.graph.enableToMap.value
+            val enableCopyWith = settings.graph.enableCopyWith.value
+            val fromMap = if (enableMixin) "fromMap" else settings.graph.mappableFromMap.value
+            val toMap = if (enableMixin) "toMap" else settings.graph.mappableToMap.value
+            val fromJson = if (enableMixin) "fromJson" else settings.graph.mappableFromJson.value
+            val toJson = if (enableMixin) "toJson" else settings.graph.mappableToJson.value
 
             writeln()
             writeln("@MappableClass()")
             writeScoped(buildString {
                 append("class $sampleName")
-                if (isMixin) append(" with $mappable")
+                if (enableMixin) append(" with $mappable")
                 append(" {")
             }, "}") {
                 for (member in model.members) {
@@ -124,11 +128,12 @@ class DartGenerator(
                     // }
                     "this.${it.name.keyToCamelCase()}"
                 } else ""
-                writeScoped("$sampleName($params) {", "}") {
-                    writeln("$mapper.ensureInitialized();")
-                }
+                writeln("$sampleName($params);")
+                // writeScoped("$sampleName($params) {", "}") {
+                //     writeln("$mapper.ensureInitialized();")
+                // }
 
-                if (isMixin) {
+                if (enableMixin) {
                     // factory fromMap
                     writeln()
                     writeln("factory $sampleName.$fromMap(Map<String, dynamic> map) => $mapper.fromMap(map);")
@@ -140,30 +145,38 @@ class DartGenerator(
                     fun guard(fn: String) = "$mapper._guard((c) => c.$fn)"
 
                     // factory fromMap
-                    writeln()
-                    writeln(
-                        "factory $sampleName.$fromMap(Map<String, dynamic> map) => ${guard("fromMap<$sampleName>(map)")};"
-                    )
+                    if (enableFromMap) {
+                        writeln()
+                        writeln(
+                            "factory $sampleName.$fromMap(Map<String, dynamic> map) => ${guard("fromMap<$sampleName>(map)")};"
+                        )
+                    }
 
                     // factory fromJson
-                    writeln()
-                    writeln("factory $sampleName.$fromJson(String json) => ${guard("fromJson<$sampleName>(json)")};")
+                    if (enableFromJson) {
+                        writeln()
+                        writeln("factory $sampleName.$fromJson(String json) => ${guard("fromJson<$sampleName>(json)")};")
+                    }
 
                     // toMap
-                    writeln()
-                    writeScoped("Map<String, dynamic> $toMap() {", "}") {
-                        writeln("return ${guard("toMap(this)")};")
+                    if (enableToMap) {
+                        writeln()
+                        writeScoped("Map<String, dynamic> $toMap() {", "}") {
+                            writeln("return ${guard("toMap(this)")};")
+                        }
                     }
 
                     // toJson
-                    writeln()
-                    if (toJson == "toString") writeln("@override")
-                    writeScoped("String $toJson() {", "}") {
-                        writeln("return ${guard("toJson(this)")};")
+                    if (enableToJson) {
+                        writeln()
+                        if (toJson == "toString") writeln("@override")
+                        writeScoped("String $toJson() {", "}") {
+                            writeln("return ${guard("toJson(this)")};")
+                        }
                     }
 
                     // toString
-                    if (toJson != "toString") {
+                    if (!enableToJson || toJson != "toString") {
                         writeln()
                         writeln("@override")
                         writeScoped("String toString() {", "}") {
@@ -189,7 +202,7 @@ class DartGenerator(
                     }
 
                     // copyWith
-                    if (isCopyWith) {
+                    if (enableCopyWith) {
                         writeln()
                         writeScoped(
                             "${sampleName}CopyWith<$sampleName, $sampleName, $sampleName> get copyWith {",

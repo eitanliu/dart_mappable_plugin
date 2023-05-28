@@ -177,7 +177,7 @@ class DartGenerator(
                     writeScoped("bool operator ==(Object other) {", "}") {
                         writeln(
                             "return identical(this, other) || " +
-                                    "\n(runtimeType == other.runtimeType && ${guard("isEqual(this, other)")});"
+                                    "(runtimeType == other.runtimeType && ${guard("isEqual(this, other)")});"
                         )
                     }
 

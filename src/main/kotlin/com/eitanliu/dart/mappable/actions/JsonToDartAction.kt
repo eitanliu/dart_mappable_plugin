@@ -6,6 +6,7 @@ import com.eitanliu.dart.mappable.ui.JsonInputDialog
 import com.eitanliu.dart.mappable.utils.CommandUtils
 import com.eitanliu.dart.mappable.utils.MessagesUtils
 import com.intellij.CommonBundle
+import com.intellij.codeInsight.actions.ReformatCodeProcessor
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.LangDataKeys
@@ -20,7 +21,6 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
-import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.impl.file.PsiDirectoryFactory
 import io.flutter.pub.PubRoots
 import java.io.IOException
@@ -87,7 +87,8 @@ class JsonToDartAction : AnAction() {
                 documentManager.getDocument(psi)?.also { doc ->
                     doc.setText(generator.generatorClassesString())
                     documentManager.commitDocument(doc)
-                    CodeStyleManager.getInstance(project).reformat(psi)
+                    // CodeStyleManager.getInstance(project).reformat(psi)
+                    ReformatCodeProcessor(psi, false).run()
                 }
             }
         }

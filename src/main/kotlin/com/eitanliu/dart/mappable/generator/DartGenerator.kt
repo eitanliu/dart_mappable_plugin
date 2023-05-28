@@ -100,14 +100,12 @@ class DartGenerator(
                         if (member.entity) append(camelCaseSuffix)
                         if (member.collection && nullable && member.type != "dynamic") append("?")
                         if (member.collection) append(">")
-                        if (nullable && member.type != "dynamic") append("?")
+                        if (nullable && (member.type != "dynamic" || member.collection)) append("?")
                         // name
                         append(" ${member.name.keyToCamelCase()}")
                         // default
                         if (!settings.constructor) {
-                            if (member.collection) {
-                                append(" = List.empty(growable: true)")
-                            } else {
+                            if (!nullable) {
                                 append(" = ${typeDefault(member)}")
                             }
                         }
@@ -309,6 +307,7 @@ class DartGenerator(
 
     private fun typeDefault(member: DartMemberModel) = when {
         member.nullable ?: settings.nullable -> "null"
+        member.collection -> "List.empty(growable: true)"
         member.entity -> "${member.type}$camelCaseSuffix()"
         else -> when (member.type) {
             "String" -> "''"

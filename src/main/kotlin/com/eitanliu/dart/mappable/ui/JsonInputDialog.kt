@@ -47,7 +47,7 @@ class JsonInputDialog(
     private val prettyGson: Gson = GsonBuilder().setPrettyPrinting().serializeNulls().create()
 
     init {
-        title = "Generate Dart Bean Class Code"
+        title = "Generate Dart Data Class Code"
         setOKButtonText("Generate")
         okAction.apply {
             putValue(DEFAULT_ACTION, false)
@@ -59,7 +59,7 @@ class JsonInputDialog(
     override fun createCenterPanel() = panel {
 
         row {
-            label("Please input the class name and JSON String for generating dart bean class")
+            label("Please input the class name and JSON String for generating dart data class")
         }
         row {
             label("JSON Text:")

@@ -66,9 +66,20 @@ class DartGenerator(
             val mappable = "${sampleName}Mappable"
             val mapper = "${sampleName}Mapper"
 
+            val isMixin = settings.graph.mappableMixin.value
+            val isCopyWith = settings.graph.mappableCopyWith.value
+            val fromMap = if (isMixin) "fromMap" else settings.graph.mappableFromMap.value
+            val toMap = if (isMixin) "toMap" else settings.graph.mappableToMap.value
+            val fromJson = if (isMixin) "fromJson" else settings.graph.mappableFromJson.value
+            val toJson = if (isMixin) "toJson" else settings.graph.mappableToJson.value
+
             writeln()
             writeln("@MappableClass()")
-            writeScoped("class $sampleName with $mappable {", "}") {
+            writeScoped(buildString {
+                append("class $sampleName")
+                if (isMixin) append(" with $mappable")
+                append(" {")
+            }, "}") {
                 for (member in model.members) {
 
                     if (member.name.needAnnotation()) {
@@ -99,9 +110,9 @@ class DartGenerator(
                         append(";")
                     })
                 }
-                writeln()
 
                 // constructor
+                writeln()
                 val params = if (settings.constructor) model.members.joinToString(
                     separator = ", ", prefix = "", postfix = ""
                 ) {
@@ -116,16 +127,81 @@ class DartGenerator(
                 writeScoped("$sampleName($params) {", "}") {
                     writeln("$mapper.ensureInitialized();")
                 }
-                writeln()
 
-                // factory
-                writeln("factory $sampleName.fromMap(Map<String, dynamic> map) => $mapper.fromMap(map);")
-                writeln()
+                if (isMixin) {
+                    // factory fromMap
+                    writeln()
+                    writeln("factory $sampleName.$fromMap(Map<String, dynamic> map) => $mapper.fromMap(map);")
 
-                writeln("factory $sampleName.fromJson(String json) => $mapper.fromJson(json);")
-                writeln()
+                    // factory fromJson
+                    writeln()
+                    writeln("factory $sampleName.$fromJson(String json) => $mapper.fromJson(json);")
+                } else {
+                    fun guard(fn: String) = "$mapper._guard((c) => c.$fn)"
+
+                    // factory fromMap
+                    writeln()
+                    writeln(
+                        "factory $sampleName.$fromMap(Map<String, dynamic> map) => ${guard("fromMap<$sampleName>(map)")};"
+                    )
+
+                    // factory fromJson
+                    writeln()
+                    writeln("factory $sampleName.$fromJson(String json) => ${guard("fromJson<$sampleName>(json)")};")
+
+                    // toMap
+                    writeln()
+                    writeScoped("Map<String, dynamic> $toMap() {", "}") {
+                        writeln("return ${guard("toMap(this)")};")
+                    }
+
+                    // toJson
+                    writeln()
+                    if (toJson == "toString") writeln("@override")
+                    writeScoped("String $toJson() {", "}") {
+                        writeln("return ${guard("toJson(this)")};")
+                    }
+
+                    // toString
+                    if (toJson != "toString") {
+                        writeln()
+                        writeln("@override")
+                        writeScoped("String toString() {", "}") {
+                            writeln("return ${guard("asString(this)")};")
+                        }
+                    }
+
+                    // equal
+                    writeln()
+                    writeln("@override")
+                    writeScoped("bool operator ==(Object other) {", "}") {
+                        writeln(
+                            "return identical(this, other) || " +
+                                    "\n(runtimeType == other.runtimeType && ${guard("isEqual(this, other)")});"
+                        )
+                    }
+
+                    // hashCode
+                    writeln()
+                    writeln("@override")
+                    writeScoped("int get hashCode {", "}") {
+                        writeln("return ${guard("hash(this)")};")
+                    }
+
+                    // copyWith
+                    if (isCopyWith) {
+                        writeln()
+                        writeScoped(
+                            "${sampleName}CopyWith<$sampleName, $sampleName, $sampleName> get copyWith {",
+                            "}"
+                        ) {
+                            writeln("return _${sampleName}CopyWithImpl(this, \$identity, \$identity);")
+                        }
+                    }
+                }
 
                 // ensureInitialized
+                writeln()
                 writeln("static $mapper ensureInitialized() => $mapper.ensureInitialized();")
             }
         }

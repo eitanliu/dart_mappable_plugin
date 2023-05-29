@@ -33,11 +33,17 @@
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
+        <notificationGroup id="DartMappable Notification Group" displayType="BALLOON"
+            bundle="messages.DartMappableBundle" key="name" />
+
+        <applicationConfigurable groupId="tools" displayName="DartMappable Settings"
+            id="preferences.SingleFileExecutionConfigurable"
+            instance="com.eitanliu.dart.mappable.settings.SettingConfig" />
+
         <applicationService serviceImplementation="com.eitanliu.dart.mappable.settings.Settings" />
 
-        <projectConfigurable displayName="DartMappable Settings" id="preferences.SingleFileExecutionConfigurable"
-            instance="com.eitanliu.dart.mappable.settings.SettingConfig" />
         <applicationService serviceImplementation="com.eitanliu.dart.mappable.services.ApplicationService" />
+
         <projectService serviceImplementation="com.eitanliu.dart.mappable.services.ProjectService" />
     </extensions>
 
@@ -48,8 +54,10 @@
     </application-components>
 
     <applicationListeners>
-        <listener class="com.eitanliu.dart.mappable.listeners.ProjectManagerListener"
-            topic="com.intellij.openapi.project.ProjectManagerListener" />
+        <!--<listener class="com.eitanliu.dart.mappable.listeners.ApplicationListener"-->
+        <!--    topic="com.intellij.ide.AppLifecycleListener" />-->
+        <!--<listener class="com.eitanliu.dart.mappable.listeners.ProjectListener"-->
+        <!--    topic="com.intellij.openapi.project.ProjectManagerListener" />-->
     </applicationListeners>
 
     <actions>

@@ -95,12 +95,20 @@ class DartGenerator(
                     writeln(buildString {
                         if (final) append("final ")
                         // type
-                        if (member.collection) append("List<")
-                        append(member.type)
-                        if (member.entity) append(camelCaseSuffix)
-                        if (member.collection && nullable && member.type != "dynamic") append("?")
-                        if (member.collection) append(">")
-                        if (nullable && (member.type != "dynamic" || member.collection)) append("?")
+                        fun addType() {
+                            append(member.type)
+                            if (member.entity) append(camelCaseSuffix)
+                            if (nullable && member.type != "dynamic") append("?")
+                        }
+                        if (member.collection) {
+                            append("List<")
+                            addType()
+                            append(">")
+                            if (nullable) append("?")
+                        } else {
+                            addType()
+                        }
+
                         // name
                         append(" ${member.name.keyToCamelCase()}")
                         // default

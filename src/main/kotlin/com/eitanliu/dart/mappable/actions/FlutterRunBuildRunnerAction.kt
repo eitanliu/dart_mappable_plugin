@@ -1,7 +1,7 @@
 package com.eitanliu.dart.mappable.actions
 
-import com.eitanliu.dart.mappable.extensions.filterInContent
 import com.eitanliu.dart.mappable.utils.CommandUtils
+import com.eitanliu.dart.mappable.utils.MessagesUtils
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.LangDataKeys
@@ -13,7 +13,7 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
-import io.flutter.pub.PubRoots
+import io.flutter.pub.PubRoot
 
 class FlutterRunBuildRunnerAction : AnAction() {
     override fun actionPerformed(event: AnActionEvent) {
@@ -42,9 +42,11 @@ class FlutterRunBuildRunnerAction : AnAction() {
             }
         } ?: return
 
-        val pubRoots = PubRoots.forModule(module).filterInContent(directory.virtualFile)
-        if (pubRoots.isEmpty()) return
-        val pubRoot = pubRoots.first()
+        // val pubRoots = PubRoots.forModule(module).filterInContent(directory.virtualFile)
+        // if (MessagesUtils.isNotFlutterProject(pubRoots, false)) return
+        // val pubRoot = pubRoots.first()
+        val pubRoot = PubRoot.forFile(directory.virtualFile)
+        if (MessagesUtils.isNotFlutterProject(pubRoot, false)) return
 
         ApplicationManager.getApplication().invokeLater {
             FileDocumentManager.getInstance().saveAllDocuments()

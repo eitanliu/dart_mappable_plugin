@@ -1,6 +1,5 @@
 package com.eitanliu.dart.mappable.actions
 
-import com.eitanliu.dart.mappable.extensions.filterInContent
 import com.eitanliu.dart.mappable.extensions.invokeLater
 import com.eitanliu.dart.mappable.ui.JsonInputDialog
 import com.eitanliu.dart.mappable.utils.CommandUtils
@@ -22,7 +21,7 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.file.PsiDirectoryFactory
-import io.flutter.pub.PubRoots
+import io.flutter.pub.PubRoot
 import java.io.IOException
 
 
@@ -54,9 +53,11 @@ class JsonToDartAction : AnAction() {
             }
         } ?: return
 
-        val pubRoots = PubRoots.forModule(module).filterInContent(directory.virtualFile)
-        if (MessagesUtils.isNotFlutterProject(pubRoots)) return
-        val pubRoot = pubRoots.first()
+        // val pubRoots = PubRoots.forModule(module).filterInContent(directory.virtualFile)
+        // if (MessagesUtils.isNotFlutterProject(pubRoots)) return
+        // val pubRoot = pubRoots.first()
+        val pubRoot = PubRoot.forFile(directory.virtualFile)
+        if (MessagesUtils.isNotFlutterProject(pubRoot)) return
 
         val directoryFactory = PsiDirectoryFactory.getInstance(directory.project)
         val packageName = directoryFactory.getQualifiedName(directory, true)

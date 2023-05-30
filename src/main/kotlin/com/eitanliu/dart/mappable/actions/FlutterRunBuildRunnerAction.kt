@@ -9,10 +9,7 @@ import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.roots.ModuleRootManager
-import com.intellij.psi.PsiDirectory
-import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiManager
+import com.intellij.psi.*
 import io.flutter.pub.PubRoot
 
 class FlutterRunBuildRunnerAction : AnAction() {
@@ -28,7 +25,6 @@ class FlutterRunBuildRunnerAction : AnAction() {
             ?: LangDataKeys.EDITOR.getData(dataContext)?.document?.let {
                 PsiDocumentManager.getInstance(project).getPsiFile(it)
             }
-
         val moduleRoot = ModuleRootManager.getInstance(module)
         val directory = when (navigatable) {
             is PsiDirectory -> navigatable
@@ -41,11 +37,12 @@ class FlutterRunBuildRunnerAction : AnAction() {
                 }.firstOrNull()
             }
         } ?: return
+        val psiFile = navigatable as? PsiFile
 
         // val pubRoots = PubRoots.forModule(module).filterInContent(directory.virtualFile)
         // if (MessagesUtils.isNotFlutterProject(pubRoots, false)) return
         // val pubRoot = pubRoots.first()
-        val pubRoot = PubRoot.forFile(directory.virtualFile)
+        val pubRoot = PubRoot.forFile(psiFile?.virtualFile ?: directory.virtualFile)
         if (MessagesUtils.isNotFlutterProject(pubRoot, false)) return
 
         ApplicationManager.getApplication().invokeLater {

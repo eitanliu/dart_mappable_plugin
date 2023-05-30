@@ -52,11 +52,12 @@ class JsonToDartAction : AnAction() {
                 }.firstOrNull()
             }
         } ?: return
+        val psiFile = navigatable as? PsiFile
 
         // val pubRoots = PubRoots.forModule(module).filterInContent(directory.virtualFile)
         // if (MessagesUtils.isNotFlutterProject(pubRoots)) return
         // val pubRoot = pubRoots.first()
-        val pubRoot = PubRoot.forFile(directory.virtualFile)
+        val pubRoot = PubRoot.forFile(psiFile?.virtualFile ?: directory.virtualFile)
         if (MessagesUtils.isNotFlutterProject(pubRoot)) return
 
         val directoryFactory = PsiDirectoryFactory.getInstance(directory.project)
@@ -66,9 +67,9 @@ class JsonToDartAction : AnAction() {
 
             val fileName = generator.fileName
 
-            val psiFile = directory.findFile(fileName)
+            val psi = directory.findFile(fileName)
 
-            if (psiFile != null) {
+            if (psi != null) {
                 val override = Messages.showOkCancelDialog(
                     "Do you want to overwrite the $fileName file?", "File Already Exist",
                     CommonBundle.message("button.overwrite"), CommonBundle.getCancelButtonText(),

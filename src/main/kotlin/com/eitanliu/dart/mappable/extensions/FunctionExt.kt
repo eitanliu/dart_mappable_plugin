@@ -1,6 +1,7 @@
 package com.eitanliu.dart.mappable.extensions
 
 import com.intellij.util.containers.WeakList
+import java.lang.UnsupportedOperationException
 import java.lang.ref.WeakReference
 
 fun <T> (T.() -> Unit).weakRef(): T.() -> Unit {
@@ -32,6 +33,9 @@ class WeakRecFun1List<T>(
     init {
         this.receiver = WeakReference(receiver)
     }
+
+    override val size: Int
+        get() = throw UnsupportedOperationException("${this::class.simpleName} are not supported")
 
     override fun invoke() = forEach {
         receiver.get()?.apply { it.invoke(this) }

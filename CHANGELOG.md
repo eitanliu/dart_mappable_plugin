@@ -1,5 +1,31 @@
 <!-- Keep a Changelog guide -> https://keepachangelog.com -->
 
+# Dart Mappable Changelog
+
+## [1.1.3]
+
+### Release
+
+- fix run build_runner editing files not been saved
+
+## [1.1.2]
+
+### Release
+
+- fix run build_runner editing files not been saved
+
+## [1.1.1]
+
+### Release
+
+- Compatible with intellij-community 231 versions(Android Studio Hedgehog | 2023.1.1)
+
+## [1.1.0]
+
+### Release
+
+- user Kotlin UI DSL V2 API
+
 ## [1.0.3]
 
 ### Release

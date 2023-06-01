@@ -6,6 +6,6 @@ import com.eitanliu.dart.mappable.DartMappableBundle
 class ApplicationService {
 
     init {
-        println(DartMappableBundle.message("applicationService"))
+        println(DartMappableBundle.message("application.service"))
     }
 }

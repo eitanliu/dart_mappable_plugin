@@ -66,9 +66,24 @@ class DartGenerator(
             val mappable = "${sampleName}Mappable"
             val mapper = "${sampleName}Mapper"
 
+            val enableMixin = settings.graph.enableMixin.value
+            val enableFromJson = settings.graph.enableFromJson.value
+            val enableToJson = settings.graph.enableToJson.value
+            val enableFromMap = settings.graph.enableFromMap.value
+            val enableToMap = settings.graph.enableToMap.value
+            val enableCopyWith = settings.graph.enableCopyWith.value
+            val fromMap = if (enableMixin) "fromMap" else settings.graph.mappableFromMap.value
+            val toMap = if (enableMixin) "toMap" else settings.graph.mappableToMap.value
+            val fromJson = if (enableMixin) "fromJson" else settings.graph.mappableFromJson.value
+            val toJson = if (enableMixin) "toJson" else settings.graph.mappableToJson.value
+
             writeln()
             writeln("@MappableClass()")
-            writeScoped("class $sampleName with $mappable {", "}") {
+            writeScoped(buildString {
+                append("class $sampleName")
+                if (enableMixin) append(" with $mappable")
+                append(" {")
+            }, "}") {
                 for (member in model.members) {
 
                     if (member.name.needAnnotation()) {
@@ -80,28 +95,34 @@ class DartGenerator(
                     writeln(buildString {
                         if (final) append("final ")
                         // type
-                        if (member.collection) append("List<")
-                        append(member.type)
-                        if (member.entity) append(camelCaseSuffix)
-                        if (member.collection && nullable && member.type != "dynamic") append("?")
-                        if (member.collection) append(">")
-                        if (nullable && member.type != "dynamic") append("?")
+                        fun addType() {
+                            append(member.type)
+                            if (member.entity) append(camelCaseSuffix)
+                            if (nullable && member.type != "dynamic") append("?")
+                        }
+                        if (member.collection) {
+                            append("List<")
+                            addType()
+                            append(">")
+                            if (nullable) append("?")
+                        } else {
+                            addType()
+                        }
+
                         // name
                         append(" ${member.name.keyToCamelCase()}")
                         // default
                         if (!settings.constructor) {
-                            if (member.collection) {
-                                append(" = List.empty(growable: true)")
-                            } else {
+                            if (!nullable) {
                                 append(" = ${typeDefault(member)}")
                             }
                         }
                         append(";")
                     })
                 }
-                writeln()
 
                 // constructor
+                writeln()
                 val params = if (settings.constructor) model.members.joinToString(
                     separator = ", ", prefix = "", postfix = ""
                 ) {
@@ -113,19 +134,93 @@ class DartGenerator(
                     // }
                     "this.${it.name.keyToCamelCase()}"
                 } else ""
-                writeScoped("$sampleName($params) {", "}") {
-                    writeln("$mapper.ensureInitialized();")
+                writeln("$sampleName($params);")
+                // writeScoped("$sampleName($params) {", "}") {
+                //     writeln("$mapper.ensureInitialized();")
+                // }
+
+                if (enableMixin) {
+                    // factory fromMap
+                    writeln()
+                    writeln("factory $sampleName.$fromMap(Map<String, dynamic> map) => $mapper.fromMap(map);")
+
+                    // factory fromJson
+                    writeln()
+                    writeln("factory $sampleName.$fromJson(String json) => $mapper.fromJson(json);")
+                } else {
+                    fun guard(fn: String) = "$mapper._guard((c) => c.$fn)"
+
+                    // factory fromMap
+                    if (enableFromMap) {
+                        writeln()
+                        writeln(
+                            "factory $sampleName.$fromMap(Map<String, dynamic> map) => ${guard("fromMap<$sampleName>(map)")};"
+                        )
+                    }
+
+                    // factory fromJson
+                    if (enableFromJson) {
+                        writeln()
+                        writeln("factory $sampleName.$fromJson(String json) => ${guard("fromJson<$sampleName>(json)")};")
+                    }
+
+                    // toMap
+                    if (enableToMap) {
+                        writeln()
+                        writeScoped("Map<String, dynamic> $toMap() {", "}") {
+                            writeln("return ${guard("toMap(this)")};")
+                        }
+                    }
+
+                    // toJson
+                    if (enableToJson) {
+                        writeln()
+                        if (toJson == "toString") writeln("@override")
+                        writeScoped("String $toJson() {", "}") {
+                            writeln("return ${guard("toJson(this)")};")
+                        }
+                    }
+
+                    // toString
+                    if (!enableToJson || toJson != "toString") {
+                        writeln()
+                        writeln("@override")
+                        writeScoped("String toString() {", "}") {
+                            writeln("return ${guard("asString(this)")};")
+                        }
+                    }
+
+                    // equal
+                    writeln()
+                    writeln("@override")
+                    writeScoped("bool operator ==(Object other) {", "}") {
+                        writeln(
+                            "return identical(this, other) || " +
+                                    "(runtimeType == other.runtimeType && ${guard("isEqual(this, other)")});"
+                        )
+                    }
+
+                    // hashCode
+                    writeln()
+                    writeln("@override")
+                    writeScoped("int get hashCode {", "}") {
+                        writeln("return ${guard("hash(this)")};")
+                    }
+
+                    // copyWith
+                    if (enableCopyWith) {
+                        writeln()
+                        writeScoped(
+                            "${sampleName}CopyWith<$sampleName, $sampleName, $sampleName> get copyWith {",
+                            "}"
+                        ) {
+                            writeln("return _${sampleName}CopyWithImpl(this, \$identity, \$identity);")
+                        }
+                    }
                 }
-                writeln()
-
-                // factory
-                writeln("factory $sampleName.fromMap(Map<String, dynamic> map) => $mapper.fromMap(map);")
-                writeln()
-
-                writeln("factory $sampleName.fromJson(String json) => $mapper.fromJson(json);")
-                writeln()
 
                 // ensureInitialized
+                writeln()
                 writeln("static $mapper ensureInitialized() => $mapper.ensureInitialized();")
             }
         }
@@ -220,6 +315,7 @@ class DartGenerator(
 
     private fun typeDefault(member: DartMemberModel) = when {
         member.nullable ?: settings.nullable -> "null"
+        member.collection -> "List.empty(growable: true)"
         member.entity -> "${member.type}$camelCaseSuffix()"
         else -> when (member.type) {
             "String" -> "''"

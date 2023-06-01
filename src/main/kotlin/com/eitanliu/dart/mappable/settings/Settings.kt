@@ -16,14 +16,31 @@ data class Settings(
     var constructor: Boolean,
     var nullable: Boolean,
     var final: Boolean,
+    var enableMixin: Boolean,
+    var enableFromJson: Boolean,
+    var enableToJson: Boolean,
+    var enableFromMap: Boolean,
+    var enableToMap: Boolean,
+    var enableCopyWith: Boolean,
+    var mappableFromJson: String,
+    var mappableToJson: String,
+    var mappableFromMap: String,
+    var mappableToMap: String,
+    var mappableCopyWith: String,
 ) : PersistentStateComponent<Settings> {
 
     val graph = Graph(this)
 
     constructor() : this(
         modelSuffix = "entity", ensureInitialized = true,
-        constructor = true, nullable = false,
-        final = false,
+        constructor = true, nullable = false, final = false,
+        enableMixin = true,
+        enableFromJson = true, enableToJson = true,
+        enableFromMap = true, enableToMap = true,
+        enableCopyWith = true,
+        mappableFromJson = "fromString", mappableToJson = "toString",
+        mappableFromMap = "fromJson", mappableToMap = "toJson",
+        mappableCopyWith = "copyWith",
     )
 
     override fun getState(): Settings {
@@ -45,6 +62,19 @@ data class Settings(
         val constructor = propertyGraph.propertyRef(data::constructor)
         val nullable = propertyGraph.propertyRef(data::nullable)
         val final = propertyGraph.propertyRef(data::final)
+
+        val enableMixin = propertyGraph.propertyRef(data::enableMixin)
+        val enableFromJson = propertyGraph.propertyRef(data::enableFromJson)
+        val enableToJson = propertyGraph.propertyRef(data::enableToJson)
+        val enableFromMap = propertyGraph.propertyRef(data::enableFromMap)
+        val enableToMap = propertyGraph.propertyRef(data::enableToMap)
+        val enableCopyWith = propertyGraph.propertyRef(data::enableCopyWith)
+
+        val mappableFromJson = propertyGraph.propertyRef(data::mappableFromJson)
+        val mappableToJson = propertyGraph.propertyRef(data::mappableToJson)
+        val mappableFromMap = propertyGraph.propertyRef(data::mappableFromMap)
+        val mappableToMap = propertyGraph.propertyRef(data::mappableToMap)
+        val mappableCopyWith = propertyGraph.propertyRef(data::mappableCopyWith)
 
         fun afterPropagation(disposable: Disposable? = null, listener: Graph.() -> Unit) = apply {
             wrapper.listenerList.add(listener)

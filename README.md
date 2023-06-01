@@ -6,7 +6,7 @@
 2. Open in the IDE `Setting` -> `Plugins`, right click setting icon ⚙️ -> `Install Plugin from Disk...` selected you download file.
 
 <!-- Plugin description -->
-Json to dart beans are provided, and dart files ending in entity are provided to generate dart bean factory for use.  
+Json to dart data classes are provided, and dart files ending in entity are provided to generate dart class factory for use.  
 
 Right click on package -> `New` -> `Json To DartMappable`　And Then you will know how to use.  
 

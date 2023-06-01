@@ -4,11 +4,7 @@ import com.intellij.openapi.diagnostic.Logger
 
 object Log {
 
-    private val log: Logger
-
-    init {
-        log = Logger.getInstance(Log::class.java.simpleName)
-    }
+    private val log = Logger.getInstance(Log::class.java)
 
     fun e() {
         val info = getInfo()

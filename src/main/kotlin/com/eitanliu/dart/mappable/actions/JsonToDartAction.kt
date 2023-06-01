@@ -1,11 +1,11 @@
 package com.eitanliu.dart.mappable.actions
 
-import com.eitanliu.dart.mappable.extensions.filterInContent
 import com.eitanliu.dart.mappable.extensions.invokeLater
 import com.eitanliu.dart.mappable.ui.JsonInputDialog
 import com.eitanliu.dart.mappable.utils.CommandUtils
 import com.eitanliu.dart.mappable.utils.MessagesUtils
 import com.intellij.CommonBundle
+import com.intellij.codeInsight.actions.ReformatCodeProcessor
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.LangDataKeys
@@ -20,9 +20,8 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
-import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.impl.file.PsiDirectoryFactory
-import io.flutter.pub.PubRoots
+import io.flutter.pub.PubRoot
 import java.io.IOException
 
 
@@ -53,10 +52,13 @@ class JsonToDartAction : AnAction() {
                 }.firstOrNull()
             }
         } ?: return
+        val psiFile = navigatable as? PsiFile
 
-        val pubRoots = PubRoots.forModule(module).filterInContent(directory.virtualFile)
-        if (MessagesUtils.isNotFlutterProject(pubRoots)) return
-        val pubRoot = pubRoots.first()
+        // val pubRoots = PubRoots.forModule(module).filterInContent(directory.virtualFile)
+        // if (MessagesUtils.isNotFlutterProject(pubRoots)) return
+        // val pubRoot = pubRoots.first()
+        val pubRoot = PubRoot.forFile(psiFile?.virtualFile ?: directory.virtualFile)
+        if (MessagesUtils.isNotFlutterProject(pubRoot)) return
 
         val directoryFactory = PsiDirectoryFactory.getInstance(directory.project)
         val packageName = directoryFactory.getQualifiedName(directory, true)
@@ -65,9 +67,9 @@ class JsonToDartAction : AnAction() {
 
             val fileName = generator.fileName
 
-            val psiFile = directory.findFile(fileName)
+            val psi = directory.findFile(fileName)
 
-            if (psiFile != null) {
+            if (psi != null) {
                 val override = Messages.showOkCancelDialog(
                     "Do you want to overwrite the $fileName file?", "File Already Exist",
                     CommonBundle.message("button.overwrite"), CommonBundle.getCancelButtonText(),
@@ -87,7 +89,8 @@ class JsonToDartAction : AnAction() {
                 documentManager.getDocument(psi)?.also { doc ->
                     doc.setText(generator.generatorClassesString())
                     documentManager.commitDocument(doc)
-                    CodeStyleManager.getInstance(project).reformat(psi)
+                    // CodeStyleManager.getInstance(project).reformat(psi)
+                    ReformatCodeProcessor(psi, false).run()
                 }
             }
         }

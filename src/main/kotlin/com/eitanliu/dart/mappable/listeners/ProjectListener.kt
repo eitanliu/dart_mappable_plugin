@@ -1,5 +1,6 @@
 package com.eitanliu.dart.mappable.listeners
 
+import com.eitanliu.compat.listeners.CompatProjectListener
 import com.eitanliu.dart.mappable.services.ProjectService
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
@@ -14,7 +15,7 @@ import com.intellij.openapi.project.ProjectManagerListener
  *
  * import com.intellij.openapi.project.ProjectManagerListener
  */
-internal class ProjectListener : ProjectManagerListener {
+internal class ProjectListener : ProjectManagerListener, CompatProjectListener {
 
     override fun projectOpened(project: Project) {
         project.service<ProjectService>()

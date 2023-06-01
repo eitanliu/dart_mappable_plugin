@@ -1,5 +1,6 @@
 package com.eitanliu.dart.mappable.observable
 
+import com.eitanliu.compat.observable.CompatObservableProperty
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.observable.properties.ObservableMutableProperty
 import com.intellij.util.containers.WeakList
@@ -8,7 +9,7 @@ import java.lang.ref.WeakReference
 class DisposableObservableMutableProperty<T>(
     property: ObservableMutableProperty<T>,
     parentDisposable: Disposable,
-) : ObservableMutableProperty<T> {
+) : ObservableMutableProperty<T>, CompatObservableProperty<T> {
 
     private val property = WeakReference(property)
     private val disposable = WeakReference(parentDisposable)

@@ -5,7 +5,10 @@ import com.eitanliu.dart.mappable.extensions.propertyOf
 import com.eitanliu.dart.mappable.extensions.value
 import com.intellij.openapi.observable.properties.PropertyGraph
 import com.intellij.openapi.options.UnnamedConfigurable
-import com.intellij.ui.layout.panel
+import com.intellij.openapi.ui.DialogPanel
+import com.intellij.ui.components.JBScrollPane
+import com.intellij.ui.layout.*
+import javax.swing.JComponent
 
 
 @Suppress("DialogTitleCapitalization")
@@ -23,62 +26,70 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
             }
         }
         row { label("Configure dart data model files suffix.") }
-        // row(null as String?, true) {}
-        separator("Mappable")
-        buttonsGroup("Implement:", indent = false) {
-            row {
-                radioButton("Mixin", true)
-                    .bindSelected(graph.enableMixin)
-            }
-            lateinit var customPredicate: ComponentPredicate
-            row {
-                val btn = radioButton("Custom", false)
-                    .bindSelected(graph.enableMixin, true)
-                customPredicate = btn.selected
-            }
-            indent {
-                row {
-                    checkBox("fromMap")
-                        .bindSelected(graph.enableFromMap)
-                    textField().apply {
-                        bindText(graph.mappableFromMap)
-                    }.horizontalAlign(HorizontalAlign.FILL)
-                }.layout(RowLayout.LABEL_ALIGNED)
-                row {
-                    checkBox("toMap")
-                        .bindSelected(graph.enableToMap)
-                    textField().apply {
-                        bindText(graph.mappableToMap)
-                    }.horizontalAlign(HorizontalAlign.FILL)
-                }.layout(RowLayout.LABEL_ALIGNED)
-                row {
-                    checkBox("fromJson")
-                        .bindSelected(graph.enableFromJson)
-                    textField().apply {
-                        bindText(graph.mappableFromJson)
-                    }.horizontalAlign(HorizontalAlign.FILL)
-                }.layout(RowLayout.LABEL_ALIGNED)
-                row {
-                    checkBox("toJson")
-                        .bindSelected(graph.enableToJson)
-                    textField().apply {
-                        bindText(graph.mappableToJson)
-                    }.horizontalAlign(HorizontalAlign.FILL)
-                }.layout(RowLayout.LABEL_ALIGNED)
-                // row {
-                //     checkBox("copyWith")
-                //         .bindSelected(graph.enableCopyWith)
-                //     textField().apply {
-                //         bindText(graph.mappableCopyWith)
-                //     }.horizontalAlign(HorizontalAlign.FILL)
-                // }.layout(RowLayout.LABEL_ALIGNED)
-            }.visibleIf(customPredicate)
-        }.bind(::enableMixin)
 
-        onApply(::apply)
+        nestedPanel("Mappable") {
+            mappableImplement()
+        }.apply {
+            this.constraints(CCFlags.growY)
+        }
     }
 
-    override fun createComponent(): JComponent = rootPanel
+    fun LayoutBuilder.mappableImplement(): CellBuilder<DialogPanel> {
+        return nestedPanel(title = "Implement:") {
+            row {
+                radioButton("Mixin")
+                    .bindSelected(graph.enableMixin)
+            }
+            row {
+                val btn = radioButton("Custom")
+                    .bindSelected(graph.enableMixin, true)
+            }
+            row {
+                subRowIndent = 1
+                row {
+                    checkBox("fromMap", graph.enableFromMap)
+                    textField(graph.mappableFromMap).apply {
+                        constraints(pushX)
+                    }
+                }
+                row {
+                    checkBox("toMap", graph.enableToMap)
+                    textField(graph.mappableToMap).apply {
+                        constraints(pushX)
+                    }
+                }
+                row {
+                    checkBox("fromJson", graph.enableFromJson)
+                    textField(graph.mappableFromJson).apply {
+                        constraints(pushX)
+                    }
+                }
+                row {
+                    checkBox("toJson", graph.enableToJson)
+                    textField(graph.mappableToJson).apply {
+                        constraints(pushX)
+                    }
+                }
+                // row {
+                //     checkBox("copyWith", graph.enableCopyWith)
+                //     textField(graph.mappableCopyWith).apply {
+                //         constraints(pushX)
+                //     }
+                // }
+            }.apply {
+                subRowsVisible = !graph.enableMixin.value
+                graph.enableMixin.afterPropagation {
+                    subRowsVisible = !graph.enableMixin.value
+                }
+            }
+        }.withLeftGap()
+
+    }
+
+    override fun createComponent(): JComponent = JBScrollPane(rootPanel).apply {
+        horizontalScrollBar = null
+        border = null
+    }
 
     override fun isModified(): Boolean {
         return settings.graph.modelSuffix.value != graph.modelSuffix.value

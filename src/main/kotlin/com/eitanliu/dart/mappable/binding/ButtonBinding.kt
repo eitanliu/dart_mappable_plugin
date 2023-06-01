@@ -3,14 +3,15 @@ package com.eitanliu.dart.mappable.binding
 import com.intellij.openapi.observable.properties.ObservableMutableProperty
 import com.intellij.openapi.observable.util.lockOrSkip
 import com.intellij.ui.components.JBRadioButton
-import com.intellij.ui.dsl.builder.Cell
+import com.intellij.ui.layout.CellBuilder
+import com.intellij.ui.layout.applyToComponent
 import java.util.concurrent.atomic.AtomicBoolean
 
 
-fun <T : JBRadioButton> Cell<T>.bindSelected(
+fun <T : JBRadioButton> CellBuilder<T>.bindSelected(
     property: ObservableMutableProperty<Boolean>,
     not: Boolean = false,
-): Cell<T> {
+): CellBuilder<T> {
     return applyToComponent { bind(property, not) }
 }
 

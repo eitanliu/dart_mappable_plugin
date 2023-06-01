@@ -180,8 +180,6 @@ class JsonInputDialog(
         private val settings = data.settings
         private val disposable = data.disposable
 
-        private val wrapper = PropertyGraphWrapper(propertyGraph, this)
-
         val className = propertyGraph.propertyRef(data::className)
         val json = propertyGraph.propertyRef(data::json)
 
@@ -190,8 +188,7 @@ class JsonInputDialog(
         val final = settings.graph.final.copyBind(disposable, propertyGraph)
 
         fun afterPropagation(disposable: Disposable? = null, listener: Graph.() -> Unit) = apply {
-            wrapper.listenerList.add(listener)
-            propertyGraph.afterPropagation(wrapper.listener)
+            propertyGraph.afterPropagation(disposable) { listener() }
         }
     }
 }

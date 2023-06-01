@@ -24,12 +24,13 @@ class SettingsDialog(
         init()
     }
 
-    override fun createCenterPanel() = layout.rootPanel.apply {
+    override fun createCenterPanel() = layout.createComponent().apply {
 
         // preferredSize = JBDimension(600, 500)
     }
 
     override fun doOKAction() {
+        layout.apply()
         super.doOKAction()
     }
 }

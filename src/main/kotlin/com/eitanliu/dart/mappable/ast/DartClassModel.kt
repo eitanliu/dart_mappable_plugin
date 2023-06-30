@@ -1,4 +1,4 @@
-package com.eitanliu.dart.mappable.models
+package com.eitanliu.dart.mappable.ast
 
 data class DartClassModel(
     val name: String,

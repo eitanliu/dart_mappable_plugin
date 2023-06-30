@@ -1,46 +1,33 @@
 package com.eitanliu.dart.mappable.generator
 
+import com.eitanliu.dart.mappable.ast.*
 import com.eitanliu.dart.mappable.extensions.*
-import com.eitanliu.dart.mappable.models.DartClassModel
-import com.eitanliu.dart.mappable.models.DartFunctionModel
-import com.eitanliu.dart.mappable.models.DartImportModel
-import com.eitanliu.dart.mappable.models.DartMemberModel
 import com.eitanliu.dart.mappable.settings.Settings
 import com.google.gson.*
-import java.math.BigDecimal
-import java.math.BigInteger
 
 class DartGenerator(
     private val settings: Settings,
     className: String,
     json: String,
-) {
-    private val camelCaseName = className.keyToCamelCase(true)
-
-    private val camelCaseSuffix = settings.graph.modelSuffix.value
-        .replaceNonAlphabeticNumber("_")
-        .underscoreToCamelCase(true)
-
-    private val underscoreSuffix = camelCaseSuffix.camelCaseToUnderscore()
-
-    private val underscoreNameAndSuffix = "${camelCaseName.camelCaseToUnderscore()}${
-        if (underscoreSuffix.isEmpty()) "" else "_$underscoreSuffix"
-    }"
-
-    val fileName = "$underscoreNameAndSuffix.dart"
+    dartFileName: DartFileName = DartFileName.Default(className, settings.graph.modelSuffix.value),
+) : DartClassBuilder,
+    DartJsonParser,
+    DartFileName by dartFileName {
 
     val fileMapperName = "$underscoreNameAndSuffix.mapper.dart"
 
     val jsonElement by lazy { JsonParser.parseString(json) }
 
-    fun generatorClassesString() = CodeGenerator {
+    fun generatorClassesString() = generator().builder.toString()
+
+    override fun generator() = CodeGenerator {
         val models = parserElement(jsonElement, camelCaseName)
 
         writeFileImports(models)
         writeFileParts(models)
         writeDataClasses(models)
 
-    }.builder.toString()
+    }
 
     private fun CodeGenerator.writeFileImports(models: List<DartClassModel>) {
         val imports = models.flatMapTo(mutableListOf()) { it.imports }
@@ -226,93 +213,6 @@ class DartGenerator(
         }
     }
 
-    fun parserElement(
-        element: JsonElement,
-        name: String,
-        models: MutableList<DartClassModel> = mutableListOf(),
-    ): MutableList<DartClassModel> {
-
-        if (element is JsonArray) {
-            if (element.size() != 0) parserElement(element.first(), name, models)
-        }
-
-        if (element !is JsonObject) return models
-
-        val imports = mutableListOf<DartImportModel>()
-        val members = mutableListOf<DartMemberModel>()
-        val functions = mutableListOf<DartFunctionModel>()
-
-        val classModel = DartClassModel(name, imports, members, functions)
-        models.add(classModel)
-
-        for ((key, value) in element.entrySet()) {
-
-            val memberModel = when {
-                value.isJsonObject -> {
-                    val subName = "$name${key.keyToCamelCase(true)}"
-                    parserElement(value, subName, models)
-                    DartMemberModel(key, subName, entity = true)
-                }
-
-                value.isJsonArray -> {
-                    val item = value.asJsonArray.firstOrNull()
-                    when {
-                        item == null -> DartMemberModel(key, "dynamic", collection = true)
-                        item is JsonPrimitive -> typeMapping(key, item).copy(collection = true)
-                        else -> {
-                            val subName = "$name${key.keyToCamelCase(true)}"
-                            parserElement(value, subName, models)
-                            DartMemberModel(key, subName, collection = true, entity = true)
-                        }
-                    }
-                }
-
-                value is JsonPrimitive -> {
-                    typeMapping(key, value)
-                }
-
-                else -> {
-                    DartMemberModel(key, "dynamic")
-                }
-            }
-            members.add(memberModel)
-
-        }
-        return models
-    }
-
-    private fun typeMapping(key: String, value: JsonPrimitive) = when {
-
-        value.isString -> {
-            DartMemberModel(key, "String")
-        }
-
-        value.isBoolean -> {
-            DartMemberModel(key, "bool")
-        }
-
-        value.isNumber -> {
-            when (val num = value.asNumber) {
-                is BigInteger, is Long, is Int, is Short, is Byte -> {
-                    DartMemberModel(key, "int")
-                }
-
-                is BigDecimal, is Double, is Float -> {
-                    DartMemberModel(key, "double")
-                }
-
-                else -> {
-                    DartMemberModel(key, num.getType())
-                }
-
-            }
-        }
-
-        else -> {
-            DartMemberModel(key, "dynamic")
-        }
-    }
-
     private fun typeDefault(member: DartMemberModel) = when {
         member.nullable ?: settings.nullable -> "null"
         member.collection -> "List.empty(growable: true)"
@@ -327,29 +227,8 @@ class DartGenerator(
         }
     }
 
-    private fun Number.getType(): String {
-        val numberString = toString()
-
-        return when {
-            numberString.matches(Regex("^[+-]?\\d+$")) -> "int"
-            numberString.matches(Regex("^[+-]?\\d+\\.\\d+$")) -> "double"
-            else -> "num"
-        }
-    }
-
-    private fun String.keyToCamelCase(capitalizeFirstWord: Boolean = false): String {
-        return replaceNonAlphabeticNumber("_")
-            .underscoreToCamelCase(capitalizeFirstWord)
-            .numberAddPrefix()
-    }
-
     private fun String.needAnnotation(): Boolean {
         val regex = Regex("^[a-z][a-zA-Z0-9]*$")
         return !matches(regex)
-    }
-
-    private fun String.numberAddPrefix(prefix: String = "$"): String {
-        val regex = Regex("^\\d.+$")
-        return if (matches(regex)) "$prefix$this" else this
     }
 }

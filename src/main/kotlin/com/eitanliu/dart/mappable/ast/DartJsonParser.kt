@@ -25,10 +25,11 @@ interface DartJsonParser : DartFileName.Extensions {
         if (element !is JsonObject) return models
 
         val imports = mutableListOf<DartImportModel>()
+        val parts = mutableListOf<DartPartModel>()
         val members = mutableListOf<DartMemberModel>()
         val functions = mutableListOf<DartFunctionModel>()
 
-        val classModel = DartClassModel(name, imports, members, functions)
+        val classModel = DartClassModel(name, imports, parts, members, functions)
         models.add(classModel)
 
         for ((key, value) in element.entrySet()) {

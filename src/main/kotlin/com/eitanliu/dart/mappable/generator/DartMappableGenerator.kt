@@ -5,20 +5,19 @@ import com.eitanliu.dart.mappable.extensions.*
 import com.eitanliu.dart.mappable.settings.Settings
 import com.google.gson.*
 
-class DartGenerator(
+class DartMappableGenerator(
     private val settings: Settings,
     className: String,
     json: String,
     dartFileName: DartFileName = DartFileName.Default(className, settings.graph.modelSuffix.value),
-) : DartClassBuilder,
+) : DartGenerator,
+    DartGenerator.Extensions,
     DartJsonParser,
     DartFileName by dartFileName {
 
     val fileMapperName = "$underscoreNameAndSuffix.mapper.dart"
 
     val jsonElement by lazy { JsonParser.parseString(json) }
-
-    fun generatorClassesString() = generator().builder.toString()
 
     override fun generator() = CodeGenerator {
         val models = parserElement(jsonElement, camelCaseName)
@@ -30,19 +29,22 @@ class DartGenerator(
     }
 
     private fun CodeGenerator.writeFileImports(models: List<DartClassModel>) {
-        val imports = models.flatMapTo(mutableListOf()) { it.imports }
-        imports.add(DartImportModel("package:dart_mappable/dart_mappable.dart"))
-        imports.sortBy { it.name }
 
-        for (import in imports) {
-            val alias = import.alias?.let { " as $it" } ?: ""
-            writeln("import '${import.name}'${alias};")
+        for (syntax in models.importsSyntax {
+            yield(DartImportModel("package:dart_mappable/dart_mappable.dart"))
+        }) {
+            writeln(syntax)
         }
     }
 
     private fun CodeGenerator.writeFileParts(models: List<DartClassModel>) {
         writeln()
-        writeln("part '$fileMapperName';")
+
+        for (syntax in models.partsSyntax {
+            yield(DartPartModel(fileMapperName, fileName))
+        }) {
+            writeln(syntax)
+        }
     }
 
     private fun CodeGenerator.writeDataClasses(models: List<DartClassModel>) {
@@ -79,33 +81,10 @@ class DartGenerator(
 
                     val nullable = member.nullable ?: settings.nullable
                     val final = settings.final
-                    writeln(buildString {
-                        if (final) append("final ")
-                        // type
-                        fun addType() {
-                            append(member.type)
-                            if (member.entity) append(camelCaseSuffix)
-                            if (nullable && member.type != "dynamic") append("?")
-                        }
-                        if (member.collection) {
-                            append("List<")
-                            addType()
-                            append(">")
-                            if (nullable) append("?")
-                        } else {
-                            addType()
-                        }
-
-                        // name
-                        append(" ${member.name.keyToCamelCase()}")
-                        // default
-                        if (!settings.constructor) {
-                            if (!nullable) {
-                                append(" = ${typeDefault(member)}")
-                            }
-                        }
-                        append(";")
-                    })
+                    val syntax = member.buildSyntax(
+                        camelCaseSuffix, final, nullable, !settings.constructor
+                    )
+                    writeln(syntax)
                 }
 
                 // constructor
@@ -211,24 +190,5 @@ class DartGenerator(
                 writeln("static $mapper ensureInitialized() => $mapper.ensureInitialized();")
             }
         }
-    }
-
-    private fun typeDefault(member: DartMemberModel) = when {
-        member.nullable ?: settings.nullable -> "null"
-        member.collection -> "List.empty(growable: true)"
-        member.entity -> "${member.type}$camelCaseSuffix()"
-        else -> when (member.type) {
-            "String" -> "''"
-            "bool" -> "false"
-            "int" -> "0"
-            "double" -> "0.0"
-            "dynamic" -> "null"
-            else -> "$${member.type}()"
-        }
-    }
-
-    private fun String.needAnnotation(): Boolean {
-        val regex = Regex("^[a-z][a-zA-Z0-9]*$")
-        return !matches(regex)
     }
 }

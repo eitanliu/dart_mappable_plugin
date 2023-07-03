@@ -2,11 +2,12 @@
 
 package com.eitanliu.dart.mappable.ui
 
+import com.eitanliu.dart.mappable.ast.DartGenerator
 import com.eitanliu.dart.mappable.binding.bindTabTransferFocus
 import com.eitanliu.dart.mappable.extensions.copyBind
 import com.eitanliu.dart.mappable.extensions.propertyRef
 import com.eitanliu.dart.mappable.extensions.value
-import com.eitanliu.dart.mappable.generator.DartGenerator
+import com.eitanliu.dart.mappable.generator.DartMappableGenerator
 import com.eitanliu.dart.mappable.settings.Settings
 import com.google.gson.*
 import com.intellij.openapi.Disposable
@@ -158,7 +159,7 @@ class JsonInputDialog(
             return
         }
 
-        val g = DartGenerator(settings, className, json)
+        val g = DartMappableGenerator(settings, className, json)
 
         if (doOkAction(g)) {
             generator = g

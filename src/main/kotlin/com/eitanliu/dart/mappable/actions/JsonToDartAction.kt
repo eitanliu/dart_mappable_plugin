@@ -87,7 +87,7 @@ class JsonToDartAction : AnAction() {
             val file = directory.virtualFile.findOrCreateChildData(this, generator.fileName)
             PsiManager.getInstance(project).findFile(file)?.let { psi ->
                 documentManager.getDocument(psi)?.also { doc ->
-                    doc.setText(generator.generatorClassesString())
+                    doc.setText(generator.buildString())
                     documentManager.commitDocument(doc)
                     // CodeStyleManager.getInstance(project).reformat(psi)
                     ReformatCodeProcessor(psi, false).run()

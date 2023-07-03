@@ -8,13 +8,14 @@ import com.intellij.openapi.observable.properties.GraphPropertyImpl.Companion.gr
 import com.intellij.openapi.observable.properties.PropertyGraph
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty0
+import kotlin.reflect.full.createInstance
 
 inline fun <V> KProperty0<V>.toGraphProperty(
-    propertyGraph: PropertyGraph = PropertyGraph()
+    propertyGraph: PropertyGraph = createPropertyGraph()
 ): GraphProperty<V> = propertyGraph.graphProperty(::get)
 
 inline fun <V> KMutableProperty0<V>.toGraphProperty(
-    propertyGraph: PropertyGraph = PropertyGraph(),
+    propertyGraph: PropertyGraph = createPropertyGraph(),
     parentDisposable: Disposable? = null,
 ): GraphProperty<V> = propertyGraph.graphProperty(::get).also { property ->
     if (parentDisposable != null) {
@@ -27,6 +28,8 @@ inline fun <V> KMutableProperty0<V>.toGraphProperty(
         }
     }
 }
+
+inline fun createPropertyGraph() = PropertyGraph::class.createInstance()
 
 inline fun <T> PropertyGraph.propertyRef(ref: KProperty0<T>): GraphProperty<T> = ref.toGraphProperty(this)
 
@@ -42,7 +45,7 @@ inline var <T> GraphProperty<T>.value
 
 inline fun <T> GraphProperty<T>.copyBind(
     parentDisposable: Disposable,
-    propertyGraph: PropertyGraph = PropertyGraph(),
+    propertyGraph: PropertyGraph = createPropertyGraph(),
 ): GraphProperty<T> = propertyGraph.graphProperty(::get).also { property ->
     property.afterChange({
         if (get() != it) set(it)

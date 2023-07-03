@@ -6,6 +6,7 @@ import com.eitanliu.dart.mappable.ast.DartGenerator
 import com.eitanliu.dart.mappable.binding.bind
 import com.eitanliu.dart.mappable.binding.bindTabTransferFocus
 import com.eitanliu.dart.mappable.extensions.copyBind
+import com.eitanliu.dart.mappable.extensions.createPropertyGraph
 import com.eitanliu.dart.mappable.extensions.propertyRef
 import com.eitanliu.dart.mappable.extensions.value
 import com.eitanliu.dart.mappable.generator.buildDartGenerator
@@ -177,7 +178,7 @@ class JsonInputDialog(
     }
 
     class Graph(private val data: JsonInputDialog) {
-        private val propertyGraph = PropertyGraph()
+        private val propertyGraph: PropertyGraph = createPropertyGraph()
         private val settings = data.settings
         private val disposable = data.disposable
 

@@ -1,5 +1,6 @@
 package com.eitanliu.dart.mappable.settings
 
+import com.eitanliu.dart.mappable.extensions.createPropertyGraph
 import com.eitanliu.dart.mappable.extensions.propertyRef
 import com.eitanliu.dart.mappable.observable.PropertyGraphWrapper
 import com.intellij.openapi.Disposable
@@ -53,7 +54,7 @@ data class Settings(
     }
 
     class Graph(private val data: Settings) {
-        private val propertyGraph = PropertyGraph()
+        private val propertyGraph: PropertyGraph = createPropertyGraph()
         private val wrapper = PropertyGraphWrapper(propertyGraph, this)
 
         val modelSuffix = propertyGraph.propertyRef(data::modelSuffix)

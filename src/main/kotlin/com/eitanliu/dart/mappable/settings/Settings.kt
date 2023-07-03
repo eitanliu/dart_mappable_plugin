@@ -1,5 +1,6 @@
 package com.eitanliu.dart.mappable.settings
 
+import com.eitanliu.dart.mappable.extensions.createPropertyGraph
 import com.eitanliu.dart.mappable.extensions.propertyRef
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.PersistentStateComponent
@@ -52,7 +53,7 @@ data class Settings(
     }
 
     class Graph(private val data: Settings) {
-        private val propertyGraph = PropertyGraph()
+        private val propertyGraph: PropertyGraph = createPropertyGraph()
 
         val modelSuffix = propertyGraph.propertyRef(data::modelSuffix)
         val implement = propertyGraph.propertyRef(data::implement)

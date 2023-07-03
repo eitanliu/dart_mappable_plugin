@@ -2,6 +2,7 @@ package com.eitanliu.dart.mappable.settings
 
 import com.eitanliu.dart.mappable.binding.bindSelected
 import com.eitanliu.dart.mappable.binding.selected
+import com.eitanliu.dart.mappable.extensions.createPropertyGraph
 import com.eitanliu.dart.mappable.extensions.propertyOf
 import com.eitanliu.dart.mappable.extensions.value
 import com.intellij.openapi.observable.properties.PropertyGraph
@@ -166,7 +167,7 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
     }
 
     class Graph(data: SettingLayout) {
-        private val propertyGraph = PropertyGraph()
+        private val propertyGraph: PropertyGraph = createPropertyGraph()
 
         val modelSuffix = propertyGraph.propertyOf(data.settings.modelSuffix)
         val implement = propertyGraph.propertyOf(data.settings.implement)

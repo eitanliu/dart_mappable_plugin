@@ -29,39 +29,39 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
         }
         row { label("Configure dart data model files suffix.") }
 
-            rowComment("Configure dart data model files suffix.")
-        }
-        buttonsGroup("Implement") {
+        row("Implement") {
+            subRowIndent = 1
             val mappablePredicate = graph.implement.selected(Implements.DART_MAPPABLE)
             row {
-                radioButton("dart_mappable", Implements.DART_MAPPABLE)
+                radioButton("dart_mappable")
                     .bindSelected(graph.implement, Implements.DART_MAPPABLE)
             }
             // panel {
-            rowsRange {
-                buildMappable()
-            }.visibleIf(mappablePredicate)
             row {
-                radioButton("json_serializable", Implements.JSON_SERIALIZABLE)
+                buildMappable(mappablePredicate)
+            }
+            row {
+                radioButton("json_serializable")
                     .bindSelected(graph.implement, Implements.JSON_SERIALIZABLE)
             }
-        }.bind(::implement)
+        }
 
     }
 
-    private fun LayoutBuilder.buildMappable(): CellBuilder<DialogPanel>  {
-        return nestedPanel(indent = true) {
+    private fun Row.buildMappable(visibility: ComponentPredicate? = null) = nestedPanel(null, visibility) {
+        row {
+            subRowIndent = 1
             val customPredicate = graph.enableMixin.selected(false)
             row {
-                radioButton("Mixin", true)
+                radioButton("Mixin")
                     .bindSelected(graph.enableMixin, true)
-                customPredicate = btn.selected
             }
             row {
-                radioButton("Custom", false)
+                radioButton("Custom")
                     .bindSelected(graph.enableMixin, false)
             }
-            rowPanel(indent = true) {
+            rowRanger(visibility = customPredicate) {
+                subRowIndent = 2
                 row {
                     checkBox("fromMap", graph.enableFromMap)
                     textField(graph.mappableFromMap).apply {
@@ -92,28 +92,39 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
                 //         constraints(pushX)
                 //     }
                 // }
-            }.apply {
-                subRowsVisible = !graph.enableMixin.value
-                graph.enableMixin.afterPropagation {
-                    subRowsVisible = !graph.enableMixin.value
-                }
             }
-        }.withLeftGap()
+        }
 
     }
 
-    private fun Panel.rowPanel(
+
+    private fun LayoutBuilder.rowRanger(
         title: String? = null,
-        indent: Boolean = true,
-        init: Panel.() -> Unit
+        visibility: ComponentPredicate? = null,
+        init: Row.() -> Unit
     ) = row {
-        panel {
-            if (title != null) separator(title)
-            if (indent) {
-                indent(init)
-            } else {
-                init()
-            }
+        nestedPanelRow(title, visibility, init)
+    }
+
+
+    private fun Row.nestedPanelRow(
+        title: String? = null,
+        visibility: ComponentPredicate? = null,
+        init: Row.() -> Unit
+    ) = nestedPanel(title, visibility) {
+        row { init() }
+    }
+
+    fun Row.nestedPanel(
+        title: String? = null,
+        visibility: ComponentPredicate? = null,
+        init: LayoutBuilder.() -> Unit
+    ): CellBuilder<DialogPanel> {
+        return component(com.intellij.ui.layout.panel(title = title) {
+            // if (title != null) separator(title)
+            init()
+        }).apply {
+            if (visibility != null) visibleIf(visibility)
         }
     }
 

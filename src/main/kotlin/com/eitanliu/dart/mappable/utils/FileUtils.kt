@@ -32,7 +32,7 @@ object FileUtils {
 
     fun pubSpecYamlFiles(project: Project) = pubSpecYamlFiles(searchScope(project))
 
-    fun pubSpecYamlFiles(scope: GlobalSearchScope) = FilenameIndex.getVirtualFilesByName("pubspec.yaml", scope)
+    fun pubSpecYamlFiles(scope: GlobalSearchScope) = FilenameIndex.getVirtualFilesByName(scope.project, "pubspec.yaml", scope)
         .asSequence()
         .filter { !it.isDirectory }
         .sortedByDescending { it.path.length }

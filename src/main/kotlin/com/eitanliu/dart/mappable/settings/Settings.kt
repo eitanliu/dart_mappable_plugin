@@ -12,7 +12,7 @@ import com.intellij.util.xmlb.XmlSerializerUtil
 @State(name = "DartMappableSettings", storages = [(Storage("DartMappableSettings.xml"))])
 data class Settings(
     var modelSuffix: String,
-    var ensureInitialized: Boolean,
+    var implement: String,
     var constructor: Boolean,
     var nullable: Boolean,
     var final: Boolean,
@@ -32,7 +32,7 @@ data class Settings(
     val graph = Graph(this)
 
     constructor() : this(
-        modelSuffix = "entity", ensureInitialized = true,
+        modelSuffix = "entity", implement = Implements.DART_MAPPABLE,
         constructor = true, nullable = false, final = false,
         enableMixin = true,
         enableFromJson = true, enableToJson = true,
@@ -57,8 +57,8 @@ data class Settings(
         private val wrapper = PropertyGraphWrapper(propertyGraph, this)
 
         val modelSuffix = propertyGraph.propertyRef(data::modelSuffix)
+        val implement = propertyGraph.propertyRef(data::implement)
 
-        val ensureInitialized = propertyGraph.propertyRef(data::ensureInitialized)
         val constructor = propertyGraph.propertyRef(data::constructor)
         val nullable = propertyGraph.propertyRef(data::nullable)
         val final = propertyGraph.propertyRef(data::final)

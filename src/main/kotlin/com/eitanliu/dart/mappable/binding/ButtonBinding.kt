@@ -8,24 +8,24 @@ import com.intellij.ui.layout.applyToComponent
 import java.util.concurrent.atomic.AtomicBoolean
 
 
-fun <T : JBRadioButton> CellBuilder<T>.bindSelected(
-    property: ObservableMutableProperty<Boolean>,
-    not: Boolean = false,
-): CellBuilder<T> {
-    return applyToComponent { bind(property, not) }
+fun <C : JBRadioButton, T> CellBuilder<C>.bindSelected(
+    property: ObservableMutableProperty<T>,
+    expected: T,
+): CellBuilder<C> {
+    return applyToComponent { bind(property, expected) }
 }
 
-fun <C : JBRadioButton> C.bind(property: ObservableMutableProperty<Boolean>, not: Boolean = false): C = apply {
-    isSelected = if (not) !property.get() else property.get()
+fun <C : JBRadioButton, T> C.bind(property: ObservableMutableProperty<T>, expected: T): C = apply {
+    isSelected = property.get() == expected
     val mutex = AtomicBoolean()
     property.afterChange {
         mutex.lockOrSkip {
-            isSelected = if (not) !it else it
+            isSelected = it == expected
         }
     }
     addItemListener {
         mutex.lockOrSkip {
-            property.set(if (not) !isSelected else isSelected)
+            if (property.get() != expected) property.set(expected)
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.eitanliu.dart.mappable.settings
 
 import com.eitanliu.dart.mappable.binding.bindSelected
+import com.eitanliu.dart.mappable.binding.selected
 import com.eitanliu.dart.mappable.extensions.propertyOf
 import com.eitanliu.dart.mappable.extensions.value
 import com.intellij.openapi.observable.properties.PropertyGraph
@@ -15,6 +16,7 @@ import javax.swing.JComponent
 class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
     val graph = Graph(this)
 
+    private var implement by graph.implement
     private var enableMixin by graph.enableMixin
 
     val rootPanel = panel {
@@ -27,25 +29,39 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
         }
         row { label("Configure dart data model files suffix.") }
 
-        nestedPanel("Mappable") {
-            mappableImplement()
-        }.apply {
-            this.constraints(CCFlags.growY)
+            rowComment("Configure dart data model files suffix.")
         }
+        buttonsGroup("Implement") {
+            val mappablePredicate = graph.implement.selected(Implements.DART_MAPPABLE)
+            row {
+                radioButton("dart_mappable", Implements.DART_MAPPABLE)
+                    .bindSelected(graph.implement, Implements.DART_MAPPABLE)
+            }
+            // panel {
+            rowsRange {
+                buildMappable()
+            }.visibleIf(mappablePredicate)
+            row {
+                radioButton("json_serializable", Implements.JSON_SERIALIZABLE)
+                    .bindSelected(graph.implement, Implements.JSON_SERIALIZABLE)
+            }
+        }.bind(::implement)
+
     }
 
-    fun LayoutBuilder.mappableImplement(): CellBuilder<DialogPanel> {
-        return nestedPanel(title = "Implement:") {
+    private fun LayoutBuilder.buildMappable(): CellBuilder<DialogPanel>  {
+        return nestedPanel(indent = true) {
+            val customPredicate = graph.enableMixin.selected(false)
             row {
-                radioButton("Mixin")
-                    .bindSelected(graph.enableMixin)
-            }
-            row {
-                val btn = radioButton("Custom")
+                radioButton("Mixin", true)
                     .bindSelected(graph.enableMixin, true)
+                customPredicate = btn.selected
             }
             row {
-                subRowIndent = 1
+                radioButton("Custom", false)
+                    .bindSelected(graph.enableMixin, false)
+            }
+            rowPanel(indent = true) {
                 row {
                     checkBox("fromMap", graph.enableFromMap)
                     textField(graph.mappableFromMap).apply {
@@ -86,6 +102,21 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
 
     }
 
+    private fun Panel.rowPanel(
+        title: String? = null,
+        indent: Boolean = true,
+        init: Panel.() -> Unit
+    ) = row {
+        panel {
+            if (title != null) separator(title)
+            if (indent) {
+                indent(init)
+            } else {
+                init()
+            }
+        }
+    }
+
     override fun createComponent(): JComponent = JBScrollPane(rootPanel).apply {
         horizontalScrollBar = null
         border = null
@@ -93,6 +124,7 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
 
     override fun isModified(): Boolean {
         return settings.graph.modelSuffix.value != graph.modelSuffix.value
+                || settings.graph.implement.value != graph.implement.value
                 || settings.graph.enableMixin.value != graph.enableMixin.value
                 || settings.graph.enableFromJson.value != graph.enableFromJson.value
                 || settings.graph.enableToJson.value != graph.enableToJson.value
@@ -108,6 +140,7 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
 
     override fun apply() {
         settings.graph.modelSuffix.value = graph.modelSuffix.value
+        settings.graph.implement.value = graph.implement.value
         settings.graph.enableMixin.value = graph.enableMixin.value
         settings.graph.enableFromJson.value = graph.enableFromJson.value
         settings.graph.enableToJson.value = graph.enableToJson.value
@@ -123,6 +156,7 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
 
     override fun reset() {
         graph.modelSuffix.value = settings.graph.modelSuffix.value
+        graph.implement.value = settings.graph.implement.value
         graph.enableMixin.value = settings.graph.enableMixin.value
         graph.enableFromJson.value = settings.graph.enableFromJson.value
         graph.enableToJson.value = settings.graph.enableToJson.value
@@ -140,6 +174,7 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
         private val propertyGraph = PropertyGraph()
 
         val modelSuffix = propertyGraph.propertyOf(data.settings.modelSuffix)
+        val implement = propertyGraph.propertyOf(data.settings.implement)
         val enableMixin = propertyGraph.propertyOf(data.settings.enableMixin)
         val enableFromJson = propertyGraph.propertyOf(data.settings.enableFromJson)
         val enableToJson = propertyGraph.propertyOf(data.settings.enableToJson)

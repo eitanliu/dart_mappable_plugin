@@ -87,7 +87,7 @@ class JsonToDartAction : AnAction() {
             val file = directory.virtualFile.findOrCreateChildData(this, generator.fileName)
             PsiManager.getInstance(project).findFile(file)?.let { psi ->
                 documentManager.getDocument(psi)?.also { doc ->
-                    doc.setText(generator.generatorClassesString())
+                    doc.setText(generator.buildString())
                     documentManager.commitDocument(doc)
                     // CodeStyleManager.getInstance(project).reformat(psi)
                     ReformatCodeProcessor(psi, false).run()
@@ -103,41 +103,5 @@ class JsonToDartAction : AnAction() {
                 directory.virtualFile.refresh(false, false)
             }
         }
-
-        // 获取项目根目录
-        // project.stateStore.projectBasePath
-        // project.guessProjectDir()
-        // project.baseDir
-
-        // 获取模块根目录
-        // module.moduleFile?.parent
-        // module.moduleNioFile.parent
-        // module.stateStore.storageManager.expandMacro(StoragePathMacros.MODULE_FILE).parent
-        // ProjectRootManager.getInstance(project).fileIndex.getContentRootForFile(file)
-
-
-        // 获取项目全部文件
-        // ProjectRootManager.getInstance(project).contentRoots
-        // ProjectRootManager.getInstance(project).contentSourceRoots
-        // 获取模块全部文件
-        // ModuleRootManager.getInstance(module).contentRoots
-        // 获取模块全部文件(不包含根目录)
-        // ModuleRootManager.getInstance(module).excludeRoots
-        // 获取模块源码文件
-        // ModuleRootManager.getInstance(module).sourceRoots
-        // ModuleRootManager.getInstance(module).externalSource
-        // ModuleRootManager.getInstance(module).getSourceRoots(rootTypes)
-        // 遍历目录
-        // ModuleRootManager.getInstance(module).fileIndex.iterateContent {  }
-        // 判断包含关系
-        // ModuleRootManager.getInstance(module).fileIndex.isInContent( directory.virtualFile )
-
-        // 获取 VirtualFile
-        // LocalFileSystem.getInstance().findFileByNioFile()
-
-        // PsiFile 获取 VirtualFile
-        // pisFile.getVirtualFile()
-        // VirtualFile 获取 PsiFile
-        // PsiManager.getInstance(project).findFile()
     }
 }

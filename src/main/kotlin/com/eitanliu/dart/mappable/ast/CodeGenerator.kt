@@ -1,21 +1,20 @@
-package com.eitanliu.dart.mappable.generator
+package com.eitanliu.dart.mappable.ast
 
 class CodeGenerator(
+    /**
+     * String used for newlines (ex "\n").
+     */
+    val newline: String = "\n",
+    /**
+     * String used to represent a tab.
+     */
+    val tab: String = "  ",
     val builder: StringBuilder = StringBuilder(),
     block: CodeGenerator.() -> Unit,
 ) {
 
     private var count = 0
 
-    /**
-     * String used for newlines (ex "\n").
-     */
-    val newline = '\n'
-
-    /**
-     * String used to represent a tab.
-     */
-    val tab = "  "
 
     init {
         block()

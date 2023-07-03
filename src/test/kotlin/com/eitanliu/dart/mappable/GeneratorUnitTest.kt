@@ -1,7 +1,8 @@
 package com.eitanliu.dart.mappable
 
-import com.eitanliu.dart.mappable.generator.CodeGenerator
-import com.eitanliu.dart.mappable.generator.DartGenerator
+import com.eitanliu.dart.mappable.ast.CodeGenerator
+import com.eitanliu.dart.mappable.generator.DartMappableGenerator
+import com.eitanliu.dart.mappable.generator.JsonSerializableGenerator
 import com.eitanliu.dart.mappable.settings.Settings
 import org.junit.Test
 
@@ -48,20 +49,41 @@ class GeneratorUnitTest {
         assertEquals("generatorEquals", expected, actual)
     }
 
-    @Test
-    fun jsonParse() {
+    private fun jsonParse(): String {
         val classLoader = javaClass.classLoader
         val test01 = classLoader.getResourceAsStream("test01.json")!!
         val content = test01.bufferedReader().use { it.readText() }
         println("json: \n$content")
+        return content
+    }
+
+    @Test
+    fun testDartMappable() {
+        val content = jsonParse()
+
         val setting = Settings().apply {
             modelSuffix = "Vo"
             constructor = false
             nullable = true
             final = false
         }
-        val generator = DartGenerator(setting, "Text01", content)
-        val classes = generator.generatorClassesString()
+        val generator = DartMappableGenerator(setting, "Text01", content)
+        val classes = generator.buildString()
+        println("classes: \n$classes")
+    }
+
+    @Test
+    fun testJsonSerializable() {
+        val content = jsonParse()
+
+        val setting = Settings().apply {
+            modelSuffix = "Vo"
+            constructor = false
+            nullable = true
+            final = false
+        }
+        val generator = JsonSerializableGenerator(setting, "Text01", content)
+        val classes = generator.buildString()
         println("classes: \n$classes")
     }
 }

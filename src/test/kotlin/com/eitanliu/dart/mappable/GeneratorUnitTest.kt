@@ -2,6 +2,7 @@ package com.eitanliu.dart.mappable
 
 import com.eitanliu.dart.mappable.ast.CodeGenerator
 import com.eitanliu.dart.mappable.generator.DartMappableGenerator
+import com.eitanliu.dart.mappable.generator.JsonSerializableGenerator
 import com.eitanliu.dart.mappable.settings.Settings
 import org.junit.Test
 
@@ -67,6 +68,21 @@ class GeneratorUnitTest {
             final = false
         }
         val generator = DartMappableGenerator(setting, "Text01", content)
+        val classes = generator.buildString()
+        println("classes: \n$classes")
+    }
+
+    @Test
+    fun testJsonSerializable() {
+        val content = jsonParse()
+
+        val setting = Settings().apply {
+            modelSuffix = "Vo"
+            constructor = false
+            nullable = true
+            final = false
+        }
+        val generator = JsonSerializableGenerator(setting, "Text01", content)
         val classes = generator.buildString()
         println("classes: \n$classes")
     }

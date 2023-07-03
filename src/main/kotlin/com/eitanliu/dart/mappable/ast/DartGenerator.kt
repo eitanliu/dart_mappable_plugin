@@ -95,7 +95,7 @@ interface DartGenerator : DartFileName {
         ) = buildString {
             val member = this@buildSyntax;
             if (final) append("final ")
-            val nullable = this@buildSyntax.nullable ?: nullable
+            val nullable = member.nullable ?: nullable
             // type
             append(typeName(entitySuffix, nullable))
 

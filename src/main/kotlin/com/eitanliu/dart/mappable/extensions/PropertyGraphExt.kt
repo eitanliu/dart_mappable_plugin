@@ -22,7 +22,11 @@ inline fun <V> KMutableProperty0<V>.toGraphProperty(
     }
 }
 
-inline fun createPropertyGraph() = PropertyGraph::class.createInstance()
+fun createPropertyGraph() = try {
+    PropertyGraph()
+} catch (e: Throwable) {
+    PropertyGraph::class.createInstance()
+}
 
 inline fun <T> PropertyGraph.propertyRef(ref: KProperty0<T>): GraphProperty<T> = ref.toGraphProperty(this)
 

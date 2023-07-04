@@ -12,12 +12,12 @@ import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 import javax.swing.JComponent
 
 
-@Suppress("DialogTitleCapitalization")
+@Suppress("DialogTitleCapitalization", "MemberVisibilityCanBePrivate")
 class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
     val graph = Graph(this)
 
-    private var implement by graph.implement
-    private var enableMixin by graph.enableMixin
+    internal var implement by graph.implement
+    internal var enableMixin by graph.enableMixin
 
     val rootPanel = panel {
 
@@ -32,7 +32,7 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
 
             rowComment("Configure dart data model files suffix.")
         }
-        buttonsGroup("Implement") {
+        buttonGroup(::implement, "Implement") {
             val mappablePredicate = graph.implement.selected(Implements.DART_MAPPABLE)
             row {
                 radioButton("dart_mappable", Implements.DART_MAPPABLE)
@@ -46,12 +46,12 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
                 radioButton("json_serializable", Implements.JSON_SERIALIZABLE)
                     .bindSelected(graph.implement, Implements.JSON_SERIALIZABLE)
             }
-        }.bind(::implement)
+        }
 
     }
 
     private fun Panel.buildMappable() {
-        buttonsGroup(indent = true) {
+        buttonGroup(::enableMixin, indent = true) {
             val customPredicate = graph.enableMixin.selected(false)
             row {
                 radioButton("Mixin", true)
@@ -98,7 +98,7 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
                 //     }.horizontalAlign(HorizontalAlign.FILL)
                 // }.layout(RowLayout.LABEL_ALIGNED)
             }.visibleIf(customPredicate)
-        }.bind(::enableMixin)
+        }
     }
 
     private fun Panel.rowPanel(

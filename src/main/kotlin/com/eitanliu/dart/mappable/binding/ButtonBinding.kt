@@ -5,16 +5,23 @@ import com.intellij.ui.components.JBRadioButton
 import com.intellij.ui.layout.CellBuilder
 import com.intellij.ui.layout.applyToComponent
 import java.util.concurrent.atomic.AtomicBoolean
+import javax.swing.ButtonGroup
 
 
 fun <C : JBRadioButton, T> CellBuilder<C>.bindSelected(
-    property: GraphProperty<T>,
-    expected: T,
+    property: GraphProperty<T>, expected: T,
+    group: ButtonGroup? = null,
 ): CellBuilder<C> {
-    return applyToComponent { bind(property, expected) }
+    return applyToComponent {
+        bind(property, expected, group)
+    }
 }
 
-fun <C : JBRadioButton, T> C.bind(property: GraphProperty<T>, expected: T): C = apply {
+fun <C : JBRadioButton, T> C.bind(
+    property: GraphProperty<T>, expected: T,
+    group: ButtonGroup? = null,
+): C = apply {
+    if (group != null) model.group = group
     isSelected = property.get() == expected
     val mutex = AtomicBoolean()
     property.afterChange {
@@ -24,7 +31,7 @@ fun <C : JBRadioButton, T> C.bind(property: GraphProperty<T>, expected: T): C = 
     }
     addItemListener {
         mutex.lockOrSkip {
-            if (property.get() != expected) property.set(expected)
+            if (isSelected) property.set(expected)
         }
     }
 }

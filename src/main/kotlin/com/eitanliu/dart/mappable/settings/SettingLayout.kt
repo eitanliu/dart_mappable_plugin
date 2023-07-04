@@ -10,6 +10,7 @@ import com.intellij.openapi.options.UnnamedConfigurable
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.layout.*
+import javax.swing.ButtonGroup
 import javax.swing.JComponent
 
 
@@ -32,10 +33,11 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
 
         row("Implement") {
             subRowIndent = 1
+            val group = ButtonGroup()
             val mappablePredicate = graph.implement.selected(Implements.DART_MAPPABLE)
             row {
                 radioButton("dart_mappable")
-                    .bindSelected(graph.implement, Implements.DART_MAPPABLE)
+                    .bindSelected(graph.implement, Implements.DART_MAPPABLE, group)
             }
             // panel {
             row {
@@ -43,7 +45,7 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
             }
             row {
                 radioButton("json_serializable")
-                    .bindSelected(graph.implement, Implements.JSON_SERIALIZABLE)
+                    .bindSelected(graph.implement, Implements.JSON_SERIALIZABLE, group)
             }
         }
 
@@ -53,13 +55,15 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
         row {
             subRowIndent = 1
             val customPredicate = graph.enableMixin.selected(false)
+
+            val group = ButtonGroup()
             row {
                 radioButton("Mixin")
-                    .bindSelected(graph.enableMixin, true)
+                    .bindSelected(graph.enableMixin, true, group)
             }
             row {
                 radioButton("Custom")
-                    .bindSelected(graph.enableMixin, false)
+                    .bindSelected(graph.enableMixin, false, group)
             }
             rowRanger(visibility = customPredicate) {
                 subRowIndent = 2

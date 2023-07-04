@@ -2,11 +2,13 @@
 
 package com.eitanliu.dart.mappable.ui
 
+import com.eitanliu.dart.mappable.ast.DartGenerator
 import com.eitanliu.dart.mappable.binding.bindTabTransferFocus
 import com.eitanliu.dart.mappable.extensions.copyBind
+import com.eitanliu.dart.mappable.extensions.createPropertyGraph
 import com.eitanliu.dart.mappable.extensions.propertyRef
 import com.eitanliu.dart.mappable.extensions.value
-import com.eitanliu.dart.mappable.generator.DartGenerator
+import com.eitanliu.dart.mappable.generator.buildDartGenerator
 import com.eitanliu.dart.mappable.observable.PropertyGraphWrapper
 import com.eitanliu.dart.mappable.settings.Settings
 import com.google.gson.*
@@ -48,7 +50,7 @@ class JsonInputDialog(
     private val prettyGson: Gson = GsonBuilder().setPrettyPrinting().serializeNulls().create()
 
     init {
-        title = "Generate Dart Bean Class Code"
+        title = "Generate Dart Data Class Code"
         setOKButtonText("Generate")
         okAction.apply {
             putValue(DEFAULT_ACTION, false)
@@ -60,7 +62,7 @@ class JsonInputDialog(
     override fun createCenterPanel() = panel {
 
         row {
-            label("Please input the class name and JSON String for generating dart bean class")
+            label("Please input the class name and JSON String for generating dart data class")
         }
         row {
             label("JSON Text:")
@@ -74,6 +76,7 @@ class JsonInputDialog(
             textArea().apply {
                 bindText(graph.json)
                 applyToComponent {
+                    rows = 10
                     myPreferredFocusedComponent = this
                     bindTabTransferFocus()
                 }
@@ -158,7 +161,7 @@ class JsonInputDialog(
             return
         }
 
-        val g = DartGenerator(settings, className, json)
+        val g = buildDartGenerator(settings, className, json)
 
         if (doOkAction(g)) {
             generator = g
@@ -172,7 +175,7 @@ class JsonInputDialog(
     }
 
     class Graph(private val data: JsonInputDialog) {
-        private val propertyGraph = PropertyGraph()
+        private val propertyGraph: PropertyGraph = createPropertyGraph()
         private val settings = data.settings
         private val disposable = data.disposable
 

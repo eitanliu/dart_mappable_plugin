@@ -2,6 +2,12 @@
 
 # Dart Mappable Changelog
 
+## [1.1.3]
+
+### Release
+
+- fix run build_runner editing files not been saved
+
 ## [1.1.2]
 
 ### Release

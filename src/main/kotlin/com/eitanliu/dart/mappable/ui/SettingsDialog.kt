@@ -1,6 +1,5 @@
 package com.eitanliu.dart.mappable.ui
 
-import com.eitanliu.dart.mappable.extensions.value
 import com.eitanliu.dart.mappable.settings.SettingLayout
 import com.eitanliu.dart.mappable.settings.Settings
 import com.intellij.openapi.application.ApplicationManager
@@ -26,11 +25,11 @@ class SettingsDialog(
     }
 
     override fun createCenterPanel() = layout.rootPanel.apply {
+
         // preferredSize = JBDimension(600, 500)
     }
 
     override fun doOKAction() {
-        settings.graph.modelSuffix.value = layout.graph.modelSuffix.value
         super.doOKAction()
     }
 }

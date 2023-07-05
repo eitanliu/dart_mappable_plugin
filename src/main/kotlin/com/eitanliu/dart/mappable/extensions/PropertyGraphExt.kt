@@ -12,12 +12,12 @@ import kotlin.reflect.full.createInstance
 
 inline fun <V> KProperty0<V>.toGraphProperty(
     propertyGraph: PropertyGraph = createPropertyGraph()
-): GraphProperty<V> = propertyGraph.graphProperty(::get)
+): GraphProperty<V> = propertyGraph.propertyOf(::get)
 
 inline fun <V> KMutableProperty0<V>.toGraphProperty(
     propertyGraph: PropertyGraph = createPropertyGraph(),
     parentDisposable: Disposable? = null,
-): GraphProperty<V> = propertyGraph.graphProperty(::get).also { property ->
+): GraphProperty<V> = propertyGraph.propertyOf(::get).also { property ->
     if (parentDisposable != null) {
         property.afterChange({
             if (get() != it) set(it)
@@ -35,9 +35,9 @@ inline fun <T> PropertyGraph.propertyRef(ref: KProperty0<T>): GraphProperty<T> =
 
 inline fun <T> PropertyGraph.propertyRef(ref: KMutableProperty0<T>): GraphProperty<T> = ref.toGraphProperty(this)
 
-inline fun <T> PropertyGraph.propertyOf(initial: T): GraphProperty<T> = graphProperty { initial }
+fun <T> PropertyGraph.propertyOf(initial: T): GraphProperty<T> = graphProperty { initial }
 
-inline fun <T> PropertyGraph.propertyOf(noinline initial: () -> T): GraphProperty<T> = graphProperty(initial)
+fun <T> PropertyGraph.propertyOf(initial: () -> T): GraphProperty<T> = graphProperty(initial)
 
 inline var <T> GraphProperty<T>.value
     get() = get()
@@ -46,7 +46,7 @@ inline var <T> GraphProperty<T>.value
 inline fun <T> GraphProperty<T>.copyBind(
     parentDisposable: Disposable,
     propertyGraph: PropertyGraph = createPropertyGraph(),
-): GraphProperty<T> = propertyGraph.graphProperty(::get).also { property ->
+): GraphProperty<T> = propertyGraph.propertyOf(::get).also { property ->
     property.afterChange({
         if (get() != it) set(it)
     }, parentDisposable)

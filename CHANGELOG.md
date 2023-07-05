@@ -2,6 +2,16 @@
 
 # Dart Mappable Changelog
 
+## [1.1.4]
+
+### Release
+
+- Support json_serializable generator
+- Allow dart_mappable custom of toMap/toJson/fromMap/fromJson methods;
+- Change reformat code
+- Change predicate flutter project
+- Fix json input area height
+
 ## [1.1.3]
 
 ### Release

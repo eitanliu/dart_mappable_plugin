@@ -17,11 +17,7 @@ import com.intellij.openapi.observable.properties.PropertyGraph
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.Messages
-import com.intellij.ui.dsl.builder.bindSelected
-import com.intellij.ui.dsl.builder.bindText
-import com.intellij.ui.dsl.builder.panel
-import com.intellij.ui.dsl.gridLayout.HorizontalAlign
-import com.intellij.ui.dsl.gridLayout.VerticalAlign
+import com.intellij.ui.dsl.builder.*
 import com.intellij.util.ui.JBDimension
 
 /**
@@ -68,7 +64,7 @@ class JsonInputDialog(
             button("Format") {
                 handleFormatJSONString()
                 myPreferredFocusedComponent?.requestFocus()
-            }.horizontalAlign(HorizontalAlign.RIGHT)
+            }.align(AlignX.RIGHT)
         }
         row {
             resizableRow()
@@ -79,15 +75,14 @@ class JsonInputDialog(
                     myPreferredFocusedComponent = this
                     bindTabTransferFocus()
                 }
-                horizontalAlign(HorizontalAlign.FILL)
-                verticalAlign(VerticalAlign.FILL)
+                align(Align.FILL)
             }
         }
         row { label("Class Name:") }
         row {
             textField().apply {
                 bindText(graph.className)
-                horizontalAlign(HorizontalAlign.FILL)
+                align(AlignX.FILL)
             }
         }
         row {
@@ -118,7 +113,7 @@ class JsonInputDialog(
 
             button("Settings") {
                 SettingsDialog(null, contentPanel).show()
-            }.horizontalAlign(HorizontalAlign.RIGHT)
+            }.align(AlignX.RIGHT)
         }
 
     }.apply {

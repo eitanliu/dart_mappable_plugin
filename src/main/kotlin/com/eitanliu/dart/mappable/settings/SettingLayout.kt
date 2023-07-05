@@ -7,8 +7,8 @@ import com.eitanliu.dart.mappable.extensions.propertyOf
 import com.eitanliu.dart.mappable.extensions.value
 import com.intellij.openapi.observable.properties.PropertyGraph
 import com.intellij.openapi.options.UnnamedConfigurable
+import com.intellij.ui.TitledSeparator
 import com.intellij.ui.dsl.builder.*
-import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 import javax.swing.JComponent
 
 
@@ -24,11 +24,11 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
         onApply(::apply)
 
         row {
-            label("Model suffix:").horizontalAlign(HorizontalAlign.LEFT)
+            label("Model suffix:").align(AlignX.LEFT)
 
             textField().apply {
                 bindText(graph.modelSuffix)
-            }.horizontalAlign(HorizontalAlign.FILL)
+            }.align(AlignX.FILL)
 
             rowComment("Configure dart data model files suffix.")
         }
@@ -67,35 +67,35 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
                         .bindSelected(graph.enableFromMap)
                     textField().apply {
                         bindText(graph.mappableFromMap)
-                    }.horizontalAlign(HorizontalAlign.FILL)
+                    }.align(AlignX.FILL)
                 }.layout(RowLayout.LABEL_ALIGNED)
                 row {
                     checkBox("toMap")
                         .bindSelected(graph.enableToMap)
                     textField().apply {
                         bindText(graph.mappableToMap)
-                    }.horizontalAlign(HorizontalAlign.FILL)
+                    }.align(AlignX.FILL)
                 }.layout(RowLayout.LABEL_ALIGNED)
                 row {
                     checkBox("fromJson")
                         .bindSelected(graph.enableFromJson)
                     textField().apply {
                         bindText(graph.mappableFromJson)
-                    }.horizontalAlign(HorizontalAlign.FILL)
+                    }.align(AlignX.FILL)
                 }.layout(RowLayout.LABEL_ALIGNED)
                 row {
                     checkBox("toJson")
                         .bindSelected(graph.enableToJson)
                     textField().apply {
                         bindText(graph.mappableToJson)
-                    }.horizontalAlign(HorizontalAlign.FILL)
+                    }.align(AlignX.FILL)
                 }.layout(RowLayout.LABEL_ALIGNED)
                 // row {
                 //     checkBox("copyWith")
                 //         .bindSelected(graph.enableCopyWith)
                 //     textField().apply {
                 //         bindText(graph.mappableCopyWith)
-                //     }.horizontalAlign(HorizontalAlign.FILL)
+                //     }.align(AlignX.FILL)
                 // }.layout(RowLayout.LABEL_ALIGNED)
             }.visibleIf(customPredicate)
         }.bind(::enableMixin)
@@ -107,7 +107,7 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
         init: Panel.() -> Unit
     ) = row {
         panel {
-            if (title != null) separator(title)
+            if (title != null) row { cell(TitledSeparator(title)) }
             if (indent) {
                 indent(init)
             } else {

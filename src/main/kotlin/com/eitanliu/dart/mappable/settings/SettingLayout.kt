@@ -2,11 +2,14 @@ package com.eitanliu.dart.mappable.settings
 
 import com.eitanliu.dart.mappable.binding.bindSelected
 import com.eitanliu.dart.mappable.binding.selected
+import com.eitanliu.dart.mappable.binding.toBinding
 import com.eitanliu.dart.mappable.extensions.createPropertyGraph
 import com.eitanliu.dart.mappable.extensions.propertyOf
 import com.eitanliu.dart.mappable.extensions.value
+import com.intellij.openapi.observable.properties.GraphProperty
 import com.intellij.openapi.observable.properties.PropertyGraph
 import com.intellij.openapi.options.UnnamedConfigurable
+import com.intellij.ui.TitledSeparator
 import com.intellij.ui.dsl.builder.*
 import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 import javax.swing.JComponent
@@ -32,7 +35,7 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
 
             rowComment("Configure dart data model files suffix.")
         }
-        buttonGroup(::implement, "Implement") {
+        buttonGroup(graph.implement, "Implement") {
             val mappablePredicate = graph.implement.selected(Implements.DART_MAPPABLE)
             row {
                 radioButton("dart_mappable", Implements.DART_MAPPABLE)
@@ -51,7 +54,7 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
     }
 
     private fun Panel.buildMappable() {
-        buttonGroup(::enableMixin, indent = true) {
+        buttonGroup(graph.enableMixin, indent = true) {
             val customPredicate = graph.enableMixin.selected(false)
             row {
                 radioButton("Mixin", true)
@@ -101,13 +104,45 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
         }
     }
 
+    // buttonGroup removed 231
+    inline fun <reified T : Any> Panel.buttonGroup(
+        binding: GraphProperty<T>, title: String? = null,
+        indent: Boolean = title != null,
+        noinline init: Panel.() -> Unit
+    ) {
+        val methods = this.javaClass.methods
+        // val buttonGroup = methods.filter { it.name == "buttonGroup" }
+        // println("buttonGroup methods ${buttonGroup.joinToString { "${it.parameterCount}" }}")
+        // val buttonsGroup = this.javaClass.methods.filter { it.name == "buttonsGroup" }
+        // println("buttonsGroup methods ${buttonsGroup.joinToString { "${it.parameterCount}" }}")
+        // buttonsGroup(title, indent, init).bind(binding::get, binding::set)
+        try {
+            methods.firstOrNull { it.name == "buttonGroup" && it.parameterCount == 5 }?.also { method ->
+                method.invoke(this, binding.toBinding(), T::class.java, title, indent, init)
+            } ?: methods.firstOrNull { it.name == "buttonsGroup" && it.parameterCount == 3 }?.also { method ->
+                val group = method.invoke(this, title, indent, init)
+                val bind = group?.run {
+                    javaClass.methods.firstOrNull {
+                        it.name == "bind"
+                    }
+                }
+                val clazz = Class.forName("com.intellij.ui.dsl.builder.MutablePropertyKt")
+                val propertyMethod = clazz.methods.firstOrNull { it.name == "MutableProperty" }
+                val property = propertyMethod?.invoke(null, binding::get, binding::set)
+                bind?.invoke(group, property, T::class.java)
+            }
+        } catch (e: Throwable) {
+            e.printStackTrace()
+        }
+    }
+
     private fun Panel.rowPanel(
         title: String? = null,
         indent: Boolean = true,
         init: Panel.() -> Unit
     ) = row {
         panel {
-            if (title != null) separator(title)
+            if (title != null) row { cell(TitledSeparator(title)) }
             if (indent) {
                 indent(init)
             } else {

@@ -39,7 +39,7 @@ inline fun <T> PropertyGraph.propertyRef(ref: KProperty0<T>): GraphProperty<T> =
 
 inline fun <T> PropertyGraph.propertyRef(ref: KMutableProperty0<T>): GraphProperty<T> = ref.toGraphProperty(this)
 
-fun <T> PropertyGraph.propertyOf(initial: T): GraphProperty<T> = graphProperty { initial }
+inline fun <T> PropertyGraph.propertyOf(initial: T): GraphProperty<T> = propertyOf { initial }
 
 fun <T> PropertyGraph.propertyOf(initial: () -> T): GraphProperty<T> = graphProperty(initial)
 

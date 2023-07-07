@@ -7,6 +7,7 @@ import com.eitanliu.dart.mappable.extensions.propertyOf
 import com.eitanliu.dart.mappable.extensions.value
 import com.intellij.openapi.observable.properties.PropertyGraph
 import com.intellij.openapi.options.UnnamedConfigurable
+import com.intellij.ui.TitledSeparator
 import com.intellij.ui.dsl.builder.*
 import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 import javax.swing.JComponent
@@ -33,6 +34,15 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
             rowComment("Configure dart data model files suffix.")
         }
         buttonsGroup("Implement") {
+            row {
+                checkBox(
+                    "json_reflectable"
+                ).bindSelected(
+                    graph.enableJsonReflectable
+                ).applyToComponent {
+                    toolTipText = "use json_reflectable annotation"
+                }
+            }
             val mappablePredicate = graph.implement.selected(Implements.DART_MAPPABLE)
             row {
                 radioButton("dart_mappable", Implements.DART_MAPPABLE)
@@ -107,7 +117,7 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
         init: Panel.() -> Unit
     ) = row {
         panel {
-            if (title != null) separator(title)
+            if (title != null) row { cell(TitledSeparator(title)) }
             if (indent) {
                 indent(init)
             } else {
@@ -121,6 +131,7 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
     override fun isModified(): Boolean {
         return settings.graph.modelSuffix.value != graph.modelSuffix.value
                 || settings.graph.implement.value != graph.implement.value
+                || settings.graph.enableJsonReflectable.value != graph.enableJsonReflectable.value
                 || settings.graph.enableMixin.value != graph.enableMixin.value
                 || settings.graph.enableFromJson.value != graph.enableFromJson.value
                 || settings.graph.enableToJson.value != graph.enableToJson.value
@@ -137,6 +148,7 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
     override fun apply() {
         settings.graph.modelSuffix.value = graph.modelSuffix.value
         settings.graph.implement.value = graph.implement.value
+        settings.graph.enableJsonReflectable.value = graph.enableJsonReflectable.value
         settings.graph.enableMixin.value = graph.enableMixin.value
         settings.graph.enableFromJson.value = graph.enableFromJson.value
         settings.graph.enableToJson.value = graph.enableToJson.value
@@ -153,6 +165,7 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
     override fun reset() {
         graph.modelSuffix.value = settings.graph.modelSuffix.value
         graph.implement.value = settings.graph.implement.value
+        graph.enableJsonReflectable.value = settings.graph.enableJsonReflectable.value
         graph.enableMixin.value = settings.graph.enableMixin.value
         graph.enableFromJson.value = settings.graph.enableFromJson.value
         graph.enableToJson.value = settings.graph.enableToJson.value
@@ -171,6 +184,7 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
 
         val modelSuffix = propertyGraph.propertyOf(data.settings.modelSuffix)
         val implement = propertyGraph.propertyOf(data.settings.implement)
+        val enableJsonReflectable = propertyGraph.propertyOf(data.settings.enableJsonReflectable)
         val enableMixin = propertyGraph.propertyOf(data.settings.enableMixin)
         val enableFromJson = propertyGraph.propertyOf(data.settings.enableFromJson)
         val enableToJson = propertyGraph.propertyOf(data.settings.enableToJson)

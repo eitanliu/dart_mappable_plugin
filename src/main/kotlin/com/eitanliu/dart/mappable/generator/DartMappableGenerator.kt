@@ -2,17 +2,21 @@ package com.eitanliu.dart.mappable.generator
 
 import com.eitanliu.dart.mappable.ast.*
 import com.eitanliu.dart.mappable.extensions.*
+import com.eitanliu.dart.mappable.generator.builder.JsonReflectableBuilder
 import com.eitanliu.dart.mappable.settings.Settings
+import com.eitanliu.dart.mappable.settings.SettingsOwner
 import com.google.gson.*
 
 class DartMappableGenerator(
-    private val settings: Settings,
+    override val settings: Settings,
     className: String,
     json: String,
     dartFileName: DartFileName = DartFileName.Impl(className, settings.graph.modelSuffix.value),
 ) : DartGenerator.Self,
+    JsonReflectableBuilder.Self,
     DartJsonParser,
-    DartFileName by dartFileName {
+    DartFileName by dartFileName,
+    SettingsOwner {
 
     val fileMapperName = "$underscoreNameAndSuffix.mapper.dart"
 
@@ -30,6 +34,7 @@ class DartMappableGenerator(
     private fun CodeGenerator.writeFileImports(models: List<DartClassModel>) {
 
         for (syntax in models.importsSyntax {
+            importJsonReflectable()
             yield(DartImportModel("package:dart_mappable/dart_mappable.dart"))
         }) {
             writeln(syntax)
@@ -66,6 +71,7 @@ class DartMappableGenerator(
             val toJson = if (enableMixin) "toJson" else settings.graph.mappableToJson.value
 
             writeln()
+            writeJsonReflectableClassAnnotation()
             writeln("@MappableClass()")
             writeScoped(buildString {
                 append("class $sampleName")

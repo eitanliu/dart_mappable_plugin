@@ -1,10 +1,10 @@
 package com.eitanliu.dart.mappable.settings
 
-import com.intellij.openapi.application.ApplicationManager
+import com.eitanliu.dart.mappable.utils.ApplicationUtils
 import com.intellij.openapi.options.Configurable
 
 class SettingConfig : Configurable {
-    private val settings = ApplicationManager.getApplication().getService(Settings::class.java).state
+    private val settings = ApplicationUtils.getSettings()
 
     private val layout = SettingLayout(settings)
 

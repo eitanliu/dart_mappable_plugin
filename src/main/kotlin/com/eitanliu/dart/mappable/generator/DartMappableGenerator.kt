@@ -9,9 +9,8 @@ class DartMappableGenerator(
     private val settings: Settings,
     className: String,
     json: String,
-    dartFileName: DartFileName = DartFileName.Default(className, settings.graph.modelSuffix.value),
-) : DartGenerator,
-    DartGenerator.Extensions,
+    dartFileName: DartFileName = DartFileName.Impl(className, settings.graph.modelSuffix.value),
+) : DartGenerator.Self,
     DartJsonParser,
     DartFileName by dartFileName {
 

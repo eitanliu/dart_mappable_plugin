@@ -8,7 +8,9 @@ interface DartGenerator : DartFileName {
 
     fun generator(): CodeGenerator
 
-    interface Extensions : DartFileName.Extensions {
+    interface Self : DartGenerator, Ext
+
+    interface Ext : DartFileName.Ext {
 
         fun Iterable<DartMemberModel>.paramsSyntax(
             entitySuffix: String,

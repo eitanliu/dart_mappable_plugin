@@ -14,6 +14,7 @@ If you change the fields in the class, right click on package -> `Flutter Comman
 
 ### 1. Use dart_mappable
 
+Open in the IDE `Setting` -> `Tools` -> `DartMappable Settings`,  selected `dart_mappable`.
 Don't forget to set up `dart_mappable` into your project : https://pub.dev/packages/dart_mappable  
 Add into your `pubspec.yaml`  
 ```yaml
@@ -32,7 +33,6 @@ flutter pub add dart_mappable_builder --dev
 
 ### 2. Use json_serializable
 
-Open in the IDE `Setting` -> `Tools` -> `DartMappable Settings`,  selected `json_serializable`.  
 Don't forget to set up `json_serializable` into your project : https://pub.dev/packages/json_serializable  
 Add into your `pubspec.yaml`
 ```yaml

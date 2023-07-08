@@ -1,9 +1,12 @@
 package com.eitanliu.dart.mappable
 
 import com.eitanliu.dart.mappable.ast.CodeGenerator
+import com.eitanliu.dart.mappable.entity.PubspecEntity
 import com.eitanliu.dart.mappable.generator.DartMappableGenerator
 import com.eitanliu.dart.mappable.generator.JsonSerializableGenerator
+import com.eitanliu.dart.mappable.settings.Implements
 import com.eitanliu.dart.mappable.settings.Settings
+import com.eitanliu.dart.mappable.utils.DependenciesUtils
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -85,5 +88,26 @@ class GeneratorUnitTest {
         val generator = JsonSerializableGenerator(setting, "Text01", content)
         val classes = generator.buildString()
         println("classes: \n$classes")
+    }
+
+    @Test
+    fun testDependencies() {
+
+        val setting = Settings().apply {
+            enableJsonReflectable = true
+            implement = Implements.DART_MAPPABLE
+        }
+
+        val pubspec = PubspecEntity(
+            mapOf(
+                "dependencies" to mapOf<String, Any>(),
+                "dev_dependencies" to null,
+            ),
+            mapOf(
+                "packages" to mapOf<String, Any>(),
+            ),
+        )
+
+        DependenciesUtils.checkDependencies(setting, pubspec)
     }
 }

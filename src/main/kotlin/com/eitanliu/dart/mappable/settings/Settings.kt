@@ -17,6 +17,7 @@ data class Settings(
     var constructor: Boolean,
     var nullable: Boolean,
     var final: Boolean,
+    var enableJsonReflectable: Boolean,
     var enableMixin: Boolean,
     var enableFromJson: Boolean,
     var enableToJson: Boolean,
@@ -35,6 +36,7 @@ data class Settings(
     constructor() : this(
         modelSuffix = "entity", implement = Implements.DART_MAPPABLE,
         constructor = true, nullable = false, final = false,
+        enableJsonReflectable = true,
         enableMixin = true,
         enableFromJson = true, enableToJson = true,
         enableFromMap = true, enableToMap = true,
@@ -63,6 +65,8 @@ data class Settings(
         val constructor = propertyGraph.propertyRef(data::constructor)
         val nullable = propertyGraph.propertyRef(data::nullable)
         val final = propertyGraph.propertyRef(data::final)
+
+        val enableJsonReflectable = propertyGraph.propertyRef(data::enableJsonReflectable)
 
         val enableMixin = propertyGraph.propertyRef(data::enableMixin)
         val enableFromJson = propertyGraph.propertyRef(data::enableFromJson)

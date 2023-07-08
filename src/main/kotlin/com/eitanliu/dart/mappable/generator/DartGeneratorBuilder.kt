@@ -11,5 +11,6 @@ fun buildDartGenerator(
     json: String,
 ): DartGenerator = when (settings.graph.implement.value) {
     Implements.JSON_SERIALIZABLE -> JsonSerializableGenerator(settings, className, json)
-    else -> DartMappableGenerator(settings, className, json)
+    Implements.DART_MAPPABLE -> DartMappableGenerator(settings, className, json)
+    else -> JsonSerializableGenerator(settings, className, json)
 }

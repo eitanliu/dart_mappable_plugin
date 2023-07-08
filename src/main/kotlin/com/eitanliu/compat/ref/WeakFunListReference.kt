@@ -1,7 +1,6 @@
 package com.eitanliu.compat.ref
 
 import com.intellij.util.containers.WeakList
-import java.lang.UnsupportedOperationException
 import java.lang.ref.WeakReference
 
 class WeakFun1List<T>(

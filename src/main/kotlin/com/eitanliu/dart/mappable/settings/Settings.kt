@@ -34,7 +34,7 @@ data class Settings(
     val graph = Graph(this)
 
     constructor() : this(
-        modelSuffix = "entity", implement = Implements.DART_MAPPABLE,
+        modelSuffix = "entity", implement = Implements.JSON_SERIALIZABLE,
         constructor = true, nullable = false, final = false,
         enableJsonReflectable = true,
         enableMixin = true,

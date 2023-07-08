@@ -6,9 +6,9 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.observable.properties.GraphProperty
 import com.intellij.openapi.observable.properties.GraphPropertyImpl.Companion.graphProperty
 import com.intellij.openapi.observable.properties.PropertyGraph
+import java.lang.reflect.Constructor
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty0
-import kotlin.reflect.full.createInstance
 
 inline fun <V> KProperty0<V>.toGraphProperty(
     propertyGraph: PropertyGraph = createPropertyGraph()
@@ -32,8 +32,20 @@ inline fun <V> KMutableProperty0<V>.toGraphProperty(
 fun createPropertyGraph() = try {
     PropertyGraph()
 } catch (e: Throwable) {
-    PropertyGraph::class.createInstance()
+    PropertyGraph::class.java.createInstance()
 }
+
+@Suppress("UNCHECKED_CAST")
+fun <T> Class<T>.createInstance(
+    predicate: ((Constructor<*>) -> Boolean)? = null,
+    params: ((Constructor<*>) -> Array<*>?)? = null,
+): T = run {
+    val constructor = constructors.asSequence()
+        .first(predicate ?: { true })
+    val args = params?.invoke(constructor) ?: arrayOfNulls<Any?>(constructors[0].parameterCount)
+    constructor.newInstance(*args) as T
+}
+
 
 inline fun <T> PropertyGraph.propertyRef(ref: KProperty0<T>): GraphProperty<T> = ref.toGraphProperty(this)
 

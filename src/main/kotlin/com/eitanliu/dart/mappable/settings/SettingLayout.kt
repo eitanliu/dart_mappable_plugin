@@ -2,7 +2,7 @@ package com.eitanliu.dart.mappable.settings
 
 import com.eitanliu.dart.mappable.binding.bindSelected
 import com.eitanliu.dart.mappable.binding.selected
-import com.eitanliu.dart.mappable.binding.toBinding
+import com.eitanliu.dart.mappable.extensions.createInstance
 import com.eitanliu.dart.mappable.extensions.createPropertyGraph
 import com.eitanliu.dart.mappable.extensions.propertyOf
 import com.eitanliu.dart.mappable.extensions.value
@@ -127,7 +127,9 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
         // buttonsGroup(title, indent, init).bind(binding::get, binding::set)
         try {
             methods.firstOrNull { it.name == "buttonGroup" && it.parameterCount == 5 }?.also { method ->
-                method.invoke(this, binding.toBinding(), T::class.java, title, indent, init)
+                val property = Class.forName("com.intellij.ui.layout.PropertyBinding")
+                    .createInstance { arrayOf(binding::get, binding::set) }
+                method.invoke(this, property, T::class.java, title, indent, init)
             } ?: methods.firstOrNull { it.name == "buttonsGroup" && it.parameterCount == 3 }?.also { method ->
                 val group = method.invoke(this, title, indent, init)
                 val bind = group?.run {

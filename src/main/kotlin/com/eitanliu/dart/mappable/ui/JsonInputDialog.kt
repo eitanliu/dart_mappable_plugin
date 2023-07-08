@@ -10,7 +10,6 @@ import com.eitanliu.dart.mappable.extensions.createPropertyGraph
 import com.eitanliu.dart.mappable.extensions.propertyRef
 import com.eitanliu.dart.mappable.extensions.value
 import com.eitanliu.dart.mappable.generator.buildDartGenerator
-import com.eitanliu.dart.mappable.observable.PropertyGraphWrapper
 import com.eitanliu.dart.mappable.utils.ApplicationUtils
 import com.google.gson.*
 import com.intellij.openapi.Disposable

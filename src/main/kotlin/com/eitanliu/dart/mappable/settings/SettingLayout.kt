@@ -42,8 +42,8 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
                 }
             }
             row {
-                radioButton("json_serializable", Implements.JSON_SERIALIZABLE)
-                    .bindSelected(graph.implement, Implements.JSON_SERIALIZABLE)
+                radioButton("json_serializable")
+                    .bindSelected(graph.implement, Implements.JSON_SERIALIZABLE, group)
             }
 
             val mappablePredicate = graph.implement.selected(Implements.DART_MAPPABLE)
@@ -54,10 +54,6 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
             // panel {
             row {
                 buildMappable(mappablePredicate)
-            }
-            row {
-                radioButton("json_serializable")
-                    .bindSelected(graph.implement, Implements.JSON_SERIALIZABLE, group)
             }
         }
 

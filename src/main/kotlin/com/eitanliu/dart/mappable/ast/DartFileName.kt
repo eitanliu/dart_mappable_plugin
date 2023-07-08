@@ -19,10 +19,10 @@ interface DartFileName {
 
     val fileName: String
 
-    class Default(
+    class Impl(
         className: String,
         suffix: String,
-    ) : DartFileName, Extensions {
+    ) : Self {
         override val camelCaseName = className.keyToCamelCase(true)
 
         override val camelCaseSuffix = suffix
@@ -40,7 +40,10 @@ interface DartFileName {
         override val fileName = "$underscoreNameAndSuffix.dart"
     }
 
-    interface Extensions {
+    // self members and extension functions
+    interface Self : DartFileName, Ext
+
+    interface Ext {
 
         fun String.keyToCamelCase(capitalizeFirstWord: Boolean = false): String {
             return replaceNonAlphabeticNumber("_")

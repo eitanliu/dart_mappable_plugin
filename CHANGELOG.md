@@ -2,6 +2,13 @@
 
 # Dart Mappable Changelog
 
+## [1.1.5]
+
+### Release
+
+- Support json_reflectable annotation
+- Support auto add dependencies
+
 ## [1.1.4]
 
 ### Release

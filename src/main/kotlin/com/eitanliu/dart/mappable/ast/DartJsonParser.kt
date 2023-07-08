@@ -7,7 +7,7 @@ import com.google.gson.JsonPrimitive
 import java.math.BigDecimal
 import java.math.BigInteger
 
-interface DartJsonParser : DartFileName.Extensions {
+interface DartJsonParser : DartFileName.Self {
 
     /**
      * parser Abstract Syntax Tree；AST

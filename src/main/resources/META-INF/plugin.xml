@@ -39,6 +39,8 @@
         <applicationConfigurable groupId="tools" displayName="DartMappable Settings"
             id="preferences.SingleFileExecutionConfigurable"
             instance="com.eitanliu.dart.mappable.settings.SettingConfig" />
+        <applicationService serviceInterface="com.eitanliu.compat.application.CoroutineSupport"
+            serviceImplementation="com.eitanliu.compat.application.impl.PlatformCoroutineSupport" />
 
         <applicationService serviceImplementation="com.eitanliu.dart.mappable.settings.Settings" />
 

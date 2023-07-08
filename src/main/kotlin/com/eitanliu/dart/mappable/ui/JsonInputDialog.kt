@@ -9,11 +9,11 @@ import com.eitanliu.dart.mappable.extensions.createPropertyGraph
 import com.eitanliu.dart.mappable.extensions.propertyRef
 import com.eitanliu.dart.mappable.extensions.value
 import com.eitanliu.dart.mappable.generator.buildDartGenerator
+import com.eitanliu.dart.mappable.utils.ApplicationUtils
 import com.eitanliu.dart.mappable.observable.PropertyGraphWrapper
 import com.eitanliu.dart.mappable.settings.Settings
 import com.google.gson.*
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.observable.properties.PropertyGraph
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
@@ -39,7 +39,7 @@ class JsonInputDialog(
     var generator: DartGenerator? = null
         private set
 
-    val settings = ApplicationManager.getApplication().getService(Settings::class.java)
+    val settings = ApplicationUtils.getSettings()
 
     val graph = Graph(this).afterPropagation(disposable) {
         okAction.isEnabled = inputIsValidJson(json.value).takeIf {

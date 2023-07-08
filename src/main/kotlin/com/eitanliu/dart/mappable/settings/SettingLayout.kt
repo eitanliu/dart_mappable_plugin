@@ -41,6 +41,10 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
                     toolTipText = "use json_reflectable annotation"
                 }
             }
+            row {
+                radioButton("json_serializable", Implements.JSON_SERIALIZABLE)
+                    .bindSelected(graph.implement, Implements.JSON_SERIALIZABLE)
+            }
 
             val mappablePredicate = graph.implement.selected(Implements.DART_MAPPABLE)
             row {

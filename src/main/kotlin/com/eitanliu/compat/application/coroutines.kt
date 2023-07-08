@@ -1,6 +1,7 @@
 package com.eitanliu.compat.application
 
-import com.intellij.openapi.application.*
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ModalityState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asContextElement
 import kotlin.coroutines.CoroutineContext

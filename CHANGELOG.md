@@ -8,6 +8,7 @@
 
 - Support json_reflectable annotation
 - Support auto add dependencies
+- Change default generator to json_serializable
 
 ## [1.1.4]
 

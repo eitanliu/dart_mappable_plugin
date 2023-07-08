@@ -25,7 +25,12 @@ inline fun <V> KMutableProperty0<V>.toGraphProperty(
 fun createPropertyGraph() = try {
     PropertyGraph()
 } catch (e: Throwable) {
-    PropertyGraph::class.java.createInstance()
+    PropertyGraph::class.java.createInstance {
+        when (it.parameterCount) {
+            2 -> arrayOf(null, true)
+            else -> null
+        }
+    }
 }
 
 @Suppress("UNCHECKED_CAST")

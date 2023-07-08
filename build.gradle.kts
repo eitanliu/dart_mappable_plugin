@@ -20,7 +20,7 @@ repositories {
 
 dependencies {
     // 添加 Compose Desktop 需要的依赖项，compose.desktop.currentOs 这个 value 便来自于上面添加的 org.jetbrains.compose 插件
-    implementation("org.jetbrains.kotlin:kotlin-reflect")
+    // implementation("org.jetbrains.kotlin:kotlin-reflect")
     // implementation(compose.desktop.currentOs)
     testImplementation("junit:junit:4.13.2")
 }

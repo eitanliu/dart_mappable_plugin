@@ -8,7 +8,6 @@ import com.intellij.openapi.observable.properties.PropertyGraph
 import java.lang.reflect.Constructor
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty0
-import kotlin.reflect.full.createInstance
 
 inline fun <V> KProperty0<V>.toGraphProperty(
     propertyGraph: PropertyGraph = createPropertyGraph()

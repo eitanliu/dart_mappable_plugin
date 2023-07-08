@@ -29,7 +29,12 @@ inline fun <V> KMutableProperty0<V>.toGraphProperty(
     }
 }
 
-fun createPropertyGraph() = PropertyGraph::class.java.createInstance()
+fun createPropertyGraph() = PropertyGraph::class.java.createInstance {
+    when (it.parameterCount) {
+        2 -> arrayOf(null, true)
+        else -> null
+    }
+}
 
 @Suppress("UNCHECKED_CAST")
 fun <T> Class<T>.createInstance(
@@ -49,7 +54,52 @@ inline fun <T> PropertyGraph.propertyRef(ref: KMutableProperty0<T>): GraphProper
 
 inline fun <T> PropertyGraph.propertyOf(initial: T): GraphProperty<T> = propertyOf { initial }
 
-fun <T> PropertyGraph.propertyOf(initial: () -> T): GraphProperty<T> = graphProperty(initial)
+fun <T> PropertyGraph.propertyOf(initial: () -> T): GraphProperty<T> = try {
+    // propertyBefore221(initial)
+    graphProperty(initial)
+} catch (e: Throwable) {
+    propertyAfter221(initial)
+}
+
+@Suppress("UNCHECKED_CAST")
+fun <T> PropertyGraph.propertyAfter221(initial: () -> T): GraphProperty<T> = run {
+    val clazz = PropertyGraph::class.java
+
+    val propertyMethod = clazz.methods.firstOrNull filter@{
+        if (it.name != "lazyProperty") return@filter false
+        if (it.parameterCount != 1) return@filter false
+
+        val parameterTypes = it.parameterTypes
+        if (!Function0::class.java.isAssignableFrom(parameterTypes[0])) return@filter false
+
+        true
+    } ?: throw NoSuchMethodException("PropertyGraph.lazyProperty no find")
+
+    propertyMethod.invoke(this, initial) as GraphProperty<T>
+}
+
+@Suppress("UNCHECKED_CAST")
+fun <T> PropertyGraph.propertyBefore221(initial: () -> T): GraphProperty<T> = run {
+    val clazzCompanion = Class.forName("com.intellij.openapi.observable.properties.GraphPropertyImpl\$Companion")
+
+    val propertyMethod = clazzCompanion.methods.firstOrNull filter@{
+        if (it.name != "graphProperty") return@filter false
+        if (it.parameterCount != 2) return@filter false
+
+        val parameterTypes = it.parameterTypes
+        if (!PropertyGraph::class.java.isAssignableFrom(parameterTypes[0])) return@filter false
+        if (!Function0::class.java.isAssignableFrom(parameterTypes[1])) return@filter false
+
+        true
+    } ?: throw NoSuchMethodException("GraphPropertyImpl.Companion.graphProperty no find")
+
+    val clazz = Class.forName("com.intellij.openapi.observable.properties.GraphPropertyImpl")
+    val field = clazz.getDeclaredField("Companion")
+    field.isAccessible = true
+    val sCompanion = field.get(null)
+
+    propertyMethod.invoke(sCompanion, this, initial) as GraphProperty<T>
+}
 
 inline var <T> GraphProperty<T>.value
     get() = get()

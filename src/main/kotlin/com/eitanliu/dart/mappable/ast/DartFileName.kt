@@ -45,9 +45,13 @@ interface DartFileName {
 
     interface Ext {
 
-        fun String.keyToCamelCase(capitalizeFirstWord: Boolean = false): String {
+        fun String.keyToFieldName(firstWord: Boolean = false): String {
+            return trimStart('_').keyToCamelCase(firstWord)
+        }
+
+        fun String.keyToCamelCase(firstWord: Boolean = false): String {
             return replaceNonAlphabeticNumber("_")
-                .underscoreToCamelCase(capitalizeFirstWord)
+                .underscoreToCamelCase(firstWord)
                 .numberAddPrefix()
         }
 

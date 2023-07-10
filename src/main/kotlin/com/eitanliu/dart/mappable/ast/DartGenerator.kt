@@ -29,7 +29,7 @@ interface DartGenerator : DartFileName {
             return members
                 .distinctBy { it.name }
                 .map {
-                    val name = it.name.keyToCamelCase()
+                    val name = it.name.keyToFieldName()
                     if (constructor) return@map "this.$name"
 
                     val nullable = it.nullable ?: nullable
@@ -102,7 +102,7 @@ interface DartGenerator : DartFileName {
             append(typeName(entitySuffix, nullable))
 
             // name
-            append(" ${member.name.keyToCamelCase()}")
+            append(" ${member.name.keyToFieldName()}")
             // default
             if (default && !nullable) {
                 append(" = ${buildDefault(member, entitySuffix, false)}")

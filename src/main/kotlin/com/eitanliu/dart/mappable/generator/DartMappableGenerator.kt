@@ -103,7 +103,7 @@ class DartMappableGenerator(
                     //     append("this.${it.name.keyToCamelCase()}")
                     //     if (!nullable) append(" = ${typeDefault(it.type)}")
                     // }
-                    "this.${it.name.keyToCamelCase()}"
+                    "this.${it.name.keyToFieldName()}"
                 } else ""
                 writeln("$sampleName($params);")
                 // writeScoped("$sampleName($params) {", "}") {

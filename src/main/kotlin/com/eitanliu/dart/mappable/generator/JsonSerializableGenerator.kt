@@ -85,7 +85,7 @@ class JsonSerializableGenerator(
                 val params = if (constructor) model.members.joinToString(
                     separator = ", ", prefix = "", postfix = ""
                 ) {
-                    "this.${it.name.keyToCamelCase()}"
+                    "this.${it.name.keyToFieldName()}"
                 } else ""
                 writeln("$sampleName($params);")
 

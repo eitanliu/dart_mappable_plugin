@@ -28,12 +28,12 @@ fun String.camelCaseToUnderscore(): String {
     return words.joinToString(separator = "_")
 }
 
-fun String.underscoreToCamelCase(capitalizeFirstWord: Boolean = false): String {
+fun String.underscoreToCamelCase(firstWord: Boolean = false): String {
     val underscore = this
     val words = underscore.split("_")
     val camelCase = StringBuilder()
     for ((index, word) in words.withIndex()) {
-        if (index == 0 && !capitalizeFirstWord) {
+        if (index == 0 && !firstWord) {
             camelCase.append(word)
         } else {
             camelCase.append(word.replaceFirstChar { if (it.isLowerCase()) it.uppercase() else it.toString() })

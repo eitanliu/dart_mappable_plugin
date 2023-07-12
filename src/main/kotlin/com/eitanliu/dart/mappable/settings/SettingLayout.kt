@@ -100,13 +100,13 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
                         bindText(graph.mappableToJson)
                     }.horizontalAlign(HorizontalAlign.FILL)
                 }.layout(RowLayout.LABEL_ALIGNED)
-                // row {
-                //     checkBox("copyWith")
-                //         .bindSelected(graph.enableCopyWith)
-                //     textField().apply {
-                //         bindText(graph.mappableCopyWith)
-                //     }.horizontalAlign(HorizontalAlign.FILL)
-                // }.layout(RowLayout.LABEL_ALIGNED)
+                row {
+                    checkBox("copyWith")
+                        .bindSelected(graph.enableCopyWith)
+                    textField().apply {
+                        bindText(graph.mappableCopyWith)
+                    }.horizontalAlign(HorizontalAlign.FILL)
+                }.layout(RowLayout.LABEL_ALIGNED)
             }.visibleIf(customPredicate)
         }.bind(::enableMixin)
     }

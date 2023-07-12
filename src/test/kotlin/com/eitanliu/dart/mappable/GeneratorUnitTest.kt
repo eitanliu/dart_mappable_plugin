@@ -69,6 +69,9 @@ class GeneratorUnitTest {
             constructor = false
             nullable = true
             final = false
+
+            enableJsonReflectable = false
+            enableMixin = true
         }
         val generator = DartMappableGenerator(setting, "Text01", content)
         val classes = generator.buildString()

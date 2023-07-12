@@ -119,7 +119,7 @@ class DartMappableGenerator(
                     writeln()
                     writeln("factory $sampleName.$fromJson(String json) => $mapper.fromJson(json);")
                 } else {
-                    fun guard(fn: String) = "_ensureContainer().$fn"
+                    fun guard(fn: String) = "_ensureContainer.$fn"
 
                     // factory fromMap
                     if (enableFromMap) {
@@ -191,7 +191,7 @@ class DartMappableGenerator(
 
                     writeln()
                     writeScoped(
-                        "static MapperContainer _ensureContainer() {", "}"
+                        "static late MapperContainer _ensureContainer = () {", "}();"
                     ) {
                         writeln("$mapper.ensureInitialized();")
                         writeln("return MapperContainer.globals;")

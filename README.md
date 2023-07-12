@@ -1,4 +1,4 @@
-# DartMappable(Json To DartMappable Or JsonSerializable)
+# DartMappable(Json To Dart Converter)
 
 ## How to use
 
@@ -6,15 +6,18 @@
 2. Open in the IDE `Setting` -> `Plugins`, right click setting icon ⚙️ -> `Install Plugin from Disk...` selected you download file.
 
 <!-- Plugin description -->
-Json to dart data classes are provided, and dart files ending in entity are provided to generate dart class factory for use.  
+Provide JSON to dart data classes conversion for use in Flutter and Dart projects.  
+Support multiple serialization schemes with [json_serializable](https://pub.dev/packages/json_serializable), [dart_mappable](https://pub.dev/packages/dart_mappable).  
 
 Right click on package -> `New` -> `Json To DartMappable`　And Then you will know how to use.  
 
-If you change the fields in the class, right click on package -> `Flutter Command` -> `Flutter Run Build Runner`, shortcut key is changed to `Alt + r`.  
+If you haven't added the dependency, it will automatically execute the command to add it.  
+
+If you change the fields in the class, right click on package -> `Flutter Command` -> `Flutter Run Build Runner`, shortcut key is `Alt + r`.  
 
 ### 1. Use dart_mappable
 
-Open in the IDE `Setting` -> `Tools` -> `DartMappable Settings`,  selected `dart_mappable`.
+Open in the IDE `Setting` -> `Tools` -> `DartMappable Settings`,  selected `dart_mappable`.  
 Don't forget to set up `dart_mappable` into your project : https://pub.dev/packages/dart_mappable  
 Add into your `pubspec.yaml`  
 ```yaml
@@ -24,7 +27,7 @@ dev_dependencies:
   build_runner: ^2.1.0
   dart_mappable_builder: ^3.0.2
 ```
-Or Run Terminal  
+Or Run command in Terminal  
 ```shell
 flutter pub add dart_mappable
 flutter pub add build_runner --dev
@@ -42,7 +45,7 @@ dev_dependencies:
   build_runner: ^2.3.3
   json_serializable: ^6.6.0
 ```
-Or Run Terminal
+Or Run command in Terminal
 ```shell
 flutter pub add json_annotation
 flutter pub add build_runner --dev

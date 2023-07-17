@@ -7,9 +7,10 @@
 
 <!-- Plugin description -->
 Provide JSON to dart data classes conversion for use in Flutter and Dart projects.  
-Support multiple serialization schemes with [json_serializable](https://pub.dev/packages/json_serializable), [dart_mappable](https://pub.dev/packages/dart_mappable).  
+Support multiple serialization schemes with [json_serializable](https://pub.dev/packages/json_serializable), [dart_mappable](https://pub.dev/packages/dart_mappable), [freezed](https://pub.dev/packages/freezed).  
 
 Right click on package -> `New` -> `Json To DartMappable`　And Then you will know how to use.  
+After converting JSON to dart classes, will be automatically run 'flutter pub run build_runner build --delete-conflicting-outputs'.  
 
 If you haven't added the dependency, it will automatically execute the command to add it.  
 
@@ -36,6 +37,7 @@ flutter pub add dart_mappable_builder --dev
 
 ### 2. Use json_serializable
 
+Open in the IDE `Setting` -> `Tools` -> `DartMappable Settings`,  selected `json_serializable`.  
 Don't forget to set up `json_serializable` into your project : https://pub.dev/packages/json_serializable  
 Add into your `pubspec.yaml`
 ```yaml
@@ -50,5 +52,27 @@ Or Run command in Terminal
 flutter pub add json_annotation
 flutter pub add build_runner --dev
 flutter pub add json_serializable --dev
+```
+
+### 2. Use freezed
+
+Open in the IDE `Setting` -> `Tools` -> `DartMappable Settings`,  selected `freezed`.  
+Don't forget to set up `freezed` into your project : https://pub.dev/packages/freezed  
+Add into your `pubspec.yaml`
+```yaml
+dependencies:
+  freezed_annotation: ^2.4.1
+dev_dependencies: 
+  build_runner: ^2.1.0
+  freezed: ^2.4.1
+```
+Or Run command in Terminal
+```shell
+flutter pub add freezed_annotation
+flutter pub add --dev build_runner
+flutter pub add --dev freezed
+# if using freezed to generate fromJson/toJson, also add:
+flutter pub add json_annotation
+flutter pub add --dev json_serializable
 ```
 <!-- Plugin description end -->

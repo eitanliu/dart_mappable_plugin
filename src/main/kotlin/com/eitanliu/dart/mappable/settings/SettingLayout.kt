@@ -30,19 +30,13 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
             }
         }
         row { label("Configure dart data model files suffix.") }
-
-            rowComment("Configure dart data model files suffix.")
-        }
         row {
             checkBox(
-                "auto run build_runner"
-            ).bindSelected(
-                graph.autoBuildRunner
+                "auto run build_runner", graph.autoBuildRunner
             ).applyToComponent {
                 toolTipText = "auto run 'flutter pub run build_runner build --delete-conflicting-outputs'"
             }
         }
-        buttonGroup(graph.implement, "Implement") {
         row("Implement") {
             subRowIndent = 1
             val group = ButtonGroup()
@@ -66,6 +60,16 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
             // panel {
             row {
                 buildMappable(mappablePredicate)
+            }
+
+            val freezedPredicate = graph.implement.selected(Implements.FREEZED)
+            row {
+                radioButton("freezed")
+                    .bindSelected(graph.implement, Implements.FREEZED, group)
+            }
+            // panel {
+            row {
+                buildFreezed(freezedPredicate)
             }
         }
 
@@ -111,28 +115,27 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
                         constraints(pushX)
                     }
                 }
-                // row {
-                //     checkBox("copyWith", graph.enableCopyWith)
-                //     textField(graph.mappableCopyWith).apply {
-                //         constraints(pushX)
-                //     }
-                // }
+                row {
+                    checkBox("copyWith", graph.enableCopyWith)
+                    textField(graph.mappableCopyWith).apply {
+                        constraints(pushX)
+                    }
+                }
             }
         }
 
     }
 
 
-    private fun Panel.buildFreezed() {
-        indent {
+    private fun Row.buildFreezed(visibility: ComponentPredicate? = null) = nestedPanel(null, visibility) {
+        row {
+            subRowIndent = 2
             row {
-                checkBox("fromJson/toJson")
-                    .bindSelected(graph.freezedEnableJson)
+                checkBox("fromJson/toJson", graph.freezedEnableJson)
             }
         }
     }
 
-    private fun Panel.rowPanel(
     private fun LayoutBuilder.rowRanger(
         title: String? = null,
         visibility: ComponentPredicate? = null,

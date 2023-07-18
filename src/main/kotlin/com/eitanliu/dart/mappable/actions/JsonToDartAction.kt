@@ -1,6 +1,7 @@
 package com.eitanliu.dart.mappable.actions
 
 import com.eitanliu.dart.mappable.extensions.ApplicationScope
+import com.eitanliu.dart.mappable.extensions.value
 import com.eitanliu.dart.mappable.ui.JsonInputDialog
 import com.eitanliu.dart.mappable.utils.ApplicationUtils
 import com.eitanliu.dart.mappable.utils.CommandUtils
@@ -112,6 +113,7 @@ class JsonToDartAction : AnAction() {
             }
 
             FileDocumentManager.getInstance().saveDocument(doc)
+            if (!settings.graph.autoBuildRunner.value) return@launch
             CommandUtils.executeFlutterPubCommand(
                 project, pubRoot, "run build_runner build --delete-conflicting-outputs"
             ) {

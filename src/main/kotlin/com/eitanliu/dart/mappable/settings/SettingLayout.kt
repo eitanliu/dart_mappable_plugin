@@ -33,6 +33,15 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
 
             rowComment("Configure dart data model files suffix.")
         }
+        row {
+            checkBox(
+                "auto run build_runner"
+            ).bindSelected(
+                graph.autoBuildRunner
+            ).applyToComponent {
+                toolTipText = "auto run 'flutter pub run build_runner build --delete-conflicting-outputs'"
+            }
+        }
         buttonsGroup("Implement") {
             row {
                 checkBox(
@@ -148,6 +157,7 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
     override fun isModified(): Boolean {
         return settings.graph.modelSuffix.value != graph.modelSuffix.value
                 || settings.graph.implement.value != graph.implement.value
+                || settings.graph.autoBuildRunner.value != graph.autoBuildRunner.value
                 || settings.graph.enableJsonReflectable.value != graph.enableJsonReflectable.value
                 || settings.graph.enableMixin.value != graph.enableMixin.value
                 || settings.graph.enableFromJson.value != graph.enableFromJson.value
@@ -166,6 +176,7 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
     override fun apply() {
         settings.graph.modelSuffix.value = graph.modelSuffix.value
         settings.graph.implement.value = graph.implement.value
+        settings.graph.autoBuildRunner.value = graph.autoBuildRunner.value
         settings.graph.enableJsonReflectable.value = graph.enableJsonReflectable.value
         settings.graph.enableMixin.value = graph.enableMixin.value
         settings.graph.enableFromJson.value = graph.enableFromJson.value
@@ -184,6 +195,7 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
     override fun reset() {
         graph.modelSuffix.value = settings.graph.modelSuffix.value
         graph.implement.value = settings.graph.implement.value
+        graph.autoBuildRunner.value = settings.graph.autoBuildRunner.value
         graph.enableJsonReflectable.value = settings.graph.enableJsonReflectable.value
         graph.enableMixin.value = settings.graph.enableMixin.value
         graph.enableFromJson.value = settings.graph.enableFromJson.value
@@ -204,6 +216,7 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
 
         val modelSuffix = propertyGraph.propertyOf(data.settings.modelSuffix)
         val implement = propertyGraph.propertyOf(data.settings.implement)
+        val autoBuildRunner = propertyGraph.propertyOf(data.settings.autoBuildRunner)
         val enableJsonReflectable = propertyGraph.propertyOf(data.settings.enableJsonReflectable)
         val enableMixin = propertyGraph.propertyOf(data.settings.enableMixin)
         val enableFromJson = propertyGraph.propertyOf(data.settings.enableFromJson)

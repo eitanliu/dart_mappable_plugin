@@ -16,6 +16,7 @@ data class Settings(
     var constructor: Boolean,
     var nullable: Boolean,
     var final: Boolean,
+    var autoBuildRunner: Boolean,
     var enableJsonReflectable: Boolean,
     var enableMixin: Boolean,
     var enableFromJson: Boolean,
@@ -36,6 +37,7 @@ data class Settings(
     constructor() : this(
         modelSuffix = "entity", implement = Implements.JSON_SERIALIZABLE,
         constructor = true, nullable = false, final = false,
+        autoBuildRunner = true,
         enableJsonReflectable = true,
         enableMixin = true,
         enableFromJson = true, enableToJson = true,
@@ -66,6 +68,7 @@ data class Settings(
         val nullable = propertyGraph.propertyRef(data::nullable)
         val final = propertyGraph.propertyRef(data::final)
 
+        val autoBuildRunner = propertyGraph.propertyRef(data::autoBuildRunner)
         val enableJsonReflectable = propertyGraph.propertyRef(data::enableJsonReflectable)
 
         val enableMixin = propertyGraph.propertyRef(data::enableMixin)

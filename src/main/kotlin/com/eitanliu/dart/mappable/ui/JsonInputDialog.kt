@@ -21,7 +21,6 @@ import com.intellij.ui.dsl.builder.bindText
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 import com.intellij.ui.dsl.gridLayout.VerticalAlign
-import com.intellij.util.ui.JBDimension
 
 /**
  * Json input Dialog
@@ -121,7 +120,9 @@ class JsonInputDialog(
         }
 
     }.apply {
-        preferredSize = JBDimension(600, 500)
+        // preferredSize = JBDimension(600, 500)
+        withPreferredSize(600, 500)
+        withMinimumHeight(400)
     }
 
     private fun handleFormatJSONString() {

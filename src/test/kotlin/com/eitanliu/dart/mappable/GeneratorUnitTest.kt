@@ -98,7 +98,8 @@ class GeneratorUnitTest {
 
         val setting = Settings().apply {
             enableJsonReflectable = true
-            implement = Implements.DART_MAPPABLE
+            implement = Implements.FREEZED
+            freezedEnableJson = false
         }
 
         val pubspec = PubspecEntity(
@@ -111,6 +112,6 @@ class GeneratorUnitTest {
             ),
         )
 
-        DependenciesUtils.checkDependencies(setting, pubspec)
+        println("dependencies => " + DependenciesUtils.checkDependencies(setting, pubspec).joinToString())
     }
 }

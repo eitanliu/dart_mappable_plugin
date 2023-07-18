@@ -56,6 +56,14 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
             rowsRange {
                 buildMappable()
             }.visibleIf(mappablePredicate)
+            val freezedPredicate = graph.implement.selected(Implements.FREEZED)
+            row {
+                radioButton("freezed", Implements.FREEZED)
+                    .bindSelected(graph.implement, Implements.FREEZED)
+            }
+            rowsRange {
+                buildFreezed()
+            }.visibleIf(freezedPredicate)
         }.bind(::implement)
 
     }
@@ -111,6 +119,15 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
         }.bind(::enableMixin)
     }
 
+    private fun Panel.buildFreezed() {
+        indent {
+            row {
+                checkBox("fromJson/toJson")
+                    .bindSelected(graph.freezedEnableJson)
+            }
+        }
+    }
+
     private fun Panel.rowPanel(
         title: String? = null,
         indent: Boolean = true,
@@ -143,6 +160,7 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
                 || settings.graph.mappableFromMap.value != graph.mappableFromMap.value
                 || settings.graph.mappableToMap.value != graph.mappableToMap.value
                 || settings.graph.mappableCopyWith.value != graph.mappableCopyWith.value
+                || settings.graph.freezedEnableJson.value != graph.freezedEnableJson.value
     }
 
     override fun apply() {
@@ -160,6 +178,7 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
         settings.graph.mappableFromMap.value = graph.mappableFromMap.value
         settings.graph.mappableToMap.value = graph.mappableToMap.value
         settings.graph.mappableCopyWith.value = graph.mappableCopyWith.value
+        settings.graph.freezedEnableJson.value = graph.freezedEnableJson.value
     }
 
     override fun reset() {
@@ -177,6 +196,7 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
         graph.mappableFromMap.value = settings.graph.mappableFromMap.value
         graph.mappableToMap.value = settings.graph.mappableToMap.value
         graph.mappableCopyWith.value = settings.graph.mappableCopyWith.value
+        graph.freezedEnableJson.value = settings.graph.freezedEnableJson.value
     }
 
     class Graph(data: SettingLayout) {
@@ -196,6 +216,7 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
         val mappableFromMap = propertyGraph.propertyOf(data.settings.mappableFromMap)
         val mappableToMap = propertyGraph.propertyOf(data.settings.mappableToMap)
         val mappableCopyWith = propertyGraph.propertyOf(data.settings.mappableCopyWith)
+        val freezedEnableJson = propertyGraph.propertyOf(data.settings.freezedEnableJson)
 
     }
 }

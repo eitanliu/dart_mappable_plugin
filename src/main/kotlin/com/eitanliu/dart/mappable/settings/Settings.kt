@@ -28,6 +28,7 @@ data class Settings(
     var mappableFromMap: String,
     var mappableToMap: String,
     var mappableCopyWith: String,
+    var freezedEnableJson: Boolean,
 ) : PersistentStateComponent<Settings> {
 
     val graph = Graph(this)
@@ -43,6 +44,7 @@ data class Settings(
         mappableFromJson = "fromString", mappableToJson = "toString",
         mappableFromMap = "fromJson", mappableToMap = "toJson",
         mappableCopyWith = "copyWith",
+        freezedEnableJson = true,
     )
 
     override fun getState(): Settings {
@@ -78,6 +80,8 @@ data class Settings(
         val mappableFromMap = propertyGraph.propertyRef(data::mappableFromMap)
         val mappableToMap = propertyGraph.propertyRef(data::mappableToMap)
         val mappableCopyWith = propertyGraph.propertyRef(data::mappableCopyWith)
+
+        val freezedEnableJson = propertyGraph.propertyRef(data::freezedEnableJson)
 
         fun afterPropagation(disposable: Disposable? = null, listener: Graph.() -> Unit) = apply {
             propertyGraph.afterPropagation(disposable) { listener() }

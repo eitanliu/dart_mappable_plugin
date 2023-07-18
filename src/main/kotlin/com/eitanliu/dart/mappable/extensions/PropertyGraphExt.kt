@@ -25,7 +25,10 @@ inline fun <V> KMutableProperty0<V>.toGraphProperty(
 fun createPropertyGraph() = try {
     PropertyGraph()
 } catch (e: Throwable) {
-    PropertyGraph::class.java.createInstance {
+    PropertyGraph::class.java.createInstance({ sequence ->
+        sequence.sortedByDescending { it.parameterCount }
+            .first { it.parameterCount <= 2 }
+    }) {
         when (it.parameterCount) {
             2 -> arrayOf(null, true)
             else -> null
@@ -35,11 +38,11 @@ fun createPropertyGraph() = try {
 
 @Suppress("UNCHECKED_CAST")
 fun <T> Class<T>.createInstance(
-    predicate: ((Constructor<*>) -> Boolean)? = null,
+    predicate: ((sequence: Sequence<Constructor<*>>) -> Constructor<*>?)? = null,
     params: ((Constructor<*>) -> Array<*>?)? = null,
 ): T = run {
-    val constructor = constructors.asSequence()
-        .first(predicate ?: { true })
+    val sequence = constructors.asSequence()
+    val constructor = predicate?.invoke(sequence) ?: sequence.first()
     val args = params?.invoke(constructor) ?: arrayOfNulls<Any?>(constructors[0].parameterCount)
     constructor.newInstance(*args) as T
 }

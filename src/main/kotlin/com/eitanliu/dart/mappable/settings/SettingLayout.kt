@@ -75,7 +75,6 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
             rowsRange {
                 buildFreezed()
             }.visibleIf(freezedPredicate)
-        }.bind(::implement)
         }
 
     }

@@ -2,14 +2,12 @@ package com.eitanliu.dart.mappable
 
 import com.eitanliu.dart.mappable.ast.CodeGenerator
 import com.eitanliu.dart.mappable.entity.PubspecEntity
-import com.eitanliu.dart.mappable.generator.DartMappableGenerator
-import com.eitanliu.dart.mappable.generator.JsonSerializableGenerator
+import com.eitanliu.dart.mappable.generator.buildDartGenerator
 import com.eitanliu.dart.mappable.settings.Implements
 import com.eitanliu.dart.mappable.settings.Settings
 import com.eitanliu.dart.mappable.utils.DependenciesUtils
+import org.junit.Assert.assertEquals
 import org.junit.Test
-
-import org.junit.Assert.*
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -65,12 +63,16 @@ class GeneratorUnitTest {
         val content = jsonParse()
 
         val setting = Settings().apply {
+            implement = Implements.DART_MAPPABLE
             modelSuffix = "Vo"
             constructor = false
             nullable = true
             final = false
+
+            enableJsonReflectable = false
+            enableMixin = true
         }
-        val generator = DartMappableGenerator(setting, "Text01", content)
+        val generator = buildDartGenerator(setting, "Text01", content)
         val classes = generator.buildString()
         println("classes: \n$classes")
     }
@@ -80,12 +82,29 @@ class GeneratorUnitTest {
         val content = jsonParse()
 
         val setting = Settings().apply {
+            implement = Implements.JSON_SERIALIZABLE
             modelSuffix = "Vo"
             constructor = false
             nullable = true
             final = false
         }
-        val generator = JsonSerializableGenerator(setting, "Text01", content)
+        val generator = buildDartGenerator(setting, "Text01", content)
+        val classes = generator.buildString()
+        println("classes: \n$classes")
+    }
+
+    @Test
+    fun testFreezed() {
+        val content = jsonParse()
+
+        val setting = Settings().apply {
+            implement = Implements.FREEZED
+            modelSuffix = "Vo"
+            constructor = false
+            nullable = false
+            final = true
+        }
+        val generator = buildDartGenerator(setting, "Text01", content)
         val classes = generator.buildString()
         println("classes: \n$classes")
     }
@@ -95,7 +114,8 @@ class GeneratorUnitTest {
 
         val setting = Settings().apply {
             enableJsonReflectable = true
-            implement = Implements.DART_MAPPABLE
+            implement = Implements.FREEZED
+            freezedEnableJson = false
         }
 
         val pubspec = PubspecEntity(
@@ -108,6 +128,6 @@ class GeneratorUnitTest {
             ),
         )
 
-        DependenciesUtils.checkDependencies(setting, pubspec)
+        println("dependencies => " + DependenciesUtils.checkDependencies(setting, pubspec).joinToString())
     }
 }

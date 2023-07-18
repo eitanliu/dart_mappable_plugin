@@ -20,7 +20,6 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.ui.components.JBTextArea
 import com.intellij.ui.layout.applyToComponent
 import com.intellij.ui.layout.panel
-import com.intellij.util.ui.JBDimension
 
 /**
  * Json input Dialog
@@ -124,7 +123,9 @@ class JsonInputDialog(
         }
 
     }.apply {
-        preferredSize = JBDimension(600, 500)
+        // preferredSize = JBDimension(600, 500)
+        withPreferredSize(600, 500)
+        withMinimumHeight(400)
     }
 
     private fun handleFormatJSONString() {

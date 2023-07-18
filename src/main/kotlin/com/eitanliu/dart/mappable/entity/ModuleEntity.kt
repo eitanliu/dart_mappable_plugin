@@ -40,5 +40,11 @@ data class DependenceEntity(
             DependenceEntity("dart_mappable_builder", SCOPE_DEV),
             DependenceEntity("build_runner", SCOPE_DEV),
         )
+
+        val FREEZED_VALUES = listOf(
+            DependenceEntity("freezed_annotation"),
+            DependenceEntity("freezed", SCOPE_DEV),
+            DependenceEntity("build_runner", SCOPE_DEV),
+        )
     }
 }

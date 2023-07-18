@@ -31,6 +31,18 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
         }
         row { label("Configure dart data model files suffix.") }
 
+            rowComment("Configure dart data model files suffix.")
+        }
+        row {
+            checkBox(
+                "auto run build_runner"
+            ).bindSelected(
+                graph.autoBuildRunner
+            ).applyToComponent {
+                toolTipText = "auto run 'flutter pub run build_runner build --delete-conflicting-outputs'"
+            }
+        }
+        buttonGroup(graph.implement, "Implement") {
         row("Implement") {
             subRowIndent = 1
             val group = ButtonGroup()
@@ -111,6 +123,16 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
     }
 
 
+    private fun Panel.buildFreezed() {
+        indent {
+            row {
+                checkBox("fromJson/toJson")
+                    .bindSelected(graph.freezedEnableJson)
+            }
+        }
+    }
+
+    private fun Panel.rowPanel(
     private fun LayoutBuilder.rowRanger(
         title: String? = null,
         visibility: ComponentPredicate? = null,
@@ -149,6 +171,7 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
     override fun isModified(): Boolean {
         return settings.graph.modelSuffix.value != graph.modelSuffix.value
                 || settings.graph.implement.value != graph.implement.value
+                || settings.graph.autoBuildRunner.value != graph.autoBuildRunner.value
                 || settings.graph.enableJsonReflectable.value != graph.enableJsonReflectable.value
                 || settings.graph.enableMixin.value != graph.enableMixin.value
                 || settings.graph.enableFromJson.value != graph.enableFromJson.value
@@ -161,11 +184,13 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
                 || settings.graph.mappableFromMap.value != graph.mappableFromMap.value
                 || settings.graph.mappableToMap.value != graph.mappableToMap.value
                 || settings.graph.mappableCopyWith.value != graph.mappableCopyWith.value
+                || settings.graph.freezedEnableJson.value != graph.freezedEnableJson.value
     }
 
     override fun apply() {
         settings.graph.modelSuffix.value = graph.modelSuffix.value
         settings.graph.implement.value = graph.implement.value
+        settings.graph.autoBuildRunner.value = graph.autoBuildRunner.value
         settings.graph.enableJsonReflectable.value = graph.enableJsonReflectable.value
         settings.graph.enableMixin.value = graph.enableMixin.value
         settings.graph.enableFromJson.value = graph.enableFromJson.value
@@ -178,11 +203,13 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
         settings.graph.mappableFromMap.value = graph.mappableFromMap.value
         settings.graph.mappableToMap.value = graph.mappableToMap.value
         settings.graph.mappableCopyWith.value = graph.mappableCopyWith.value
+        settings.graph.freezedEnableJson.value = graph.freezedEnableJson.value
     }
 
     override fun reset() {
         graph.modelSuffix.value = settings.graph.modelSuffix.value
         graph.implement.value = settings.graph.implement.value
+        graph.autoBuildRunner.value = settings.graph.autoBuildRunner.value
         graph.enableJsonReflectable.value = settings.graph.enableJsonReflectable.value
         graph.enableMixin.value = settings.graph.enableMixin.value
         graph.enableFromJson.value = settings.graph.enableFromJson.value
@@ -195,6 +222,7 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
         graph.mappableFromMap.value = settings.graph.mappableFromMap.value
         graph.mappableToMap.value = settings.graph.mappableToMap.value
         graph.mappableCopyWith.value = settings.graph.mappableCopyWith.value
+        graph.freezedEnableJson.value = settings.graph.freezedEnableJson.value
     }
 
     class Graph(data: SettingLayout) {
@@ -202,6 +230,7 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
 
         val modelSuffix = propertyGraph.propertyOf(data.settings.modelSuffix)
         val implement = propertyGraph.propertyOf(data.settings.implement)
+        val autoBuildRunner = propertyGraph.propertyOf(data.settings.autoBuildRunner)
         val enableJsonReflectable = propertyGraph.propertyOf(data.settings.enableJsonReflectable)
         val enableMixin = propertyGraph.propertyOf(data.settings.enableMixin)
         val enableFromJson = propertyGraph.propertyOf(data.settings.enableFromJson)
@@ -214,6 +243,7 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
         val mappableFromMap = propertyGraph.propertyOf(data.settings.mappableFromMap)
         val mappableToMap = propertyGraph.propertyOf(data.settings.mappableToMap)
         val mappableCopyWith = propertyGraph.propertyOf(data.settings.mappableCopyWith)
+        val freezedEnableJson = propertyGraph.propertyOf(data.settings.freezedEnableJson)
 
     }
 }

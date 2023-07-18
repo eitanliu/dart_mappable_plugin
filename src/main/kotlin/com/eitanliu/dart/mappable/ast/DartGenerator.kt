@@ -15,32 +15,36 @@ interface DartGenerator : DartFileName {
         fun Iterable<DartMemberModel>.paramsSyntax(
             entitySuffix: String,
             nullable: Boolean = false,
-            constructor: Boolean = false,
+            member: Boolean = false,
             namedFunction: Boolean = false,
-            before: (suspend SequenceScope<DartMemberModel>.() -> Unit)?,
-            after: (suspend SequenceScope<DartMemberModel>.() -> Unit)?,
+            beforeScope: (suspend SequenceScope<DartMemberModel>.() -> Unit)? = null,
+            afterScope: (suspend SequenceScope<DartMemberModel>.() -> Unit)? = null,
+            beforeTransform: (StringBuilder.(DartMemberModel) -> Unit)? = null,
+            afterTransform: (StringBuilder.(DartMemberModel) -> Unit)? = null,
         ): Sequence<String> {
             val members = sequence {
-                if (before != null) before()
+                if (beforeScope != null) beforeScope()
                 yieldAll(asSequence())
-                if (after != null) after()
+                if (afterScope != null) afterScope()
             }
 
             return members
                 .distinctBy { it.name }
                 .map {
-                    val name = it.name.keyToCamelCase()
-                    if (constructor) return@map "this.$name"
+                    val name = it.name.keyToFieldName()
+                    if (member) return@map "this.$name"
 
                     val nullable = it.nullable ?: nullable
                     val type = it.typeName(entitySuffix, nullable)
                     buildString {
+                        beforeTransform?.invoke(this, it)
                         if (namedFunction && !nullable) {
                             append("required ")
                         }
                         append(type)
                         append(" ")
                         append(name)
+                        afterTransform?.invoke(this, it)
                     }
                 }
         }
@@ -102,7 +106,7 @@ interface DartGenerator : DartFileName {
             append(typeName(entitySuffix, nullable))
 
             // name
-            append(" ${member.name.keyToCamelCase()}")
+            append(" ${member.name.keyToFieldName()}")
             // default
             if (default && !nullable) {
                 append(" = ${buildDefault(member, entitySuffix, false)}")

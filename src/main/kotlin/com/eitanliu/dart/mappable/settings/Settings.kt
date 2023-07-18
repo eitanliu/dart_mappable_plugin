@@ -17,6 +17,7 @@ data class Settings(
     var constructor: Boolean,
     var nullable: Boolean,
     var final: Boolean,
+    var autoBuildRunner: Boolean,
     var enableJsonReflectable: Boolean,
     var enableMixin: Boolean,
     var enableFromJson: Boolean,
@@ -29,6 +30,7 @@ data class Settings(
     var mappableFromMap: String,
     var mappableToMap: String,
     var mappableCopyWith: String,
+    var freezedEnableJson: Boolean,
 ) : PersistentStateComponent<Settings> {
 
     val graph = Graph(this)
@@ -36,6 +38,7 @@ data class Settings(
     constructor() : this(
         modelSuffix = "entity", implement = Implements.JSON_SERIALIZABLE,
         constructor = true, nullable = false, final = false,
+        autoBuildRunner = true,
         enableJsonReflectable = true,
         enableMixin = true,
         enableFromJson = true, enableToJson = true,
@@ -44,6 +47,7 @@ data class Settings(
         mappableFromJson = "fromString", mappableToJson = "toString",
         mappableFromMap = "fromJson", mappableToMap = "toJson",
         mappableCopyWith = "copyWith",
+        freezedEnableJson = true,
     )
 
     override fun getState(): Settings {
@@ -66,6 +70,7 @@ data class Settings(
         val nullable = propertyGraph.propertyRef(data::nullable)
         val final = propertyGraph.propertyRef(data::final)
 
+        val autoBuildRunner = propertyGraph.propertyRef(data::autoBuildRunner)
         val enableJsonReflectable = propertyGraph.propertyRef(data::enableJsonReflectable)
 
         val enableMixin = propertyGraph.propertyRef(data::enableMixin)
@@ -80,6 +85,8 @@ data class Settings(
         val mappableFromMap = propertyGraph.propertyRef(data::mappableFromMap)
         val mappableToMap = propertyGraph.propertyRef(data::mappableToMap)
         val mappableCopyWith = propertyGraph.propertyRef(data::mappableCopyWith)
+
+        val freezedEnableJson = propertyGraph.propertyRef(data::freezedEnableJson)
 
         fun afterPropagation(disposable: Disposable? = null, listener: Graph.() -> Unit) = apply {
             wrapper.listenerList.add(listener)

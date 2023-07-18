@@ -20,6 +20,13 @@ object DependenciesUtils {
             yieldAll(DependenceEntity.JSON_REFLECTABLE_VALUES)
         when (implement) {
             Implements.DART_MAPPABLE -> yieldAll(DependenceEntity.DART_MAPPABLE_VALUES)
+            Implements.FREEZED -> {
+                yieldAll(DependenceEntity.FREEZED_VALUES)
+                if (settings.graph.freezedEnableJson.value) {
+                    yieldAll(DependenceEntity.JSON_SERIALIZABLE_VALUES)
+                }
+            }
+
             Implements.JSON_SERIALIZABLE -> yieldAll(DependenceEntity.JSON_SERIALIZABLE_VALUES)
         }
     }.distinct().filterNot filter@{

@@ -103,7 +103,7 @@ class DartMappableGenerator(
                     //     append("this.${it.name.keyToCamelCase()}")
                     //     if (!nullable) append(" = ${typeDefault(it.type)}")
                     // }
-                    "this.${it.name.keyToCamelCase()}"
+                    "this.${it.name.keyToFieldName()}"
                 } else ""
                 writeln("$sampleName($params);")
                 // writeScoped("$sampleName($params) {", "}") {
@@ -119,7 +119,7 @@ class DartMappableGenerator(
                     writeln()
                     writeln("factory $sampleName.$fromJson(String json) => $mapper.fromJson(json);")
                 } else {
-                    fun guard(fn: String) = "$mapper._guard((c) => c.$fn)"
+                    fun guard(fn: String) = "_ensureContainer.$fn"
 
                     // factory fromMap
                     if (enableFromMap) {
@@ -187,6 +187,14 @@ class DartMappableGenerator(
                         ) {
                             writeln("return _${sampleName}CopyWithImpl(this, \$identity, \$identity);")
                         }
+                    }
+
+                    writeln()
+                    writeScoped(
+                        "static late MapperContainer _ensureContainer = () {", "}();"
+                    ) {
+                        writeln("$mapper.ensureInitialized();")
+                        writeln("return MapperContainer.globals;")
                     }
                 }
 

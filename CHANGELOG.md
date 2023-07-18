@@ -2,6 +2,15 @@
 
 # Dart Mappable Changelog
 
+## [1.1.6]
+
+### Release
+
+- Support freezed generator
+- Support disable automatically run `flutter pub run build_runner build --delete-conflicting-outputs`
+- Change dart_mappable custom methods generator
+- Fix conversion of names with underscore prefixes
+
 ## [1.1.5]
 
 ### Release

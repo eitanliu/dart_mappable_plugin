@@ -1,4 +1,4 @@
-# DartMappable(Json To Dart Converter)
+# DartMappable(Flutter Json To Dart Converter)
 
 ## How to use
 
@@ -16,7 +16,7 @@ If you haven't added the dependency, it will automatically execute the command t
 
 If you change the fields in the class, right click on package -> `Flutter Command` -> `Flutter Run Build Runner`, shortcut key is `Alt + r`.  
 
-### 1. Use dart_mappable
+### 1. Use DartMappable
 
 Open in the IDE `Setting` -> `Tools` -> `DartMappable Settings`,  selected `dart_mappable`.  
 Don't forget to set up `dart_mappable` into your project : https://pub.dev/packages/dart_mappable  
@@ -35,7 +35,7 @@ flutter pub add build_runner --dev
 flutter pub add dart_mappable_builder --dev
 ```
 
-### 2. Use json_serializable
+### 2. Use JsonSerializable
 
 Open in the IDE `Setting` -> `Tools` -> `DartMappable Settings`,  selected `json_serializable`.  
 Don't forget to set up `json_serializable` into your project : https://pub.dev/packages/json_serializable  
@@ -54,7 +54,7 @@ flutter pub add build_runner --dev
 flutter pub add json_serializable --dev
 ```
 
-### 2. Use freezed
+### 3. Use Freezed
 
 Open in the IDE `Setting` -> `Tools` -> `DartMappable Settings`,  selected `freezed`.  
 Don't forget to set up `freezed` into your project : https://pub.dev/packages/freezed  

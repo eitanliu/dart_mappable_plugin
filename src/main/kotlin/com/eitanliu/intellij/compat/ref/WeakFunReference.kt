@@ -1,4 +1,4 @@
-package com.eitanliu.compat.ref
+package com.eitanliu.intellij.compat.ref
 
 import java.lang.ref.WeakReference
 

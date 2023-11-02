@@ -1,4 +1,4 @@
-package com.eitanliu.compat.listeners
+package com.eitanliu.intellij.compat.listeners
 
 import com.intellij.openapi.project.Project
 

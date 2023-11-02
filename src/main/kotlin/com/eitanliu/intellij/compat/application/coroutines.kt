@@ -1,5 +1,6 @@
-package com.eitanliu.compat.application
+package com.eitanliu.intellij.compat.application
 
+import com.eitanliu.intellij.compat.application.impl.PlatformCoroutineSupport
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
 import kotlinx.coroutines.Dispatchers
@@ -17,4 +18,5 @@ fun ModalityState.asContextElement(): CoroutineContext = coroutineSupport().asCo
  */
 val Dispatchers.EDTCompat: CoroutineContext get() = coroutineSupport().edtDispatcher()
 
-private fun coroutineSupport() = ApplicationManager.getApplication().getService(CoroutineSupport::class.java)
+// private fun coroutineSupport() = ApplicationManager.getApplication().getService(CoroutineSupport::class.java)
+private fun coroutineSupport(): CoroutineSupport = PlatformCoroutineSupport

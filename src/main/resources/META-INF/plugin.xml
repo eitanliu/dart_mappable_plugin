@@ -5,7 +5,8 @@
 
     <!-- Public plugin name should be written in Title Case.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
-    <name>DartMappable(Flutter Json To DartMappable JsonSerializable Freezed)</name>
+    <!--max 64 charts-->
+    <name>DartMappable(FlutterJsonTo Freezed JsonSerializable Compatible)</name>
 
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
     <vendor email="eitanliu@gmail.com" url="https://www.eitanliu.com">Eitan Liu</vendor>
@@ -39,8 +40,8 @@
         <applicationConfigurable groupId="tools" displayName="DartMappable Settings"
             id="preferences.SingleFileExecutionConfigurable"
             instance="com.eitanliu.dart.mappable.settings.SettingConfig" />
-        <applicationService serviceInterface="com.eitanliu.compat.application.CoroutineSupport"
-            serviceImplementation="com.eitanliu.compat.application.impl.PlatformCoroutineSupport" />
+        <!--<applicationService serviceInterface="com.eitanliu.intellij.compat.application.CoroutineSupport"-->
+        <!--    serviceImplementation="com.eitanliu.intellij.compat.application.impl.PlatformCoroutineSupport" />-->
 
         <applicationService serviceImplementation="com.eitanliu.dart.mappable.settings.Settings" />
 
@@ -51,7 +52,7 @@
 
     <application-components>
         <!--<component>-->
-        <!--    <implementation-class>com.eitanliu.dart_mappable.settings.Settings</implementation-class>-->
+        <!--    <implementation-class>com.eitanliu.dart.mappable.settings.Settings</implementation-class>-->
         <!--</component>-->
     </application-components>
 

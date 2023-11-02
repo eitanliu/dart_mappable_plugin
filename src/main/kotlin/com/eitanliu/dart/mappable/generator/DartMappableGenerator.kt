@@ -191,7 +191,7 @@ class DartMappableGenerator(
 
                     writeln()
                     writeScoped(
-                        "static late MapperContainer _ensureContainer = () {", "}();"
+                        "static final MapperContainer _ensureContainer = () {", "}();"
                     ) {
                         writeln("$mapper.ensureInitialized();")
                         writeln("return MapperContainer.globals;")

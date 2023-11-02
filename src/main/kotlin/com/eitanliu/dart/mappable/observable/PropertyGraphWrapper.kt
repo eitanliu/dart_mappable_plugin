@@ -1,6 +1,6 @@
 package com.eitanliu.dart.mappable.observable
 
-import com.eitanliu.compat.ref.WeakFun1List
+import com.eitanliu.intellij.compat.ref.WeakFun1List
 import com.intellij.openapi.observable.properties.PropertyGraph
 import com.intellij.util.containers.WeakList
 import java.lang.ref.WeakReference

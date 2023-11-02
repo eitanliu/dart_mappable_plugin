@@ -25,6 +25,7 @@ dependencies {
         exclude(group = "org.jetbrains.kotlin")
     }
     // implementation(compose.desktop.currentOs)
+    // implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
     testImplementation("junit:junit:4.13.2")
 }
 

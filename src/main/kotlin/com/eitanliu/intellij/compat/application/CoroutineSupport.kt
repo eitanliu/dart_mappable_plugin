@@ -1,4 +1,4 @@
-package com.eitanliu.compat.application
+package com.eitanliu.intellij.compat.application
 
 import com.intellij.openapi.application.ModalityState
 import kotlin.coroutines.CoroutineContext

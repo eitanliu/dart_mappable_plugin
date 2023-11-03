@@ -1,4 +1,4 @@
-package com.eitanliu.dart.mappable.utils
+package com.eitanliu.intellij.compat.utils
 
 import java.awt.event.KeyEvent
 import java.awt.event.KeyListener

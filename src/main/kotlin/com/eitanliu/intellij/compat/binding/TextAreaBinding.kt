@@ -1,4 +1,4 @@
-package com.eitanliu.dart.mappable.binding
+package com.eitanliu.intellij.compat.binding
 
 import com.intellij.openapi.observable.properties.GraphProperty
 import com.intellij.ui.DocumentAdapter

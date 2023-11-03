@@ -1,4 +1,4 @@
-package com.eitanliu.dart.mappable.binding
+package com.eitanliu.intellij.compat.binding
 
 import com.eitanliu.dart.mappable.utils.SimpleKeyListener
 import com.intellij.openapi.observable.properties.ObservableProperty

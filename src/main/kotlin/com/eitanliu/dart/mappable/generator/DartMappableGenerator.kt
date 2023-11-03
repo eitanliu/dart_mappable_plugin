@@ -1,10 +1,10 @@
 package com.eitanliu.dart.mappable.generator
 
 import com.eitanliu.dart.mappable.ast.*
-import com.eitanliu.dart.mappable.extensions.*
 import com.eitanliu.dart.mappable.generator.builder.JsonReflectableBuilder
 import com.eitanliu.dart.mappable.settings.Settings
 import com.eitanliu.dart.mappable.settings.SettingsOwner
+import com.eitanliu.intellij.compat.extensions.value
 import com.google.gson.*
 
 class DartMappableGenerator(
@@ -191,7 +191,7 @@ class DartMappableGenerator(
 
                     writeln()
                     writeScoped(
-                        "static late MapperContainer _ensureContainer = () {", "}();"
+                        "static final MapperContainer _ensureContainer = () {", "}();"
                     ) {
                         writeln("$mapper.ensureInitialized();")
                         writeln("return MapperContainer.globals;")

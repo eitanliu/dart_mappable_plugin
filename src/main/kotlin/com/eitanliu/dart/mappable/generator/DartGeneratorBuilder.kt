@@ -1,7 +1,7 @@
 package com.eitanliu.dart.mappable.generator
 
 import com.eitanliu.dart.mappable.ast.DartGenerator
-import com.eitanliu.dart.mappable.extensions.value
+import com.eitanliu.intellij.compat.extensions.value
 import com.eitanliu.dart.mappable.settings.Implements
 import com.eitanliu.dart.mappable.settings.Settings
 

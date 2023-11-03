@@ -5,12 +5,13 @@ package com.eitanliu.dart.mappable.ui
 import com.eitanliu.dart.mappable.ast.DartGenerator
 import com.eitanliu.dart.mappable.binding.bind
 import com.eitanliu.dart.mappable.binding.bindTabTransferFocus
-import com.eitanliu.dart.mappable.extensions.copyBind
-import com.eitanliu.dart.mappable.extensions.createPropertyGraph
-import com.eitanliu.dart.mappable.extensions.propertyRef
-import com.eitanliu.dart.mappable.extensions.value
+import com.eitanliu.intellij.compat.extensions.copyBind
+import com.eitanliu.intellij.compat.extensions.createPropertyGraph
+import com.eitanliu.intellij.compat.extensions.propertyRef
+import com.eitanliu.intellij.compat.extensions.value
 import com.eitanliu.dart.mappable.generator.buildDartGenerator
 import com.eitanliu.dart.mappable.utils.ApplicationUtils
+import com.eitanliu.intellij.compat.observable.PropertyGraphWrapper
 import com.google.gson.*
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.observable.properties.PropertyGraph

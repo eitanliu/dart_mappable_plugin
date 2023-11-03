@@ -1,8 +1,8 @@
 package com.eitanliu.dart.mappable.settings
 
-import com.eitanliu.dart.mappable.extensions.createPropertyGraph
-import com.eitanliu.dart.mappable.extensions.propertyRef
-import com.eitanliu.dart.mappable.observable.PropertyGraphWrapper
+import com.eitanliu.intellij.compat.extensions.createPropertyGraph
+import com.eitanliu.intellij.compat.extensions.propertyRef
+import com.eitanliu.intellij.compat.observable.PropertyGraphWrapper
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.State

@@ -1,4 +1,4 @@
-package com.eitanliu.compat.application.impl
+package com.eitanliu.intellij.compat.application.impl
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState

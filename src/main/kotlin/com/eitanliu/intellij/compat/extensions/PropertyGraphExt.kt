@@ -1,6 +1,6 @@
 @file:Suppress("unused", "NOTHING_TO_INLINE")
 
-package com.eitanliu.dart.mappable.extensions
+package com.eitanliu.intellij.compat.extensions
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.observable.properties.GraphProperty

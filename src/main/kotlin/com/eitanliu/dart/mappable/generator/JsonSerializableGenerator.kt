@@ -1,19 +1,22 @@
 package com.eitanliu.dart.mappable.generator
 
 import com.eitanliu.dart.mappable.ast.*
-import com.eitanliu.dart.mappable.extensions.*
+import com.eitanliu.dart.mappable.generator.builder.JsonReflectableBuilder
 import com.eitanliu.dart.mappable.settings.Settings
+import com.eitanliu.dart.mappable.settings.SettingsOwner
+import com.eitanliu.intellij.compat.extensions.value
 import com.google.gson.*
 
 class JsonSerializableGenerator(
-    private val settings: Settings,
+    override val settings: Settings,
     className: String,
     json: String,
-    dartFileName: DartFileName = DartFileName.Default(className, settings.graph.modelSuffix.value),
-) : DartGenerator,
-    DartGenerator.Extensions,
+    dartFileName: DartFileName = DartFileName.Impl(className, settings.graph.modelSuffix.value),
+) : DartGenerator.Self,
+    JsonReflectableBuilder.Self,
     DartJsonParser,
-    DartFileName by dartFileName {
+    DartFileName by dartFileName,
+    SettingsOwner {
 
     val fileGeneratorName = "$underscoreNameAndSuffix.g.dart"
 
@@ -31,6 +34,7 @@ class JsonSerializableGenerator(
     private fun CodeGenerator.writeFileImports(models: List<DartClassModel>) {
 
         for (syntax in models.importsSyntax {
+            importJsonReflectable()
             yield(DartImportModel("package:json_annotation/json_annotation.dart"))
         }) {
             writeln(syntax)
@@ -56,6 +60,7 @@ class JsonSerializableGenerator(
             val constructor = settings.graph.constructor.value
 
             writeln()
+            writeJsonReflectableClassAnnotation()
             writeln("@JsonSerializable()")
             writeScoped(buildString {
                 append("class $sampleName")
@@ -80,7 +85,7 @@ class JsonSerializableGenerator(
                 val params = if (constructor) model.members.joinToString(
                     separator = ", ", prefix = "", postfix = ""
                 ) {
-                    "this.${it.name.keyToCamelCase()}"
+                    "this.${it.name.keyToFieldName()}"
                 } else ""
                 writeln("$sampleName($params);")
 

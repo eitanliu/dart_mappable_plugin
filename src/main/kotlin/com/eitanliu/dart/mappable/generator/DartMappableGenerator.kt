@@ -1,19 +1,22 @@
 package com.eitanliu.dart.mappable.generator
 
 import com.eitanliu.dart.mappable.ast.*
-import com.eitanliu.dart.mappable.extensions.*
+import com.eitanliu.dart.mappable.generator.builder.JsonReflectableBuilder
 import com.eitanliu.dart.mappable.settings.Settings
+import com.eitanliu.dart.mappable.settings.SettingsOwner
+import com.eitanliu.intellij.compat.extensions.value
 import com.google.gson.*
 
 class DartMappableGenerator(
-    private val settings: Settings,
+    override val settings: Settings,
     className: String,
     json: String,
-    dartFileName: DartFileName = DartFileName.Default(className, settings.graph.modelSuffix.value),
-) : DartGenerator,
-    DartGenerator.Extensions,
+    dartFileName: DartFileName = DartFileName.Impl(className, settings.graph.modelSuffix.value),
+) : DartGenerator.Self,
+    JsonReflectableBuilder.Self,
     DartJsonParser,
-    DartFileName by dartFileName {
+    DartFileName by dartFileName,
+    SettingsOwner {
 
     val fileMapperName = "$underscoreNameAndSuffix.mapper.dart"
 
@@ -31,6 +34,7 @@ class DartMappableGenerator(
     private fun CodeGenerator.writeFileImports(models: List<DartClassModel>) {
 
         for (syntax in models.importsSyntax {
+            importJsonReflectable()
             yield(DartImportModel("package:dart_mappable/dart_mappable.dart"))
         }) {
             writeln(syntax)
@@ -67,6 +71,7 @@ class DartMappableGenerator(
             val toJson = if (enableMixin) "toJson" else settings.graph.mappableToJson.value
 
             writeln()
+            writeJsonReflectableClassAnnotation()
             writeln("@MappableClass()")
             writeScoped(buildString {
                 append("class $sampleName")
@@ -98,7 +103,7 @@ class DartMappableGenerator(
                     //     append("this.${it.name.keyToCamelCase()}")
                     //     if (!nullable) append(" = ${typeDefault(it.type)}")
                     // }
-                    "this.${it.name.keyToCamelCase()}"
+                    "this.${it.name.keyToFieldName()}"
                 } else ""
                 writeln("$sampleName($params);")
                 // writeScoped("$sampleName($params) {", "}") {
@@ -114,7 +119,7 @@ class DartMappableGenerator(
                     writeln()
                     writeln("factory $sampleName.$fromJson(String json) => $mapper.fromJson(json);")
                 } else {
-                    fun guard(fn: String) = "$mapper._guard((c) => c.$fn)"
+                    fun guard(fn: String) = "_ensureContainer.$fn"
 
                     // factory fromMap
                     if (enableFromMap) {
@@ -182,6 +187,14 @@ class DartMappableGenerator(
                         ) {
                             writeln("return _${sampleName}CopyWithImpl(this, \$identity, \$identity);")
                         }
+                    }
+
+                    writeln()
+                    writeScoped(
+                        "static final MapperContainer _ensureContainer = () {", "}();"
+                    ) {
+                        writeln("$mapper.ensureInitialized();")
+                        writeln("return MapperContainer.globals;")
                     }
                 }
 

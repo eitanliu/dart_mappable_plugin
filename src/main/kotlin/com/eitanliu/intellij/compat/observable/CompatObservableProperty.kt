@@ -1,4 +1,4 @@
-package com.eitanliu.compat.observable
+package com.eitanliu.intellij.compat.observable
 
 interface CompatObservableProperty<T> {
 

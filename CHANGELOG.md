@@ -2,6 +2,33 @@
 
 # Dart Mappable Changelog
 
+## [1.1.6]
+
+### Release
+
+- Support freezed generator
+- Support disable automatically run `flutter pub run build_runner build --delete-conflicting-outputs`
+- Change dart_mappable custom methods generator
+- Fix conversion of names with underscore prefixes
+
+## [1.1.5]
+
+### Release
+
+- Support json_reflectable annotation
+- Support auto add dependencies
+- Change default generator to json_serializable
+
+## [1.1.4]
+
+### Release
+
+- Support json_serializable generator
+- Allow dart_mappable custom of toMap/toJson/fromMap/fromJson methods;
+- Change reformat code
+- Change predicate flutter project
+- Fix json input area height
+
 ## [1.1.3]
 
 ### Release

@@ -10,6 +10,7 @@ import io.flutter.console.FlutterConsoles
 import io.flutter.pub.PubRoot
 import io.flutter.sdk.FlutterSdk
 import io.flutter.utils.MostlySilentColoredProcessHandler
+import java.util.concurrent.CompletableFuture
 
 object CommandUtils {
     fun executeCommand(project: Project, command: String) {
@@ -49,11 +50,21 @@ object CommandUtils {
     fun executeFlutterPubCommand(
         project: Project, root: PubRoot, args: String,
         processListener: ProcessListener? = null, onDone: Runnable? = null
-    ) {
-        val sdk = FlutterSdk.getFlutterSdk(project) ?: return
-        val module = root.getModule(project) ?: return
+    ): CompletableFuture<Unit> {
+        val future = CompletableFuture<Unit>()
+
+        val sdk = FlutterSdk.getFlutterSdk(project) ?: return future.apply {
+            completeExceptionally(IllegalStateException("Flutter SDK configuration not found."))
+        }
+        val module = root.getModule(project) ?: return future.apply {
+            completeExceptionally(IllegalStateException("Flutter Module not found."))
+        }
         val command = sdk.flutterPub(root, *args.split(' ').toTypedArray())
-        command.startInModuleConsole(module, onDone, processListener)
+        command.startInModuleConsole(module, {
+            future.complete(Unit)
+            onDone?.run()
+        }, processListener)
         // command.startInConsole(project)
+        return future
     }
 }

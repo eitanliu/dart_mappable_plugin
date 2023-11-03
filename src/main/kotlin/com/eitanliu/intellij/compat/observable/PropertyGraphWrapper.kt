@@ -1,6 +1,6 @@
-package com.eitanliu.dart.mappable.observable
+package com.eitanliu.intellij.compat.observable
 
-import com.eitanliu.dart.mappable.extensions.WeakRecFun1List
+import com.eitanliu.intellij.compat.ref.WeakFun1List
 import com.intellij.openapi.observable.properties.PropertyGraph
 import com.intellij.util.containers.WeakList
 import java.lang.ref.WeakReference
@@ -11,9 +11,9 @@ class PropertyGraphWrapper<T>(
 ) {
     val refPropertyGraph = WeakReference(propertyGraph)
 
-    val listenerList: WeakRecFun1List<T> = WeakRecFun1List(graph, list)
+    val listenerList: WeakFun1List<T> = WeakFun1List(graph, list)
 
-    val listener = listenerList.listener
+    val listener = listenerList.weakFun
 
-    val refGraph = listenerList.weakRef
+    val refGraph = listenerList.receiver
 }

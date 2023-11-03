@@ -4,15 +4,14 @@ package com.eitanliu.dart.mappable.ui
 
 import com.eitanliu.dart.mappable.ast.DartGenerator
 import com.eitanliu.dart.mappable.binding.bindTabTransferFocus
-import com.eitanliu.dart.mappable.extensions.copyBind
-import com.eitanliu.dart.mappable.extensions.createPropertyGraph
-import com.eitanliu.dart.mappable.extensions.propertyRef
-import com.eitanliu.dart.mappable.extensions.value
+import com.eitanliu.intellij.compat.extensions.copyBind
+import com.eitanliu.intellij.compat.extensions.createPropertyGraph
+import com.eitanliu.intellij.compat.extensions.propertyRef
+import com.eitanliu.intellij.compat.extensions.value
 import com.eitanliu.dart.mappable.generator.buildDartGenerator
-import com.eitanliu.dart.mappable.settings.Settings
+import com.eitanliu.dart.mappable.utils.ApplicationUtils
 import com.google.gson.*
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.observable.properties.PropertyGraph
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
@@ -34,7 +33,7 @@ class JsonInputDialog(
     var generator: DartGenerator? = null
         private set
 
-    val settings = ApplicationManager.getApplication().getService(Settings::class.java)
+    val settings = ApplicationUtils.getSettings()
 
     val graph = Graph(this).afterPropagation(disposable) {
         okAction.isEnabled = inputIsValidJson(json.value).takeIf {
@@ -117,7 +116,9 @@ class JsonInputDialog(
         }
 
     }.apply {
-        preferredSize = JBDimension(600, 500)
+        // preferredSize = JBDimension(600, 500)
+        withPreferredSize(600, 500)
+        withMinimumHeight(400)
     }
 
     private fun handleFormatJSONString() {

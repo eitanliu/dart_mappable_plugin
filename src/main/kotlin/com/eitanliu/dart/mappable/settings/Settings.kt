@@ -1,7 +1,7 @@
 package com.eitanliu.dart.mappable.settings
 
-import com.eitanliu.dart.mappable.extensions.createPropertyGraph
-import com.eitanliu.dart.mappable.extensions.propertyRef
+import com.eitanliu.intellij.compat.extensions.createPropertyGraph
+import com.eitanliu.intellij.compat.extensions.propertyRef
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.State
@@ -16,6 +16,8 @@ data class Settings(
     var constructor: Boolean,
     var nullable: Boolean,
     var final: Boolean,
+    var autoBuildRunner: Boolean,
+    var enableJsonReflectable: Boolean,
     var enableMixin: Boolean,
     var enableFromJson: Boolean,
     var enableToJson: Boolean,
@@ -27,13 +29,16 @@ data class Settings(
     var mappableFromMap: String,
     var mappableToMap: String,
     var mappableCopyWith: String,
+    var freezedEnableJson: Boolean,
 ) : PersistentStateComponent<Settings> {
 
     val graph = Graph(this)
 
     constructor() : this(
-        modelSuffix = "entity", implement = Implements.DART_MAPPABLE,
+        modelSuffix = "entity", implement = Implements.JSON_SERIALIZABLE,
         constructor = true, nullable = false, final = false,
+        autoBuildRunner = true,
+        enableJsonReflectable = true,
         enableMixin = true,
         enableFromJson = true, enableToJson = true,
         enableFromMap = true, enableToMap = true,
@@ -41,6 +46,7 @@ data class Settings(
         mappableFromJson = "fromString", mappableToJson = "toString",
         mappableFromMap = "fromJson", mappableToMap = "toJson",
         mappableCopyWith = "copyWith",
+        freezedEnableJson = true,
     )
 
     override fun getState(): Settings {
@@ -62,6 +68,9 @@ data class Settings(
         val nullable = propertyGraph.propertyRef(data::nullable)
         val final = propertyGraph.propertyRef(data::final)
 
+        val autoBuildRunner = propertyGraph.propertyRef(data::autoBuildRunner)
+        val enableJsonReflectable = propertyGraph.propertyRef(data::enableJsonReflectable)
+
         val enableMixin = propertyGraph.propertyRef(data::enableMixin)
         val enableFromJson = propertyGraph.propertyRef(data::enableFromJson)
         val enableToJson = propertyGraph.propertyRef(data::enableToJson)
@@ -74,6 +83,8 @@ data class Settings(
         val mappableFromMap = propertyGraph.propertyRef(data::mappableFromMap)
         val mappableToMap = propertyGraph.propertyRef(data::mappableToMap)
         val mappableCopyWith = propertyGraph.propertyRef(data::mappableCopyWith)
+
+        val freezedEnableJson = propertyGraph.propertyRef(data::freezedEnableJson)
 
         fun afterPropagation(disposable: Disposable? = null, listener: Graph.() -> Unit) = apply {
             propertyGraph.afterPropagation(disposable) { listener() }

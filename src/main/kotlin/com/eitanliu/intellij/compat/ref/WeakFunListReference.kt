@@ -1,34 +1,17 @@
-package com.eitanliu.dart.mappable.extensions
+package com.eitanliu.intellij.compat.ref
 
 import com.intellij.util.containers.WeakList
-import java.lang.UnsupportedOperationException
 import java.lang.ref.WeakReference
 
-fun <T> (T.() -> Unit).weakRef(): T.() -> Unit {
-    return WeakFun1Reference(this)
-}
-
-class WeakFun1Reference<T>(
-    func: T.() -> Unit
-) : Function1<T, Unit> {
-
-    private val func = WeakReference(func)
-
-    override fun invoke(p1: T) {
-        func.get()?.invoke(p1)
-    }
-
-}
-
-class WeakRecFun1List<T>(
+class WeakFun1List<T>(
     receiver: T, list: WeakList<T.() -> Unit> = WeakList()
 ) : Function0<Unit>, MutableCollection<T.() -> Unit> by list {
 
+    val receiver: WeakReference<T>
+
     val weakRef = WeakReference(this)
 
-    private val receiver: WeakReference<T>
-
-    val listener = Listener(weakRef)
+    val weakFun get() = WeakFunction(weakRef)
 
     init {
         this.receiver = WeakReference(receiver)
@@ -42,7 +25,7 @@ class WeakRecFun1List<T>(
     }
 
     @Suppress("MemberVisibilityCanBePrivate")
-    class Listener<T>(val weakRef: WeakReference<WeakRecFun1List<T>>) : Function0<Unit> {
+    class WeakFunction<T>(val weakRef: WeakReference<WeakFun1List<T>>) : Function0<Unit> {
         override fun invoke() {
             weakRef.get()?.invoke()
         }

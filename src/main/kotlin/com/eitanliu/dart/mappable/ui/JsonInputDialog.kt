@@ -3,8 +3,8 @@
 package com.eitanliu.dart.mappable.ui
 
 import com.eitanliu.dart.mappable.ast.DartGenerator
-import com.eitanliu.dart.mappable.binding.bind
-import com.eitanliu.dart.mappable.binding.bindTabTransferFocus
+import com.eitanliu.intellij.compat.binding.bind
+import com.eitanliu.intellij.compat.binding.bindTabTransferFocus
 import com.eitanliu.intellij.compat.extensions.copyBind
 import com.eitanliu.intellij.compat.extensions.createPropertyGraph
 import com.eitanliu.intellij.compat.extensions.propertyRef

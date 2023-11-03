@@ -1,7 +1,8 @@
 package com.eitanliu.dart.mappable.settings
 
-import com.eitanliu.dart.mappable.binding.bindSelected
-import com.eitanliu.dart.mappable.binding.selected
+import com.eitanliu.intellij.compat.binding.bindSelected
+import com.eitanliu.intellij.compat.binding.selected
+import com.eitanliu.intellij.compat.extensions.createInstance
 import com.eitanliu.intellij.compat.extensions.createPropertyGraph
 import com.eitanliu.intellij.compat.extensions.propertyOf
 import com.eitanliu.intellij.compat.extensions.value

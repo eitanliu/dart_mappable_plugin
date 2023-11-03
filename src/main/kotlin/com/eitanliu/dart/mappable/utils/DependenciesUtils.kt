@@ -4,7 +4,7 @@ import com.eitanliu.dart.mappable.entity.DependenceEntity
 import com.eitanliu.dart.mappable.entity.ModuleEntity
 import com.eitanliu.dart.mappable.entity.PubspecEntity
 import com.eitanliu.dart.mappable.extensions.loadYaml
-import com.eitanliu.dart.mappable.extensions.value
+import com.eitanliu.intellij.compat.extensions.value
 import com.eitanliu.dart.mappable.settings.Implements
 import com.eitanliu.dart.mappable.settings.Settings
 import com.intellij.openapi.module.Module

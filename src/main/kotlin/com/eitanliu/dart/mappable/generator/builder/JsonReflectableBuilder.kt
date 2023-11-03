@@ -2,7 +2,7 @@ package com.eitanliu.dart.mappable.generator.builder
 
 import com.eitanliu.dart.mappable.ast.CodeGenerator
 import com.eitanliu.dart.mappable.ast.DartImportModel
-import com.eitanliu.dart.mappable.extensions.value
+import com.eitanliu.intellij.compat.extensions.value
 import com.eitanliu.dart.mappable.settings.SettingsOwner
 
 interface JsonReflectableBuilder : SettingsOwner {

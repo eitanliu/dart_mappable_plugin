@@ -1,4 +1,4 @@
-package com.eitanliu.dart.mappable.extensions
+package com.eitanliu.intellij.compat.extensions
 
 import com.eitanliu.intellij.compat.ref.WeakFun1Reference
 

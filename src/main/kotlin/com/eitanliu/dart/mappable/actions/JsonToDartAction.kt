@@ -1,7 +1,7 @@
 package com.eitanliu.dart.mappable.actions
 
-import com.eitanliu.dart.mappable.extensions.ApplicationScope
-import com.eitanliu.dart.mappable.extensions.value
+import com.eitanliu.intellij.compat.extensions.ApplicationScope
+import com.eitanliu.intellij.compat.extensions.value
 import com.eitanliu.dart.mappable.ui.JsonInputDialog
 import com.eitanliu.dart.mappable.utils.ApplicationUtils
 import com.eitanliu.dart.mappable.utils.CommandUtils

@@ -1,6 +1,6 @@
 package com.eitanliu.intellij.compat.binding
 
-import com.eitanliu.dart.mappable.utils.SimpleKeyListener
+import com.eitanliu.intellij.compat.utils.SimpleKeyListener
 import com.intellij.openapi.observable.properties.GraphProperty
 import com.intellij.ui.layout.ComponentPredicate
 import java.awt.Component

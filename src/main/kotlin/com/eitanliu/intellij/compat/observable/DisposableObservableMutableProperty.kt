@@ -1,6 +1,5 @@
-package com.eitanliu.dart.mappable.observable
+package com.eitanliu.intellij.compat.observable
 
-import com.eitanliu.intellij.compat.observable.CompatObservableProperty
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.observable.properties.ObservableMutableProperty
 import com.intellij.util.containers.WeakList

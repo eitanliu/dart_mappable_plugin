@@ -1,4 +1,4 @@
-package com.eitanliu.dart.mappable.observable
+package com.eitanliu.intellij.compat.observable
 
 import com.eitanliu.intellij.compat.ref.WeakFun1List
 import com.intellij.openapi.observable.properties.PropertyGraph

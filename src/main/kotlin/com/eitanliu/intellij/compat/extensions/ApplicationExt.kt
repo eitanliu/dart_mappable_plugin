@@ -1,4 +1,4 @@
-package com.eitanliu.dart.mappable.extensions
+package com.eitanliu.intellij.compat.extensions
 
 import com.eitanliu.intellij.compat.application.EDTCompat
 import com.intellij.openapi.application.Application

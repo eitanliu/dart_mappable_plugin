@@ -4,6 +4,8 @@ package com.eitanliu.dart.mappable.ui
 
 import com.eitanliu.dart.mappable.ast.DartGenerator
 import com.eitanliu.intellij.compat.binding.bindTabTransferFocus
+import com.eitanliu.intellij.compat.dsl.LayoutAlign
+import com.eitanliu.intellij.compat.dsl.layoutAlign
 import com.eitanliu.intellij.compat.extensions.createPropertyGraph
 import com.eitanliu.intellij.compat.extensions.propertyRef
 import com.intellij.openapi.Disposable
@@ -12,8 +14,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.ui.dsl.builder.bindText
 import com.intellij.ui.dsl.builder.panel
-import com.intellij.ui.dsl.gridLayout.HorizontalAlign
-import com.intellij.ui.dsl.gridLayout.VerticalAlign
 
 /**
  * Preview Dialog
@@ -47,8 +47,7 @@ class PreviewDialog(
                     myPreferredFocusedComponent = this
                     bindTabTransferFocus()
                 }
-                horizontalAlign(HorizontalAlign.FILL)
-                verticalAlign(VerticalAlign.FILL)
+                layoutAlign(LayoutAlign.FILL)
             }
         }
 

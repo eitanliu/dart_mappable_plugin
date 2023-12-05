@@ -1,6 +1,6 @@
 package com.eitanliu.intellij.compat.dsl
 
-import com.intellij.ui.dsl.builder.Cell
+import com.intellij.ui.dsl.builder.*
 import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 import com.intellij.ui.dsl.gridLayout.VerticalAlign
 import javax.swing.JComponent
@@ -10,10 +10,48 @@ fun <C : JComponent> Cell<C>.layoutAlign(
     align: LayoutAlign
 ): Cell<C> {
     try {
-        layoutAlignBefore223(align)
+        layoutAlignSince223(align)
     } catch (e: Throwable) {
+        layoutAlignBefore223(align)
     }
     return this
+}
+
+private fun <C : JComponent> Cell<C>.layoutAlignSince223(layoutAlign: LayoutAlign): Cell<C> {
+    val align = getAlignSince223(layoutAlign)
+    align(align)
+    return this
+}
+
+private fun getAlignSince223(align: LayoutAlign): Align {
+    return when (align) {
+        // com.intellij.ui.dsl.builder.Align.FILL.INSTANCE
+        is LayoutAlignBoth -> {
+            val alignX = getAlignSince223(align.alignX) as AlignX
+            val alignY = getAlignSince223(align.alignY) as AlignY
+            alignX + alignY
+        }
+
+        is LayoutAlignX -> {
+            val alignX = when (align) {
+                LayoutAlignX.LEFT -> AlignX.LEFT
+                LayoutAlignX.CENTER -> AlignX.CENTER
+                LayoutAlignX.RIGHT -> AlignX.RIGHT
+                LayoutAlignX.FILL -> AlignX.FILL
+            }
+            alignX
+        }
+
+        is LayoutAlignY -> {
+            val alignY = when (align) {
+                LayoutAlignY.TOP -> AlignY.TOP
+                LayoutAlignY.CENTER -> AlignY.CENTER
+                LayoutAlignY.BOTTOM -> AlignY.BOTTOM
+                LayoutAlignY.FILL -> AlignY.FILL
+            }
+            alignY
+        }
+    }
 }
 
 private fun <C : JComponent> Cell<C>.layoutAlignBefore223(

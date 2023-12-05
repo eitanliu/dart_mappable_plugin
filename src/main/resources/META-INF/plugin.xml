@@ -6,7 +6,7 @@
     <!-- Public plugin name should be written in Title Case.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
     <!--max 64 charts-->
-    <name>DartMappable(FlutterJsonTo Freezed JsonSerializable Compatible)</name>
+    <name>DartMappable(Flutter Json To Freezed JsonSerializable Compat)</name>
 
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
     <vendor email="eitanliu@gmail.com" url="https://www.eitanliu.com">Eitan Liu</vendor>

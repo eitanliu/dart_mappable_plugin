@@ -2,6 +2,13 @@
 
 # Dart Mappable Changelog
 
+## [1.1.7]
+
+### Release
+
+- Add preview generate code
+- Change json_reflectable is disabled by default
+
 ## [1.1.6]
 
 ### Release

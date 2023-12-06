@@ -1,10 +1,10 @@
+@file:Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
+
 package com.eitanliu.intellij.compat.dsl
 
 import com.intellij.ui.dsl.builder.*
-import com.intellij.ui.dsl.gridLayout.HorizontalAlign
-import com.intellij.ui.dsl.gridLayout.VerticalAlign
 import javax.swing.JComponent
-
+import java.lang.Enum as JEnum
 
 fun <C : JComponent> Cell<C>.layoutAlign(
     align: LayoutAlign
@@ -54,6 +54,7 @@ private fun getAlignSince223(align: LayoutAlign): Align {
     }
 }
 
+@Suppress("UNCHECKED_CAST")
 private fun <C : JComponent> Cell<C>.layoutAlignBefore223(
     align: LayoutAlign
 ): Cell<C> {
@@ -64,23 +65,33 @@ private fun <C : JComponent> Cell<C>.layoutAlignBefore223(
         }
 
         is LayoutAlignX -> {
+            val clazz = Class.forName("com.intellij.ui.dsl.gridLayout.HorizontalAlign")
+            val enumClass = clazz as Class<out Enum<*>>
             val horizontalAlign = when (align) {
-                LayoutAlignX.LEFT -> HorizontalAlign.LEFT
-                LayoutAlignX.CENTER -> HorizontalAlign.CENTER
-                LayoutAlignX.RIGHT -> HorizontalAlign.RIGHT
-                LayoutAlignX.FILL -> HorizontalAlign.FILL
+                LayoutAlignX.LEFT -> JEnum.valueOf(enumClass, "LEFT")
+                LayoutAlignX.CENTER -> JEnum.valueOf(enumClass, "CENTER")
+                LayoutAlignX.RIGHT -> JEnum.valueOf(enumClass, "RIGHT")
+                LayoutAlignX.FILL -> JEnum.valueOf(enumClass, "FILL")
             }
-            horizontalAlign(horizontalAlign)
+            val cellClass = this::class.java
+            val alignMethod = cellClass.getMethod("horizontalAlign", enumClass)
+            alignMethod.invoke(this, horizontalAlign)
+            // horizontalAlign(horizontalAlign)
         }
 
         is LayoutAlignY -> {
+            val clazz = Class.forName("com.intellij.ui.dsl.gridLayout.VerticalAlign")
+            val enumClass = clazz as Class<out Enum<*>>
             val verticalAlign = when (align) {
-                LayoutAlignY.TOP -> VerticalAlign.TOP
-                LayoutAlignY.CENTER -> VerticalAlign.CENTER
-                LayoutAlignY.BOTTOM -> VerticalAlign.BOTTOM
-                LayoutAlignY.FILL -> VerticalAlign.FILL
+                LayoutAlignY.TOP -> JEnum.valueOf(enumClass, "TOP")
+                LayoutAlignY.CENTER -> JEnum.valueOf(enumClass, "CENTER")
+                LayoutAlignY.BOTTOM -> JEnum.valueOf(enumClass, "BOTTOM")
+                LayoutAlignY.FILL -> JEnum.valueOf(enumClass, "FILL")
             }
-            verticalAlign(verticalAlign)
+            val cellClass = this::class.java
+            val alignMethod = cellClass.getMethod("verticalAlign", enumClass)
+            alignMethod.invoke(this, verticalAlign)
+            // verticalAlign(verticalAlign)
         }
     }
     return this

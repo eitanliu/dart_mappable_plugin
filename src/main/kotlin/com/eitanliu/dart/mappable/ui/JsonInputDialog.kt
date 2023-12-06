@@ -3,7 +3,12 @@
 package com.eitanliu.dart.mappable.ui
 
 import com.eitanliu.dart.mappable.ast.DartGenerator
+import com.eitanliu.dart.mappable.generator.buildDartGenerator
+import com.eitanliu.dart.mappable.utils.ApplicationUtils
 import com.eitanliu.intellij.compat.binding.bindTabTransferFocus
+import com.eitanliu.intellij.compat.dsl.LayoutAlign
+import com.eitanliu.intellij.compat.dsl.LayoutAlignX
+import com.eitanliu.intellij.compat.dsl.layoutAlign
 import com.eitanliu.intellij.compat.extensions.copyBind
 import com.eitanliu.intellij.compat.extensions.createPropertyGraph
 import com.eitanliu.intellij.compat.extensions.propertyRef
@@ -20,14 +25,15 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.bindText
 import com.intellij.ui.dsl.builder.panel
-import com.intellij.ui.dsl.gridLayout.HorizontalAlign
-import com.intellij.ui.dsl.gridLayout.VerticalAlign
+import java.awt.event.ActionEvent
+import javax.swing.Action
+import javax.swing.text.TextAction
 
 /**
  * Json input Dialog
  */
 class JsonInputDialog(
-    project: Project,
+    private val project: Project,
     private val className: String = "",
     private val json: String = "",
     val doOkAction: (generator: DartGenerator) -> Boolean
@@ -67,7 +73,7 @@ class JsonInputDialog(
             button("Format") {
                 handleFormatJSONString()
                 myPreferredFocusedComponent?.requestFocus()
-            }.horizontalAlign(HorizontalAlign.RIGHT)
+            }.layoutAlign(LayoutAlignX.RIGHT)
         }
         row {
             resizableRow()
@@ -78,15 +84,14 @@ class JsonInputDialog(
                     myPreferredFocusedComponent = this
                     bindTabTransferFocus()
                 }
-                horizontalAlign(HorizontalAlign.FILL)
-                verticalAlign(VerticalAlign.FILL)
+                layoutAlign(LayoutAlign.FILL)
             }
         }
         row { label("Class Name:") }
         row {
             textField().apply {
                 bindText(graph.className)
-                horizontalAlign(HorizontalAlign.FILL)
+                layoutAlign(LayoutAlignX.FILL)
             }
         }
         row {
@@ -117,7 +122,7 @@ class JsonInputDialog(
 
             button("Settings") {
                 SettingsDialog(null, contentPanel).show()
-            }.horizontalAlign(HorizontalAlign.RIGHT)
+            }.layoutAlign(LayoutAlignX.RIGHT)
         }
 
     }.apply {
@@ -147,17 +152,45 @@ class JsonInputDialog(
         false
     }
 
+    override fun createActions(): Array<Action> {
+        return arrayOf(
+            *super.createActions(),
+            getPreviewAction(),
+        )
+    }
+
+    private fun getPreviewAction(): Action {
+        return object : TextAction("Preview") {
+            override fun actionPerformed(e: ActionEvent?) {
+                doPreviewAction()
+            }
+        }
+    }
+
+    private fun doPreviewAction() {
+
+        val className = graph.className.value
+        val json = graph.json.value
+
+        if (json.isEmpty()) {
+            Messages.showErrorDialog("json must not null or empty", "Error")
+            return
+        }
+        val g = buildDartGenerator(settings, className, json)
+        PreviewDialog(project, g.buildString()).show()
+    }
+
     override fun doOKAction() {
         val className = graph.className.value
         val json = graph.json.value
 
         if (className.isEmpty()) {
-            Messages.showErrorDialog("Error", "className must not null or empty")
+            Messages.showErrorDialog("className must not null or empty", "Error")
             return
         }
 
         if (json.isEmpty()) {
-            Messages.showErrorDialog("Error", "json must not null or empty")
+            Messages.showErrorDialog("json must not null or empty", "Error")
             return
         }
 

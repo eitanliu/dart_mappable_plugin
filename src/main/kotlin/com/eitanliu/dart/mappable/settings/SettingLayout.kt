@@ -2,6 +2,8 @@ package com.eitanliu.dart.mappable.settings
 
 import com.eitanliu.intellij.compat.binding.bindSelected
 import com.eitanliu.intellij.compat.binding.selected
+import com.eitanliu.intellij.compat.dsl.LayoutAlignX
+import com.eitanliu.intellij.compat.dsl.layoutAlign
 import com.eitanliu.intellij.compat.extensions.createInstance
 import com.eitanliu.intellij.compat.extensions.createPropertyGraph
 import com.eitanliu.intellij.compat.extensions.propertyOf
@@ -11,7 +13,6 @@ import com.intellij.openapi.observable.properties.PropertyGraph
 import com.intellij.openapi.options.UnnamedConfigurable
 import com.intellij.ui.TitledSeparator
 import com.intellij.ui.dsl.builder.*
-import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 import javax.swing.JComponent
 
 
@@ -27,11 +28,11 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
         onApply(::apply)
 
         row {
-            label("Model suffix:").horizontalAlign(HorizontalAlign.LEFT)
+            label("Model suffix:").layoutAlign(LayoutAlignX.LEFT)
 
             textField().apply {
                 bindText(graph.modelSuffix)
-            }.horizontalAlign(HorizontalAlign.FILL)
+            }.layoutAlign(LayoutAlignX.FILL)
 
             rowComment("Configure dart data model files suffix.")
         }
@@ -96,35 +97,35 @@ class SettingLayout(private val settings: Settings) : UnnamedConfigurable {
                         .bindSelected(graph.enableFromMap)
                     textField().apply {
                         bindText(graph.mappableFromMap)
-                    }.horizontalAlign(HorizontalAlign.FILL)
+                    }.layoutAlign(LayoutAlignX.FILL)
                 }.layout(RowLayout.LABEL_ALIGNED)
                 row {
                     checkBox("toMap")
                         .bindSelected(graph.enableToMap)
                     textField().apply {
                         bindText(graph.mappableToMap)
-                    }.horizontalAlign(HorizontalAlign.FILL)
+                    }.layoutAlign(LayoutAlignX.FILL)
                 }.layout(RowLayout.LABEL_ALIGNED)
                 row {
                     checkBox("fromJson")
                         .bindSelected(graph.enableFromJson)
                     textField().apply {
                         bindText(graph.mappableFromJson)
-                    }.horizontalAlign(HorizontalAlign.FILL)
+                    }.layoutAlign(LayoutAlignX.FILL)
                 }.layout(RowLayout.LABEL_ALIGNED)
                 row {
                     checkBox("toJson")
                         .bindSelected(graph.enableToJson)
                     textField().apply {
                         bindText(graph.mappableToJson)
-                    }.horizontalAlign(HorizontalAlign.FILL)
+                    }.layoutAlign(LayoutAlignX.FILL)
                 }.layout(RowLayout.LABEL_ALIGNED)
                 row {
                     checkBox("copyWith")
                         .bindSelected(graph.enableCopyWith)
                     textField().apply {
                         bindText(graph.mappableCopyWith)
-                    }.horizontalAlign(HorizontalAlign.FILL)
+                    }.layoutAlign(LayoutAlignX.FILL)
                 }.layout(RowLayout.LABEL_ALIGNED)
             }.visibleIf(customPredicate)
         }

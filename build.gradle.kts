@@ -6,7 +6,7 @@ fun properties(key: String) = project.findProperty(key).toString()
 plugins {
     id("java")
     id("org.jetbrains.kotlin.jvm") version "1.8.0"
-    id("org.jetbrains.intellij")  version "1.13.1"
+    id("org.jetbrains.intellij") version "1.13.1"
     id("org.jetbrains.changelog") version "1.3.0"
     // id("org.jetbrains.compose") version "1.3.0"
 }
@@ -16,6 +16,7 @@ version = properties("pluginVersion")
 
 repositories {
     mavenCentral()
+    maven { url = uri("https://jitpack.io") }
 }
 
 dependencies {
@@ -26,6 +27,7 @@ dependencies {
     }
     // implementation(compose.desktop.currentOs)
     // implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
+    // implementation("com.github.eitanliu:intellij_compat:221-SNAPSHOT")
     testImplementation("junit:junit:4.13.2")
 }
 

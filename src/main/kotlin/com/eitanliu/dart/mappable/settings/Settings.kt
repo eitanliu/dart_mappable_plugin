@@ -39,7 +39,7 @@ data class Settings(
         modelSuffix = "entity", implement = Implements.JSON_SERIALIZABLE,
         constructor = true, nullable = false, final = false,
         autoBuildRunner = true,
-        enableJsonReflectable = true,
+        enableJsonReflectable = false,
         enableMixin = true,
         enableFromJson = true, enableToJson = true,
         enableFromMap = true, enableToMap = true,

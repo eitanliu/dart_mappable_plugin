@@ -13,8 +13,6 @@ import com.eitanliu.intellij.compat.extensions.copyBind
 import com.eitanliu.intellij.compat.extensions.createPropertyGraph
 import com.eitanliu.intellij.compat.extensions.propertyRef
 import com.eitanliu.intellij.compat.extensions.value
-import com.eitanliu.dart.mappable.generator.buildDartGenerator
-import com.eitanliu.dart.mappable.utils.ApplicationUtils
 import com.eitanliu.intellij.compat.observable.PropertyGraphWrapper
 import com.google.gson.*
 import com.intellij.openapi.Disposable

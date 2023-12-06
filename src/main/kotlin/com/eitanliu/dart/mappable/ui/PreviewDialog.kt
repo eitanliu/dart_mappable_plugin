@@ -8,6 +8,7 @@ import com.eitanliu.intellij.compat.dsl.LayoutAlign
 import com.eitanliu.intellij.compat.dsl.layoutAlign
 import com.eitanliu.intellij.compat.extensions.createPropertyGraph
 import com.eitanliu.intellij.compat.extensions.propertyRef
+import com.eitanliu.intellij.compat.observable.PropertyGraphWrapper
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.observable.properties.PropertyGraph
 import com.intellij.openapi.project.Project
@@ -59,11 +60,13 @@ class PreviewDialog(
 
     class Graph(private val data: PreviewDialog) {
         private val propertyGraph: PropertyGraph = createPropertyGraph()
+        private val wrapper = PropertyGraphWrapper(propertyGraph, this)
 
         val text = propertyGraph.propertyRef(data::text)
 
         fun afterPropagation(disposable: Disposable? = null, listener: Graph.() -> Unit) = apply {
-            propertyGraph.afterPropagation(disposable) { listener() }
+            wrapper.listenerList.add(listener)
+            propertyGraph.afterPropagation(wrapper.listener)
         }
     }
 }
